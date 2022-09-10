@@ -1,0 +1,36 @@
+#
+# Copyright 2022 by Garmin Ltd. or its subsidiaries.
+# All rights reserved.
+#
+# Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
+# and Associated Software. The Agreement accompanies the Software in the root directory of
+# the repository.
+#
+
+menu "ANT Wireless"
+
+config ANT
+    bool "ANT Wireless"
+    depends on (SOC_NRF5340_CPUNET || SOC_NRF5340_CPUAPP)
+    select MPSL if SOC_NRF5340_CPUNET
+    select EXPERIMENTAL
+    help
+       Enable ANT ultra low power wireless protocol by Garmin Canada Inc.
+       The nRF Connect SDK ANT Wireless library exclusively supports the nRF53 series SOC.
+
+if ANT
+
+config ANT_SDK_UTIL
+    bool "ANT Wireless utilities"
+    default y
+    depends on ANT
+    help
+       Enable utilities for ANT configuration.
+
+rsource "init/Kconfig"
+rsource "np/Kconfig"
+rsource "samples/Kconfig"
+
+endif
+
+endmenu

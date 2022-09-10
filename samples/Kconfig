@@ -1,0 +1,32 @@
+#
+# Copyright (c) 2022 Garmin Canada Inc.
+#
+
+if SOC_SERIES_NRF53X
+
+config ANT_INCLUDE_NP_CHILD_IMAGE
+	bool "Include ANT NP sample on netcore"
+	depends on SOC_NRF5340_CPUAPP && ANT_NP
+	select PARTITION_MANAGER_ENABLED
+	select BOARD_ENABLE_CPUNET
+	default y if ANT_NP
+	help
+	  Enabling this setting will include a network stack to run on the
+	  network core and communicate over nRF RPC with the application core.
+	  The application core does not have access to the radio peripheral.
+
+	  The ANT stack currently supports a single IPC transport mechanism: 
+	  - ANT nRF RPC (ant_rpc)
+
+if ANT_INCLUDE_NP_CHILD_IMAGE
+
+config ANT_SAMPLE_RPC_CHILD_IMAGE
+	bool
+	depends on ANT_RPC
+	default y
+	help
+	  ant_rpc sample as a child image (network core).
+
+endif # ANT_INCLUDE_NP_CHILD_IMAGE
+
+endif # SOC_SERIES_NRF53X

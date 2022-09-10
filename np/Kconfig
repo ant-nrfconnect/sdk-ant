@@ -1,0 +1,39 @@
+#
+# Copyright 2022 by Garmin Ltd. or its subsidiaries.
+# All rights reserved.
+#
+# Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
+# and Associated Software. The Agreement accompanies the Software in the root directory of
+# the repository.
+#
+
+config ANT_NP
+    bool "ANT Network Processor Multicore API Serialization"
+    depends on ANT
+    select ANT_NP_HOST if SOC_NRF5340_CPUAPP
+    select ANT_NP_REMOTE if SOC_NRF5340_CPUNET
+    select ANT_RPC
+    default n
+    help
+       Serialize API calls for execution on remote CPU. 
+
+config ANT_NP_HOST
+    bool "ANT Network Processor Host (cpuapp)"
+    depends on ANT_NP
+    depends on SOC_NRF5340_CPUAPP
+    default n
+    help
+       ANT Host (application core) configuration for multicore applications.
+
+config ANT_NP_REMOTE
+    bool "ANT Network Processor Remote (cpunet)"
+    depends on ANT_NP
+    depends on SOC_NRF5340_CPUNET
+    default n
+    help
+        ANT Remote (network core) configuration for multicore applications.
+
+config ANT_RPC
+    bool "ANT over RPC"
+    default n
+    select NRF_RPC
