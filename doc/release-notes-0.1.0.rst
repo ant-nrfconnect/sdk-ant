@@ -43,8 +43,3 @@ Other unsupported ANT features include:
 * Scanning Channel
 * High Duty Search Channel
 * CW Mode
-
-Known Issues
-************
-
-* Calling ant_channel_open() long after system start (greater than 30 minutes) can lead to temporary instability including application stalling and excess generated events
