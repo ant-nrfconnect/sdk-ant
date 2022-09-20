@@ -54,9 +54,11 @@
 #ifndef ANT_ADVANCED_BURST_H__
 #define ANT_ADVANCED_BURST_H__
 
+#include "ant_error.h"
+
 /**@brief Function for configuring channel for advanced burst
  *
  */
-void ant_advanced_burst_setup(void);
+ant_err_t ant_advanced_burst_setup(void);
 
 #endif // // ANT_ADVANCED_BURST_H__

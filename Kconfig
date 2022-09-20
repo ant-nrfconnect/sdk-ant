@@ -20,14 +20,8 @@ config ANT
 
 if ANT
 
-config ANT_SDK_UTIL
-    bool "ANT Wireless utilities"
-    default y
-    depends on ANT
-    help
-       Enable utilities for ANT configuration.
-
 rsource "init/Kconfig"
+rsource "lib/Kconfig"
 rsource "np/Kconfig"
 rsource "samples/Kconfig"
 

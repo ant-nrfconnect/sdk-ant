@@ -12,9 +12,8 @@ if(CONFIG_ANT)
 
     add_subdirectory(init)
     add_subdirectory(samples)
+    add_subdirectory(lib)
     add_subdirectory_ifdef(CONFIG_ANT_NP np)
-
-    add_subdirectory_ifdef(CONFIG_ANT_SDK_UTIL util)
 
     if(CONFIG_SOC_NRF5340_CPUNET)
         zephyr_library_import(libant ${CMAKE_CURRENT_SOURCE_DIR}/lib/libant.a)

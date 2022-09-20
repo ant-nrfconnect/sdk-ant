@@ -7,13 +7,12 @@
 # the repository.
 #
 
-CONFIG_NCS_SAMPLES_DEFAULTS=y
-CONFIG_LOG=y
-CONFIG_LOG_MODE_DEFERRED=y
-CONFIG_BOARD_ENABLE_CPUNET=y
+zephyr_library()
+zephyr_library_sources(
+  ant_hrm_page_0.c
+  ant_hrm_page_1.c
+  ant_hrm_page_2.c
+  ant_hrm_page_3.c
+  ant_hrm_page_4.c
+)
 
-CONFIG_ANT_NP=y
-CONFIG_ANT_INCLUDE_NP_CHILD_IMAGE=y
-
-CONFIG_HEAP_MEM_POOL_SIZE=4096
-CONFIG_RESET_ON_FATAL_ERROR=n

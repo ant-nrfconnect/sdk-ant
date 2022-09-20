@@ -7,13 +7,7 @@
 # the repository.
 #
 
-CONFIG_NCS_SAMPLES_DEFAULTS=y
-CONFIG_LOG=y
-CONFIG_LOG_MODE_DEFERRED=y
-CONFIG_BOARD_ENABLE_CPUNET=y
+zephyr_library()
+zephyr_library_sources(sensorsim.c)
+zephyr_include_directories(.)
 
-CONFIG_ANT_NP=y
-CONFIG_ANT_INCLUDE_NP_CHILD_IMAGE=y
-
-CONFIG_HEAP_MEM_POOL_SIZE=4096
-CONFIG_RESET_ON_FATAL_ERROR=n
