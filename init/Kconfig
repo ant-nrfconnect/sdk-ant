@@ -8,16 +8,20 @@
 #
 
 config ANT_LICENSE_KEY
-	string "ANT License Key. This key is used in stack initialization. You MUST obtain a valid \
-	commercial license key BEFORE releasing a product to market that uses ANT. You may use the \
-	Evaluation license key for non-commerical use by setting CONFIG ANT_EVALUATION_KEY=y or \
-	defining CONFIG_ANT_LICENSE_KEY in your prj.conf file. For more information about ANT \
-	licensing visit the following website: https://www.thisisant.com/developer/ant/licensing"
+	string "ANT License Key."
 	depends on SOC_NRF5340_CPUNET
 	default "3831-521d-7df9-24d8-eff3-467b-225f-a00e" if ANT_EVALUATION_KEY
+	help
+		This key is used in library initialization. You MUST obtain a
+		valid commercial license key BEFORE releasing a product to market
+		that uses ANT. You may enable the Evaluation license key for
+		non-commericial use by setting CONFIG ANT_EVALUATION_KEY=y or
+		defining CONFIG_ANT_LICENSE_KEY in the configuration file. For
+		more information about ANT licensing, visit the following website:
+		https://www.thisisant.com/developer/ant/licensing
 
 config ANT_EVALUATION_KEY
-	bool "Use ANT Evaluation License Key"
+	bool "Use ANT Evaluation License Key."
 	depends on SOC_NRF5340_CPUNET
 	default n
 
@@ -26,7 +30,7 @@ config ANT_THREAD_COOP_PRIO
 	default 8
 
 config ANT_WORK_STACK_SIZE
-	int "Size of the work handler thread stack"
+	int "Size of the work handler thread stack."
 	default 1024
 	help
 	  Size of the work handler thread stack, used to process work in ANT priority context.

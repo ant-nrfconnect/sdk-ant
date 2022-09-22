@@ -66,38 +66,46 @@ Testing
 After programming the sample to your development kit, you can test the Broadcast Transmitter using ANTware II:
 
 1. Compile and program the Broadcast Transmitter.
-2. Run ANTware II. Select your ANT PC dongle (for example, ANTUSB-m) from the available devices. Configure the device channels as follows:
+2. Run ANTware II. Select your ANT PC dongle (for example, ANTUSB-m) from the available devices.
+3. Configure the device channel by loading the device profile configuration from the following file:
+
+   .. parsed-literal::
+      :class: highlight
+      
+      ant\\samples\\ant_broadcast_tx\\ant_broadcast_tx_test.xml
+
+   Alternatively, you can configure the device channel manually:
 
    - Set the channel assignment to Slave.
    - Set the channel ID to "0, 0, 0".
 
-5. Click the Auto-Open button. Observe that messages describing the received payload appear for each ANT message. These messages should look similar to the following fragment:
+4. Click the Auto-Open button. Observe that messages describing the received payload appear for each ANT message. These messages should look similar to the following fragment:
 
-.. parsed-literal::
-   :class: highlight
+   .. parsed-literal::
+      :class: highlight
 
-   Received BROADCAST_DATA_0x4E
-   :: 4e, 00-00-00-00-00-00-00-00-01
-   Received BROADCAST_DATA_0x4E
-   :: 4e, 00-00-00-00-00-00-00-00-02
-   Received BROADCAST_DATA_0x4E
-   :: 4e, 00-00-00-00-00-00-00-00-03
-   Received BROADCAST_DATA_0x4E
-   :: 4e, 00-00-00-00-00-00-00-00-04
-   Received BROADCAST_DATA_0x4E
-   :: 4e, 00-00-00-00-00-00-00-00-05
-   Received BROADCAST_DATA_0x4E
-   :: 4e, 00-00-00-00-00-00-00-00-06
+      Received BROADCAST_DATA_0x4E
+      :: 4e, 00-00-00-00-00-00-00-00-01
+      Received BROADCAST_DATA_0x4E
+      :: 4e, 00-00-00-00-00-00-00-00-02
+      Received BROADCAST_DATA_0x4E
+      :: 4e, 00-00-00-00-00-00-00-00-03
+      Received BROADCAST_DATA_0x4E
+      :: 4e, 00-00-00-00-00-00-00-00-04
+      Received BROADCAST_DATA_0x4E
+      :: 4e, 00-00-00-00-00-00-00-00-05
+      Received BROADCAST_DATA_0x4E
+      :: 4e, 00-00-00-00-00-00-00-00-06
 
-On the nRF DK side, the virtual COM port will show corresponding EVENT_TX messages.
+   On the nRF DK side, the virtual COM port will show corresponding EVENT_TX messages.
 
-.. parsed-literal::
-   :class: highlight
+   .. parsed-literal::
+      :class: highlight
 
-   [00:00:00.491,210] <inf> ant_broadcast_tx: ANT Broadcast TX example started
-   [00:00:00.749,725] <inf> ant_broadcast_tx: EVENT_TX - 03 40 00 01 03
-   [00:00:00.999,725] <inf> ant_broadcast_tx: EVENT_TX - 03 40 00 01 03
-   [00:00:01.249,725] <inf> ant_broadcast_tx: EVENT_TX - 03 40 00 01 03
-   [00:00:01.499,725] <inf> ant_broadcast_tx: EVENT_TX - 03 40 00 01 03
-   [00:00:01.749,725] <inf> ant_broadcast_tx: EVENT_TX - 03 40 00 01 03
+      [00:00:00.491,210] <inf> ant_broadcast_tx: ANT Broadcast TX example started
+      [00:00:00.749,725] <inf> ant_broadcast_tx: EVENT_TX - 03 40 00 01 03
+      [00:00:00.999,725] <inf> ant_broadcast_tx: EVENT_TX - 03 40 00 01 03
+      [00:00:01.249,725] <inf> ant_broadcast_tx: EVENT_TX - 03 40 00 01 03
+      [00:00:01.499,725] <inf> ant_broadcast_tx: EVENT_TX - 03 40 00 01 03
+      [00:00:01.749,725] <inf> ant_broadcast_tx: EVENT_TX - 03 40 00 01 03
 

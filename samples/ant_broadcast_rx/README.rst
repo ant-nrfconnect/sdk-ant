@@ -66,22 +66,30 @@ Testing
 After programming the sample to your development kit, you can test the Broadcast Receiver using ANTware II:
 
 1. Compile and program the Broadcast Receiver.
-2. Run ANTware II. Select your ANT PC dongle (for example, ANTUSB-m) from the available devices. Configure the device channels as follows:
+2. Run ANTware II. Select your ANT PC dongle (for example, ANTUSB-m) from the available devices.
+3. Configure the device channel by loading the device profile configuration from the following file:
+
+   .. parsed-literal::
+      :class: highlight
+      
+      ant\\samples\\ant_broadcast_rx\\ant_broadcast_rx_test.xml
+
+   Alternatively, you can configure the device channel manually:
 
    - Set the channel assignment to Master.
    - Set the channel ID to "2, 2, 1".
 
-5. Click the Auto-Open button. Check the application core virtual COM port of the nRF DK for logging output.
+4. Click the Auto-Open button. Check the application core virtual COM port of the nRF DK for logging output.
 
-.. parsed-literal::
-   :class: highlight
+   .. parsed-literal::
+      :class: highlight
 
-   [00:00:00.264,251] <inf> ant_broadcast_rx: ANT Broadcast RX example started
-   [00:00:17.018,402] <inf> ant_broadcast_rx: EVENT_RX - 09 4E 00 00 00 00 00 00 00 00 00
-   [00:00:17.268,371] <inf> ant_broadcast_rx: EVENT_RX - 09 4E 00 00 00 00 00 00 00 00 01
-   [00:00:17.518,371] <inf> ant_broadcast_rx: EVENT_RX - 09 4E 00 00 00 00 00 00 00 00 02
-   [00:00:17.768,371] <inf> ant_broadcast_rx: EVENT_RX - 09 4E 00 00 00 00 00 00 00 00 03
-   [00:00:18.018,371] <inf> ant_broadcast_rx: EVENT_RX - 09 4E 00 00 00 00 00 00 00 00 04
-   [00:00:18.268,371] <inf> ant_broadcast_rx: EVENT_RX - 09 4E 00 00 00 00 00 00 00 00 05
+      [00:00:00.264,251] <inf> ant_broadcast_rx: ANT Broadcast RX example started
+      [00:00:17.018,402] <inf> ant_broadcast_rx: EVENT_RX - 09 4E 00 00 00 00 00 00 00 00 00
+      [00:00:17.268,371] <inf> ant_broadcast_rx: EVENT_RX - 09 4E 00 00 00 00 00 00 00 00 01
+      [00:00:17.518,371] <inf> ant_broadcast_rx: EVENT_RX - 09 4E 00 00 00 00 00 00 00 00 02
+      [00:00:17.768,371] <inf> ant_broadcast_rx: EVENT_RX - 09 4E 00 00 00 00 00 00 00 00 03
+      [00:00:18.018,371] <inf> ant_broadcast_rx: EVENT_RX - 09 4E 00 00 00 00 00 00 00 00 04
+      [00:00:18.268,371] <inf> ant_broadcast_rx: EVENT_RX - 09 4E 00 00 00 00 00 00 00 00 05
 
 

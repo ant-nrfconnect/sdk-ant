@@ -1309,11 +1309,11 @@ ant_err_t ant_cw_test_mode(uint8_t ucRadioFreq, uint8_t ucTxPower,
   ANT_MESSAGE rsp;
 
   // TODO: MESG_RADIO_CW_MODE_SIZE not updated with ucMode
-  cmd.ANT_MESSAGE_ucSize = MESG_RADIO_CW_MODE_SIZE + 1;
+  cmd.ANT_MESSAGE_ucSize = MESG_RADIO_CW_MODE_SIZE + 2;
   cmd.ANT_MESSAGE_ucMesgID = MESG_RADIO_CW_MODE_ID;
   cmd.ANT_MESSAGE_ucChannel = 0;
-  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = ucRadioFreq;
-  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2] = ucTxPower;
+  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = ucTxPower;
+  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2] = ucRadioFreq;
   cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_3] = ucCustomTxPower;
   cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_4] = ucMode;
   err = ant_rpc_app_send_cmd(&cmd, &rsp);

@@ -88,7 +88,7 @@
 #define RADIO_TX_POWER_LVL_1                       ((uint8_t)0x01) ///< ANT Tx power > Lvl 0. (-12dBm)
 #define RADIO_TX_POWER_LVL_2                       ((uint8_t)0x02) ///< ANT Tx power > Lvl 1. (-4dBm)
 #define RADIO_TX_POWER_LVL_3                       ((uint8_t)0x03) ///< ANT Tx power > Lvl 2. Default tx power level. (0dBm)
-#define RADIO_TX_POWER_LVL_4                       ((uint8_t)0x04) ///< ANT Tx power > Lvl 3. (+4dBm) (Not available on nRF5340)
+#define RADIO_TX_POWER_LVL_4                       ((uint8_t)0x04) ///< ANT Tx power > Lvl 3. (+4dBm / +3dBm for nRF5340)
 #define RADIO_TX_POWER_LVL_5                       ((uint8_t)0x05) ///< ANT Tx power > Lvl 4. (+8dBm) (Only available on nRF52820, nRF52833, and nRF52840)
 /** @} */
 
