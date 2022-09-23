@@ -58,16 +58,28 @@
 #include "ant_interface.h"
 #include "ant_parameters.h"
 #include "ant_host_init.h"
-#include "ant_config.h"
 #include "ant_channel_config.h"
 
 LOG_MODULE_REGISTER(ant_broadcast_tx, LOG_LEVEL_INF);
 
-static void error(void) {
-  while (true) {
-    /* Spin for ever */
-    k_sleep(K_MSEC(1000));
+/**@brief Function for setting payload for ANT message and sending it.
+ */
+void ant_message_send(void) {
+  uint8_t message_payload[ANT_STANDARD_DATA_PAYLOAD_SIZE];
+  static uint8_t counter = 1u;
+
+  memset(message_payload, 0, ANT_STANDARD_DATA_PAYLOAD_SIZE);
+  // Assign a new value to the broadcast data.
+  message_payload[ANT_STANDARD_DATA_PAYLOAD_SIZE - 1] = counter;
+
+  // Broadcast the data.
+  ant_err_t err_code = ant_broadcast_message_tx(CONFIG_BROADCAST_TX_CHANNEL_NUM,
+                                               ANT_STANDARD_DATA_PAYLOAD_SIZE, message_payload);
+  if (err_code) {
+    LOG_ERR("ant_broadcast_message_tx() failed: 0x%X", err_code);
   }
+
+  counter++;
 }
 
 /**@brief Helper function for converting ANT message buffer to string.
@@ -96,32 +108,12 @@ void convert_buf_to_hex_str(uint8_t* buf, uint8_t buf_size, char* hex_str) {
   *p_str = '\0';
 }
 
-/**@brief Function for setting payload for ANT message and sending it.
- */
-void ant_message_send(void) {
-  uint8_t message_payload[ANT_STANDARD_DATA_PAYLOAD_SIZE];
-  static uint8_t counter = 1u;
-
-  memset(message_payload, 0, ANT_STANDARD_DATA_PAYLOAD_SIZE);
-  // Assign a new value to the broadcast data.
-  message_payload[ANT_STANDARD_DATA_PAYLOAD_SIZE - 1] = counter;
-
-  // Broadcast the data.
-  ant_err_t err_code = ant_broadcast_message_tx(BROADCAST_CHANNEL_NUMBER,
-                                               ANT_STANDARD_DATA_PAYLOAD_SIZE, message_payload);
-  if (err_code) {
-    LOG_ERR("ant_broadcast_message_tx() failed: 0x%X", err_code);
-  }
-
-  counter++;
-}
-
 /**@brief Function for handling a ANT stack event.
  *
  * @param[in] p_ant_evt  ANT stack event.
  */
 static void ant_evt_handler(ant_evt_t* p_ant_evt) {
-  if (p_ant_evt->channel == BROADCAST_CHANNEL_NUMBER) {
+  if (p_ant_evt->channel == CONFIG_BROADCAST_TX_CHANNEL_NUM) {
     // hex_str size: 2 digit hex representations + spaces + null termination
     char hex_str[MESG_BUFFER_SIZE * 3 + 1];
 
@@ -188,13 +180,12 @@ ant_err_t ant_stack_setup(void) {
     LOG_INF("ANT Version %s", ANT_VERSION_STRING);
   } else {
     LOG_ERR("ant_init failed: 0x%X", err_code);
-    error();
+    return err_code;
   }
 
   err_code = ant_cb_register(&ant_evt_handler);
   if (err_code) {
     LOG_ERR("ant_cb_register() failed: 0x%X", err_code);
-    error();
   }
 
   return err_code;
@@ -202,36 +193,36 @@ ant_err_t ant_stack_setup(void) {
 
 /**@brief Function for setting up the ANT module to be ready for TX broadcast.
  */
-static void ant_channel_tx_broadcast_setup(void) {
+static ant_err_t ant_channel_tx_broadcast_setup(void) {
   ant_channel_config_t broadcast_channel_config = {
-      .channel_number = BROADCAST_CHANNEL_NUMBER,
-      .channel_type = CHANNEL_TYPE_MASTER,
-      .ext_assign = 0x00,
-      .rf_freq = RF_FREQ,
-      .transmission_type = CHAN_ID_TRANS_TYPE,
-      .device_type = CHAN_ID_DEV_TYPE,
-      .device_number = CHAN_ID_DEV_NUM,
-      .channel_period = CHAN_PERIOD,
-      .network_number = ANT_NETWORK_NUM,
+      .channel_number     = CONFIG_BROADCAST_TX_CHANNEL_NUM,
+      .channel_type       = CHANNEL_TYPE_MASTER,
+      .ext_assign         = 0x00,
+      .rf_freq            = CONFIG_BROADCAST_TX_RF_FREQ,
+      .transmission_type  = CONFIG_BROADCAST_TX_CHAN_ID_TRANS_TYPE,
+      .device_type        = CONFIG_BROADCAST_TX_CHAN_ID_DEV_TYPE,
+      .device_number      = CONFIG_BROADCAST_TX_CHAN_ID_DEV_NUM,
+      .channel_period     = CONFIG_BROADCAST_TX_CHAN_PERIOD,
+      .network_number     = CONFIG_BROADCAST_TX_NETWORK_NUM,
   };
 
   ant_err_t err_code = ant_channel_init(&broadcast_channel_config);
   if (err_code) {
     LOG_ERR("ant_channel_init() failed: 0x%X", err_code);
-    error();
+    return err_code;
   }
 
   // Fill tx buffer for the first frame.
   ant_message_send();
 
   // Open channel.
-  err_code = ant_channel_open(BROADCAST_CHANNEL_NUMBER);
+  err_code = ant_channel_open(CONFIG_BROADCAST_TX_CHANNEL_NUM);
   if (err_code) {
     LOG_ERR("ant_channel_open() failed: 0x%X", err_code);
-    error();
+    return err_code;
   }
 
-  LOG_INF("ANT Broadcast TX example started");
+  return 0;
 }
 
 void main(void) {
@@ -240,12 +231,18 @@ void main(void) {
   err_code = ant_stack_setup();
   if (err_code) {
     LOG_ERR("ant_stack_setup() failed: 0x%X", err_code);
-    error();
+    goto ERROR_EXIT;
   }
 
-  ant_channel_tx_broadcast_setup();
-
-  while (1) {
-    k_sleep(K_MSEC(1000));
+  err_code = ant_channel_tx_broadcast_setup();
+  if (err_code) {
+    goto ERROR_EXIT;
   }
+
+  LOG_INF("ANT Broadcast TX example started");
+
+  return;
+
+ERROR_EXIT:
+  k_oops();
 }

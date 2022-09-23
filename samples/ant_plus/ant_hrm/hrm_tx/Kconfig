@@ -1,0 +1,113 @@
+#
+# Copyright 2022 by Garmin Ltd. or its subsidiaries.
+# All rights reserved.
+#
+# Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
+# and Associated Software. The Agreement accompanies the Software in the root directory of
+# the repository.
+#
+
+source "Kconfig.zephyr"
+
+menuconfig HRM_TX
+	bool "ANT+ HRM TX sample"
+	select ANT
+	select ANT_HRM
+	select ANT_HRM_SIMULATOR
+	select ANT_KEY_MANAGER
+	select ANT_CHANNEL_CONFIG
+	select ANT_STATE_INDICATOR
+	select DK_LIBRARY
+	default y
+
+menu "Channel configuration"
+
+config HRM_TX_CHANNEL_NUM
+	int "Channel number assigned to HRM profile"
+	default 0
+
+config HRM_TX_NETWORK_NUM
+	int "ANT+ Network number"
+	default 0
+	help
+	  Selects the network number to associate with the channel.
+
+config HRM_TX_CHAN_ID_DEV_NUM
+	int "Channel ID: Device number"
+	default 49
+	range 0 65535
+
+config HRM_TX_CHAN_ID_TRANS_TYPE
+	int "Channel ID: Transmission type"
+	default 1
+	range 0 255
+
+endmenu
+
+menu "Product information"
+
+config HRM_TX_HW_VERSION
+	int "Hardware revision"
+	default 5
+	range 0 255
+
+config HRM_TX_MFG_ID
+	int "Manufacturer ID"
+	default 2
+	range 0 255
+
+config HRM_TX_MODEL_NUM
+	int "Model number"
+	default 2
+	range 0 255
+
+config HRM_TX_SW_VERSION
+	int "Software version"
+	default 0
+	range 0 255
+
+config HRM_TX_SERIAL_NUM
+	int "Serial number"
+	default 43981
+	range 0 65535
+
+endmenu
+
+menu "User interface"
+
+choice HRM_TX_MODIFICATION_TYPE
+	default UPDATE_AUTO
+	prompt "Method for updating Heart Rate values"
+
+config UPDATE_AUTO
+	bool "AUTO"
+	help
+	  Automatically sweep through a range of values.
+
+config UPDATE_MANUAL
+	bool "MANUAL (Buttons)"
+	help
+	  Use Button1 to decrease and Button2 to increase value.
+
+endchoice
+
+menu "HRM simulator"
+
+config SIMULATOR_MIN
+	int "Minimal heart rate"
+	default 60
+	range 0 220
+
+config SIMULATOR_MAX
+	int "Maximal heart rate"
+	default 180
+	range 0 220
+
+config SIMULATOR_INCREMENT
+	int "Heart rate increment"
+	default 2
+	range 1 5
+
+endmenu
+
+endmenu

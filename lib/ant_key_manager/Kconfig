@@ -1,0 +1,24 @@
+#
+# Copyright 2022 by Garmin Ltd. or its subsidiaries.
+# All rights reserved.
+#
+# Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
+# and Associated Software. The Agreement accompanies the Software in the root directory of
+# the repository.
+#
+
+menuconfig ANT_KEY_MANAGER
+	bool "ANT Key Manager Library"
+	help
+	  Helper functions for setting ANT Network Keys. The ANT+ network key
+	  is to be used by devices that will communicate on the ANT+ network
+	  and strictly adhere to the ANT+ Device Profiles. The ANT-FS network
+	  key is similarly used strictly for ANT-FS applications.
+
+if ANT_KEY_MANAGER
+
+module=ANT_KEY_MANAGER
+module-str=ANT Key Manager
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # ANT_KEY_MANAGER

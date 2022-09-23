@@ -500,7 +500,8 @@ static void process_msg_cmd(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE
 
   case MESG_RADIO_CW_MODE_ID: {
     // TODO: does hfclk need to be forced on?
-    if (rx_msg->ANT_MESSAGE_ucSize > (MESG_RADIO_CW_MODE_SIZE + 1)) {
+    // TODO: MESG_RADIO_CW_MODE_SIZE not updated with ucMode
+    if (rx_msg->ANT_MESSAGE_ucSize >= (MESG_RADIO_CW_MODE_SIZE + 2)) {
       ant_cw_test_mode(rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2],
         rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1],
         rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_3],

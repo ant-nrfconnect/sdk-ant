@@ -1,0 +1,32 @@
+#
+# Copyright 2022 by Garmin Ltd. or its subsidiaries.
+# All rights reserved.
+#
+# Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
+# and Associated Software. The Agreement accompanies the Software in the root directory of
+# the repository.
+#
+
+menuconfig ANT_HRM
+    bool "ANT+ HRM profile"
+    help
+      Support for ANT+ HRM constants and pages
+
+if ANT_HRM
+
+config ANT_HRM_SIMULATOR
+    bool "Enable ANT+ HRM Simulator"
+    select SENSORSIM
+
+rsource "pages/Kconfig"
+
+if ANT_HRM_SIMULATOR
+rsource "simulator/Kconfig"
+endif # ANT_HRM_SIMULATOR
+
+module=ANT_HRM
+module-str=ANT+ HRM
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # ANT_HRM
+

@@ -1,0 +1,21 @@
+#
+# Copyright 2022 by Garmin Ltd. or its subsidiaries.
+# All rights reserved.
+#
+# Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
+# and Associated Software. The Agreement accompanies the Software in the root directory of
+# the repository.
+#
+
+menuconfig ANT_CHANNEL_CONFIG
+	bool "ANT Channel Config Library"
+	help
+	  Helper functions for ANT channel configuration
+
+if ANT_CHANNEL_CONFIG
+
+module=ANT_CHANNEL_CONFIG
+module-str=ANT Channel Config
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # ANT_CHANNEL_CONFIG

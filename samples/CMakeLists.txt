@@ -5,7 +5,7 @@ if (CONFIG_ANT_INCLUDE_NP_CHILD_IMAGE)
 
   if (CONFIG_ANT_SAMPLE_RPC_CHILD_IMAGE)
     set(CHILD_IMAGE_NAME "ant_rpc")
-    set(CHILD_IMAGE_PATH "${ZEPHYR_BASE}/../ant/samples/ant_rpc")
+    set(CHILD_IMAGE_PATH "${ZEPHYR_ANT_MODULE_DIR}/samples/ant_rpc")
 
   else()
     # If we get here, something is wrong with the Kconfig resolution

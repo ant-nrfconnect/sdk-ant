@@ -58,7 +58,6 @@
 #include "ant_interface.h"
 #include "ant_parameters.h"
 #include "ant_init.h"
-#include "ant_config.h"
 #include "ant_channel_config.h"
 
 #include "ant_advanced_burst.h"
@@ -86,13 +85,6 @@ static bool     m_burst_rx;                       ///< Flag to indicate if we ar
 static void ant_evt_handler_burst(ant_evt_t * p_ant_evt);
 
 LOG_MODULE_REGISTER(ant_advanced_burst, LOG_LEVEL_INF);
-
-static void error(void) {
-  while (true) {
-    /* Spin for ever */
-    k_sleep(K_MSEC(1000));
-  }
-}
 
 /**@brief Fill burst buffer with dummy data
  *
@@ -133,7 +125,7 @@ static void burst_data_send(void) {
   memset(m_burst_data, 0, BURST_BLOCK_SIZE);
   burst_buffer_fill(m_burst_data, bytes_to_send);
 
-  err_code = ant_burst_handler_request(CHANNEL_NUMBER,
+  err_code = ant_burst_handler_request(CONFIG_ADVANCED_BURST_TX_CHANNEL_NUM,
                                        bytes_to_send,
                                        m_burst_data,
                                        burst_segment);
@@ -158,24 +150,24 @@ static void burst_data_process(uint8_t * p_burst_message) {
   // The burst data is available in p_burst_message[1] to p_burst_message[8]
 }
 
-void ant_advanced_burst_setup(void)
+ant_err_t ant_advanced_burst_setup(void)
 {
-  uint32_t err_code;
+  ant_err_t err_code;
 
   m_counter  = 0;
   m_bytes    = 0;
   m_burst_rx = false;
 
   ant_channel_config_t channel_config = {
-      .channel_number    = CHANNEL_NUMBER,
-      .channel_type      = CHANNEL_TYPE_MASTER,
-      .ext_assign        = 0x00,
-      .rf_freq           = RF_FREQ,
-      .transmission_type = CHAN_ID_TRANS_TYPE,
-      .device_type       = CHAN_ID_DEV_TYPE,
-      .device_number     = CHAN_ID_DEV_NUM,
-      .channel_period    = CHAN_PERIOD,
-      .network_number    = ANT_NETWORK_NUM,
+      .channel_number     = CONFIG_ADVANCED_BURST_TX_CHANNEL_NUM,
+      .channel_type       = CHANNEL_TYPE_MASTER,
+      .ext_assign         = 0x00,
+      .rf_freq            = CONFIG_ADVANCED_BURST_TX_RF_FREQ,
+      .transmission_type  = CONFIG_ADVANCED_BURST_TX_CHAN_ID_TRANS_TYPE,
+      .device_type        = CONFIG_ADVANCED_BURST_TX_CHAN_ID_DEV_TYPE,
+      .device_number      = CONFIG_ADVANCED_BURST_TX_CHAN_ID_DEV_NUM,
+      .channel_period     = CONFIG_ADVANCED_BURST_TX_CHAN_PERIOD,
+      .network_number     = CONFIG_ADVANCED_BURST_TX_NETWORK_NUM,
   };
 
   uint8_t adv_burst_config[] = {
@@ -197,26 +189,28 @@ void ant_advanced_burst_setup(void)
   err_code = ant_cb_register(&ant_evt_handler_burst);
   if (err_code) {
     LOG_ERR("ant_cb_register() failed: 0x%X", err_code);
-    error();
+    return err_code;
   }
 
   err_code = ant_channel_init(&channel_config);
   if (err_code) {
     LOG_ERR("ant_channel_init() failed: 0x%X", err_code);
-    error();
+    return err_code;
   }
 
   err_code = ant_adv_burst_config_set(adv_burst_config, sizeof(adv_burst_config));
   if (err_code) {
     LOG_ERR("ant_adv_burst_config_set() failed: 0x%X", err_code);
-    error();
+    return err_code;
   }
 
-  err_code = ant_channel_open(CHANNEL_NUMBER);
+  err_code = ant_channel_open(CONFIG_ADVANCED_BURST_TX_CHANNEL_NUM);
   if (err_code) {
     LOG_ERR("ant_channel_open() failed: 0x%X", err_code);
-    error();
+    return err_code;
   }
+
+  return 0;
 }
 
 /**

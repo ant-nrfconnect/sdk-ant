@@ -57,25 +57,17 @@
 #include "ant_error.h"
 #include "ant_interface.h"
 #include "ant_parameters.h"
-#include "ant_init.h"
-#include "ant_config.h"
+#include "ant_host_init.h"
 #include "ant_channel_config.h"
-
 #include "ant_advanced_burst.h"
 
 LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
 
-static void error(void)
-{
-  while (true) {
-    /* Spin for ever */
-    k_sleep(K_MSEC(1000));
-  }
-}
-
-void convert_buf_to_hex_str(uint8_t* buf, uint8_t buf_size, char *hex_str)
-{
-  // hex_str size: 2 digit hex representations + spaces + null termination
+/**@brief Helper function for converting ANT message buffer to string.
+ */
+void convert_buf_to_hex_str(uint8_t* buf, uint8_t buf_size, char *hex_str) {
+  // note: hex_str size is buf_size*3 + 1 to accommodate hex bytes string
+  //       representation w/ spacing + null
    char* p_str = hex_str;
    for (uint8_t i = 0; i < buf_size; i++) {
       uint8_t upper = ((buf[i] >> 4) & 0x0F);
@@ -160,8 +152,7 @@ static void ant_evt_handler_main(ant_evt_t *p_ant_evt)
 
 /**@brief Function for ANT stack initialization.
  */
-ant_err_t ant_stack_setup(void)
-{
+ant_err_t ant_stack_setup(void) {
   ant_err_t err_code;
 
   err_code = ant_init();
@@ -169,13 +160,12 @@ ant_err_t ant_stack_setup(void)
     LOG_INF("ANT Version %s", ANT_VERSION_STRING);
   } else {
     LOG_ERR("ant_init failed: 0x%X", err_code);
-    error();
+    return err_code;
   }
 
   err_code = ant_cb_register(&ant_evt_handler_main);
   if (err_code) {
     LOG_ERR("ant_cb_register() failed: 0x%X", err_code);
-    error();
   }
 
   return err_code;
@@ -187,12 +177,18 @@ void main(void) {
   err_code = ant_stack_setup();
   if (err_code) {
     LOG_ERR("ant_stack_setup() failed: 0x%X", err_code);
-    error();
+    goto ERROR_EXIT;
   }
 
-  ant_advanced_burst_setup();
-
-  while (1) {
-    k_sleep(K_MSEC(1000));
+  err_code = ant_advanced_burst_setup();
+  if (err_code) {
+    goto ERROR_EXIT;
   }
+
+  LOG_INF("ANT Advanced Burst example started");
+
+  return;
+
+ERROR_EXIT:
+  k_oops();
 }

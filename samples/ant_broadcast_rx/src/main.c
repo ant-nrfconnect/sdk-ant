@@ -58,17 +58,9 @@
 #include "ant_interface.h"
 #include "ant_parameters.h"
 #include "ant_host_init.h"
-#include "ant_config.h"
 #include "ant_channel_config.h"
 
 LOG_MODULE_REGISTER(ant_broadcast_rx, LOG_LEVEL_INF);
-
-static void error(void) {
-  while (true) {
-    /* Spin for ever */
-    k_sleep(K_MSEC(1000));
-  }
-}
 
 /**@brief Helper function for converting ANT message buffer to string.
  */
@@ -101,7 +93,7 @@ void convert_buf_to_hex_str(uint8_t* buf, uint8_t buf_size, char* hex_str) {
  * @param[in] p_ant_evt  ANT stack event.
  */
 static void ant_evt_handler(ant_evt_t* p_ant_evt) {
-  if (p_ant_evt->channel == BROADCAST_CHANNEL_NUMBER) {
+  if (p_ant_evt->channel == CONFIG_BROADCAST_RX_CHANNEL_NUM) {
     // hex_str size: 2 digit hex representations + spaces + null termination
     char hex_str[MESG_BUFFER_SIZE * 3 + 1];
 
@@ -167,13 +159,11 @@ ant_err_t ant_stack_setup(void) {
     LOG_INF("ANT Version %s", ANT_VERSION_STRING);
   } else {
     LOG_ERR("ant_init failed: 0x%X", err_code);
-    error();
   }
 
   err_code = ant_cb_register(&ant_evt_handler);
   if (err_code) {
     LOG_ERR("ant_cb_register() failed: 0x%X", err_code);
-    error();
   }
 
   return err_code;
@@ -181,33 +171,33 @@ ant_err_t ant_stack_setup(void) {
 
 /**@brief Function for setting up the ANT module to be ready for RX broadcast.
  */
-static void ant_channel_rx_broadcast_setup(void) {
+static ant_err_t ant_channel_rx_broadcast_setup(void) {
   ant_channel_config_t broadcast_channel_config = {
-      .channel_number = BROADCAST_CHANNEL_NUMBER,
-      .channel_type = CHANNEL_TYPE_SLAVE,
-      .ext_assign = 0x00,
-      .rf_freq = RF_FREQ,
-      .transmission_type = CHAN_ID_TRANS_TYPE,
-      .device_type = CHAN_ID_DEV_TYPE,
-      .device_number = CHAN_ID_DEV_NUM,
-      .channel_period = CHAN_PERIOD,
-      .network_number = ANT_NETWORK_NUM,
+      .channel_number     = CONFIG_BROADCAST_RX_CHANNEL_NUM,
+      .channel_type       = CHANNEL_TYPE_SLAVE,
+      .ext_assign         = 0x00,
+      .rf_freq            = CONFIG_BROADCAST_RX_RF_FREQ,
+      .transmission_type  = CONFIG_BROADCAST_RX_CHAN_ID_TRANS_TYPE,
+      .device_type        = CONFIG_BROADCAST_RX_CHAN_ID_DEV_TYPE,
+      .device_number      = CONFIG_BROADCAST_RX_CHAN_ID_DEV_NUM,
+      .channel_period     = CONFIG_BROADCAST_RX_CHAN_PERIOD,
+      .network_number     = CONFIG_BROADCAST_RX_NETWORK_NUM,
   };
 
   ant_err_t err_code = ant_channel_init(&broadcast_channel_config);
   if (err_code) {
     LOG_ERR("ant_channel_init() failed: 0x%X", err_code);
-    error();
+    return err_code;
   }
 
   // Open channel.
-  err_code = ant_channel_open(BROADCAST_CHANNEL_NUMBER);
+  err_code = ant_channel_open(CONFIG_BROADCAST_RX_CHANNEL_NUM);
   if (err_code) {
     LOG_ERR("ant_channel_open() failed: 0x%X", err_code);
-    error();
+    return err_code;
   }
 
-  LOG_INF("ANT Broadcast RX example started");
+  return 0;
 }
 
 void main(void) {
@@ -216,12 +206,18 @@ void main(void) {
   err_code = ant_stack_setup();
   if (err_code) {
     LOG_ERR("ant_stack_setup() failed: 0x%X", err_code);
-    error();
+    goto ERROR_EXIT;
   }
 
-  ant_channel_rx_broadcast_setup();
-
-  while (1) {
-    k_sleep(K_MSEC(1000));
+  err_code = ant_channel_rx_broadcast_setup();
+  if (err_code) {
+    goto ERROR_EXIT;
   }
+
+  LOG_INF("ANT Broadcast RX example started");
+
+  return;
+
+ERROR_EXIT:
+  k_oops();
 }
