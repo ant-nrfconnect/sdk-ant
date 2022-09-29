@@ -1,0 +1,10 @@
+sample:
+  description: Provides ANT connectivity over RPC
+  name: ANT RPC
+tests:
+  sample.ant_rpc:
+    platform_allow: nrf5340dk_nrf5340_cpunet
+    tags: ant
+    build_only: true
+    extra_configs:
+      - CONFIG_ANT_EVALUATION_KEY=y

@@ -1,0 +1,9 @@
+sample:
+  description: ANT Broadcast Receiver Sample
+  name: ANT Broadcast Receiver
+tests:
+  sample.ant_broadcast_rx:
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    tags: ant
+    build_only: true
+    extra_args: ant_rpc_CONFIG_ANT_EVALUATION_KEY=y
