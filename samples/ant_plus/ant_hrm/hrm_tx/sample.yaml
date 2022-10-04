@@ -4,6 +4,8 @@ sample:
 tests:
   sample.hrm_tx:
     platform_allow: nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
     tags: ant
     build_only: true
     extra_args: ant_rpc_CONFIG_ANT_EVALUATION_KEY=y

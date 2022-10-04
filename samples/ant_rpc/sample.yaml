@@ -4,6 +4,8 @@ sample:
 tests:
   sample.ant_rpc:
     platform_allow: nrf5340dk_nrf5340_cpunet
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpunet
     tags: ant
     build_only: true
     extra_configs:
