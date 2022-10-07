@@ -1,0 +1,14 @@
+.. _ant_release_notes:
+
+Release notes
+#############
+
+See the release notes for information about specific ANT for nRF Connect SDK releases.
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Releases:
+
+   releases/release-notes-0.3.0
+   releases/release-notes-0.2.0
+   releases/release-notes-0.1.0

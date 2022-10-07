@@ -1,0 +1,9 @@
+SPHINXBUILD   = sphinx-build
+SOURCEDIR     = .
+BUILDDIR      = doc/html
+
+rule build_sphinx
+    command = $SPHINXBUILD -c doc -b html "$SOURCEDIR" "$BUILDDIR"
+    description = Building ANT docset...
+
+build ant: build_sphinx

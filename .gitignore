@@ -17,6 +17,9 @@ venv
 
 /*.patch
 
+doc/_build
+doc/html
+
 tags
 .project
 .cproject
