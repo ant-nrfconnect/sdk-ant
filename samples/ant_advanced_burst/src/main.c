@@ -51,8 +51,8 @@
  *
  */
 
-#include <kernel.h>
-#include <logging/log.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 
 #include "ant_error.h"
 #include "ant_interface.h"

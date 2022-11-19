@@ -28,7 +28,7 @@ Enabling ANT for nRF Connect SDK
 
 Access to the ANT for nRF Connect repository is granted to ANT Adopters after accepting the license agreement and authenticating through GitHub.
 
-Once your access is set up, you will be able to see the repository here: https://github.com/ant-nrfconnect/sdk-ant
+Once your access is set up, you will be able to browse the repository here: https://github.com/ant-nrfconnect/sdk-ant
 
 The ANT module must be enabled by prefixing the ``ant`` group-filter in sdk-nrf's west manifest (``west.yml``) from ``-`` to ``+``. For example:
 
@@ -37,15 +37,16 @@ The ANT module must be enabled by prefixing the ``ant`` group-filter in sdk-nrf'
    
    group-filter: [-homekit, -nrf-802154, -find-my, +ant]
 
-Next, run west update to synchronize the workspace's projects based on the contents of the
-manifest file.
+Next, run west update to synchronize the workspace's projects based on the contents of the manifest file.
 
 .. parsed-literal::
    :class: highlight
    
    west update
 
-The repository will be cloned from the remote. Your GitHub credentials may be verified at this point. The ANT module will appear as ant in the nRF Connect SDK main folder (which contains folders such as ``nrf`` or ``zephyr``).
+The repository will be cloned from the remote. Your GitHub credentials may be verified at this point. The ANT module will appear as ``ant`` in the nRF Connect SDK main folder (which contains folders such as ``nrf`` or ``zephyr``).
+
+See the :ref:`Integration notes <ant_integration_notes>` and :ref:`Samples <ant_samples>` for details on configuring your nRF Connect SDK project to include ANT.
 
 Updating ANT for nRF Connect SDK
 ********************************
@@ -72,7 +73,7 @@ If desired, this documentation can be generated on demand from the repository so
 
 To build the documentation:
 
-1. Open a command-line window in the ANT module folder.
+1. Open a command-line window in the ANT module folder (``ant``).
 2. Run ninja by entering the following command:
 
 .. parsed-literal::

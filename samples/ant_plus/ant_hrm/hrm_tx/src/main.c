@@ -52,6 +52,7 @@
  */
 
 #include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 
 #include <ant_parameters.h>
 #include <ant_state_indicator.h>
@@ -60,7 +61,6 @@
 
 #include <dk_buttons_and_leds.h>
 
-#include <logging/log.h>
 LOG_MODULE_REGISTER(hrm_tx, LOG_LEVEL_INF);
 
 #define TIMER_TICK_MS       (ANT_HRM_OPERATING_TIME_UNIT * 1000)

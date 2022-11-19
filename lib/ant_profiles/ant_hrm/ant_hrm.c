@@ -8,7 +8,7 @@
 #include <ant_profiles/ant_hrm.h>
 #include <ant_profiles/ant_hrm_utils.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ant_hrm, CONFIG_ANT_HRM_LOG_LEVEL);
 
 #define BACKGROUND_DATA_INTERVAL 64 /**< The number of main data pages sent between background data page.

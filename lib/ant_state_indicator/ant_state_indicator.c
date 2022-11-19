@@ -10,7 +10,7 @@
 #include <ant_state_indicator.h>
 
 #include <dk_buttons_and_leds.h>
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ant_state_indicator, LOG_LEVEL_INF);
 
 #define ADVERTISING_LED_ON_INTERVAL_MS              200

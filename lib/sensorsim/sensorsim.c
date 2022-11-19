@@ -6,7 +6,7 @@
 
 #include <sensorsim.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(sensorsim, CONFIG_SENSORSIM_LOG_LEVEL);
 
 void sensorsim_init(sensorsim_state_t     * p_state,

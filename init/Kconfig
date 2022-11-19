@@ -55,13 +55,14 @@ endchoice
 
 config ANT_TOTAL_CHANNELS_ALLOCATED
 	int
-	default 8
+	range 1 15
+	default 15
 	prompt "Allocated ANT channels."
 
 config ANT_ENCRYPTED_CHANNELS
 	int
 	default 0
-	prompt "Encrypted ANT channels."
+	prompt "Encrypted ANT channels will be supported in a future release."
 
 config ANT_EVENT_QUEUE_SIZE
 	int
