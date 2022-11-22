@@ -49,6 +49,11 @@
  * THE EXCLUSION OF INCIDENTAL OR CONSEQUENTIAL DAMAGES, SO THE
  * ABOVE LIMITATIONS MAY NOT APPLY TO YOU.
  *
+ * This file incorporates work covered by the following copyrights and permission notices:
+ * zephyr/samples/bluetooth/peripheral_hr/src/main.c
+ * Copyright (c) 2015-2016 Intel Corporation
+ * SPDX-License-Identifier: Apache-2.0
+ *
  */
 
 #include <zephyr/types.h>
@@ -151,7 +156,7 @@ static int bt_ready(void) {
   }
 
   LOG_INF("Advertising started");
-  return err;
+  return 0;
 }
 
 static void auth_cancel(struct bt_conn *conn) {
