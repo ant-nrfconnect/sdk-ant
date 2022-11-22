@@ -7,11 +7,11 @@
  * the repository.
  */
 
-#include <init.h>
-#include <irq.h>
-#include <kernel.h>
+#include <zephyr/init.h>
+#include <zephyr/irq.h>
+#include <zephyr/kernel.h>
 #include <errno.h>
-#include <sys/__assert.h>
+#include <zephyr/sys/__assert.h>
 #include <zephyr/logging/log.h>
 
 #include "ant_init.h"

@@ -1,0 +1,58 @@
+#
+# Copyright 2022 by Garmin Ltd. or its subsidiaries.
+# All rights reserved.
+#
+# Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
+# and Associated Software. The Agreement accompanies the Software in the root directory of
+# the repository.
+#
+
+source "Kconfig.zephyr"
+
+menuconfig BACKGROUND_SCANNING
+	bool "ANT Background Scanning sample"
+	select ANT
+	select ANT_CHANNEL_CONFIG
+	select ANT_SEARCH_CONFIG
+	select ANT_STATE_INDICATOR
+	select DK_LIBRARY
+	default y
+
+menu "Channel configuration"
+
+config ANT_BS_CHANNEL_NUMBER
+	int "BS Channel Number"
+	default 0
+
+config ANT_MS_CHANNEL_NUMBER
+	int "MS Channel Number"
+	default 1
+
+config RF_FREQ
+	int "RF Frequency"
+	default 77
+
+config CHAN_ID_TRANS_TYPE
+	int "Channel ID: Transmission Type"
+	default 5
+	range 0 255
+
+config CHAN_ID_DEV_TYPE
+	int "Channel ID: Device Type"
+	default 1
+	range 0 127
+
+config CHAN_ID_DEV_NUM
+	int "Channel ID: Device Number"
+	default 2
+	range 0 65535
+
+config CHAN_PERIOD
+	int "Channel Period (in 32 kHz counts)"
+	default 2048
+
+config ANT_NETWORK_NUM
+	int "Network Number"
+	default 0
+
+endmenu

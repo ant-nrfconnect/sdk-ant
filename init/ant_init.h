@@ -13,7 +13,7 @@
 #include "ant_error.h"
 #include "ant_parameters.h"
 
-#include <irq.h>
+#include <zephyr/irq.h>
 #include <stdint.h>
 
 #define NRF_ANT_EVT_CHANNEL_FIELD_SIZE 1  //!< Size of the channel field in ANT stack event

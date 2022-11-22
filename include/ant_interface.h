@@ -78,13 +78,13 @@ typedef struct
  */
 ant_err_t ant_stack_init(const uint8_t *aucLicenseKey);
 
- /** @brief This function is used to specify the total number of ANT channels, number of encrypted channels (subset of total ANT channels) and transmit burst queue size to be supported
- *          by the ANT stack. Upon enabling successfully, the ANT stack defaults to supporting 1 ANT channel (encryption capable) and a 64 byte transmit burst buffer. If additional
- *          channels are needed and/or more encrypted channels are needed and/or larger tx burst buffer size is needed, then the desired configuration can be specified to the ANT stack
- *          using this function. In this case, a static RAM buffer (of minimum size defined by @ref ANT_ENABLE_GET_REQUIRED_SPACE) must be supplied by the application to be used by the ANT stack.
+ /** @brief This is a glue function called by the nRF Connect SDK initialization code for ANT. It is not necessary to call it directly.
+  *         It is used to specify the total number of ANT channels, number of encrypted channels (subset of total ANT channels) and transmit burst queue size to be supported by the ANT stack.
+ *          Upon enabling successfully, the ANT stack defaults to the values defined by Kconfigs ANT_TOTAL_CHANNELS_ALLOCATED, ANT_ENCRYPTED_CHANNELS and ANT_EVENT_QUEUE_SIZE.
+ *          If more channels are needed and/or more encrypted channels are needed and/or larger tx burst buffer size is needed, then the desired configuration can be specified to the ANT stack using these configuration variables.
+ *          In this case, a static RAM buffer (of minimum size defined by @ref ANT_ENABLE_GET_REQUIRED_SPACE) is supplied by the initialization code to be used by the ANT stack.
  *
- *          Notes: - If used, function should be called immediately after before any ANT related function calls.
- *                 - Using ant_stack_reset() will not reset ANT stack channel allocation configuration. It will be maintained.
+ *          Notes: - Using ant_stack_reset() will not reset ANT stack channel allocation configuration. It will be maintained.
  *
  * @param[in] pstChannelEnable is a pointer to ANT_ENABLE structure.
  *                  where ucTotalNumberOfChannels is an unsigned char (1 octet) denoting the total number of ANT channels desired (1 to @ref MAX_ANT_CHANNELS, defined in ant_parameters.h)

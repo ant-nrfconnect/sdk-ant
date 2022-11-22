@@ -6,7 +6,7 @@
 
 #include <ant_profiles/hrm/pages/ant_hrm_page_3.h>
 
-#include <logging/log.h>
+#include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ant_hrm_page_3, CONFIG_HRM_PAGES_LOG_LEVEL);
 
 /**@brief HRM page 3 data layout structure. */

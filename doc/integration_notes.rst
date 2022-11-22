@@ -16,16 +16,29 @@ Configuration
 
 In nRF Connect SDK applications, you can enable ANT Wireless using the ``CONFIG_ANT=y`` Kconfig option.
 
-To include the ANT Network Processor on the network core (cpunet), use ``CONFIG_ANT_NP=y`` Kconfig option. This will include the interproccessor communication layers with the default underlying transport (nRF RPC).
+On dual-core platforms (nRF5340), ANT configurations should be supplied to both the application and network core processors. To include ANT multicore API serialization, use ``CONFIG_ANT_NP=y`` Kconfig option. This will include the interproccessor communication layers with the default underlying transport (nRF RPC).
+
+Single Protocol
+***************
+
+By default, the provided ANT samples target the ``nrf5340dk_nrf5340_cpuapp`` core and automatically include a single protocol network core image (``ant_rpc``). 
 
 The automatic child image feature relies on a further two configuration options:
 
 * ``CONFIG_ANT_INCLUDE_NP_CHILD_IMAGE=y``
 * ``CONFIG_BOARD_ENABLE_CPUNET=y`` to enable cpunet from cpuapp
 
-For more configurable options, see nRF Kconfig for the ANT module.
-Any modified options MUST be synchronized on cpuapp and cpunet with equivalent prj.conf changes.
 
+Dual Protocol: ANT and BLE
+**************************
+
+Multiprotocol support can be evaluated by enabling both ``CONFIG_BT`` and ``CONFIG_ANT`` along with any other desired stack configuration settings.
+
+Instead of including the single protocol network core image (``ant_rpc``), the ANT protocol stack will be combined with the default nRF Connect SDK BLE stack (typically ``hci_rpmsg``).
+
+Due to space constraints on the network core, it may be necessary to limit protocol resources to those strictly required for your application (ie. using ``CONFIG_BT_MAX_CONN``).
+
+See the ``samples/multiprotocol`` folder for dual protocol application examples.
 
 .. _ant_licenses:
 

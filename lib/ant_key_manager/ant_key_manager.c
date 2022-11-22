@@ -8,10 +8,11 @@
  */
 
 #include <stdio.h>
+#include <zephyr/sys/__assert.h>
+
 #include "ant_key_manager.h"
 #include "ant_key_manager_config.h"
 #include "ant_interface.h"
-#include <sys/__assert.h>
 #include "ant_error.h"
 
 static uint8_t m_ant_plus_network_key[] = ANT_PLUS_NETWORK_KEY;
