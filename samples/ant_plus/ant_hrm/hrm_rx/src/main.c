@@ -57,25 +57,21 @@
 #include <ant_parameters.h>
 #include <ant_state_indicator.h>
 #include <ant_key_manager.h>
-#include <ant_profiles/ant_hrm.h>
+#include <ant_profiles/hrm/ant_hrm.h>
 
 #include <dk_buttons_and_leds.h>
 
 LOG_MODULE_REGISTER(hrm_rx, LOG_LEVEL_INF);
 
-static void ant_hrm_evt_handler(ant_hrm_profile_t * p_profile, ant_hrm_evt_t event);
+static void ant_hrm_evt_handler(ant_hrm_profile_t *p_profile, ant_hrm_evt_t event);
 
-HRM_DISP_CHANNEL_CONFIG_DEF(hrm,
-  CONFIG_HRM_RX_CHANNEL_NUM,
-  CONFIG_HRM_RX_CHAN_ID_TRANS_TYPE,
-  CONFIG_HRM_RX_CHAN_ID_DEV_NUM,
-  CONFIG_HRM_RX_NETWORK_NUM,
-  HRM_MSG_PERIOD_4Hz);
+HRM_DISP_CHANNEL_CONFIG_DEF(hrm, CONFIG_HRM_RX_CHANNEL_NUM, CONFIG_HRM_RX_CHAN_ID_TRANS_TYPE,
+                            CONFIG_HRM_RX_CHAN_ID_DEV_NUM, CONFIG_HRM_RX_NETWORK_NUM,
+                            HRM_MSG_PERIOD_4Hz);
 
 static ant_hrm_profile_t hrm;
 
-static void ant_hrm_evt_handler(ant_hrm_profile_t * p_profile, ant_hrm_evt_t event)
-{
+static void ant_hrm_evt_handler(ant_hrm_profile_t *p_profile, ant_hrm_evt_t event) {
   switch (event) {
     case ANT_HRM_PAGE_0_UPDATED:
       /* fall through */
@@ -93,8 +89,7 @@ static void ant_hrm_evt_handler(ant_hrm_profile_t * p_profile, ant_hrm_evt_t eve
   }
 }
 
-static int utils_setup(void)
-{
+static int utils_setup(void) {
   int err = ant_state_indicator_init(hrm.channel_number, HRM_DISP_CHANNEL_TYPE);
   if (err) {
     LOG_ERR("ant_state_indicator_init failed: %d", err);
@@ -104,16 +99,10 @@ static int utils_setup(void)
   return err;
 }
 
-static void ant_evt_handler(ant_evt_t *p_ant_evt)
-{
-  ant_hrm_disp_evt_handler(p_ant_evt, &hrm);
-}
+static void ant_evt_handler(ant_evt_t *p_ant_evt) { ant_hrm_disp_evt_handler(p_ant_evt, &hrm); }
 
-static int profile_setup(void)
-{
-  int err = ant_hrm_disp_init(&hrm,
-    HRM_DISP_CHANNEL_CONFIG(hrm),
-    ant_hrm_evt_handler);
+static int profile_setup(void) {
+  int err = ant_hrm_disp_init(&hrm, HRM_DISP_CHANNEL_CONFIG(hrm), ant_hrm_evt_handler);
   if (err) {
     LOG_ERR("ant_hrm_disp_init failed: %d", err);
     return err;
@@ -128,8 +117,7 @@ static int profile_setup(void)
   return err;
 }
 
-int ant_stack_setup(void)
-{
+int ant_stack_setup(void) {
   int err = ant_init();
   if (err) {
     LOG_ERR("ant_init failed: %d", err);
@@ -150,8 +138,7 @@ int ant_stack_setup(void)
   return err;
 }
 
-void main(void)
-{
+void main(void) {
   LOG_INF("ANT+ HRM RX sample starting...");
 
   int err = ant_stack_setup();

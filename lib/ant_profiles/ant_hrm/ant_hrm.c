@@ -1,12 +1,19 @@
 /*
+ * Copyright (c) 2023 by Garmin Ltd. or its subsidiaries.
+ * All rights reserved.
+ *
+ * Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
+ * and Associated Software. The Agreement accompanies the Software in the root directory of
+ * the repository.
+ *
  * Copyright (c) 2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <ant_interface.h>
-#include <ant_profiles/ant_hrm.h>
-#include <ant_profiles/ant_hrm_utils.h>
+#include <ant_profiles/hrm/ant_hrm.h>
+#include <ant_profiles/hrm/ant_hrm_utils.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(ant_hrm, CONFIG_ANT_HRM_LOG_LEVEL);

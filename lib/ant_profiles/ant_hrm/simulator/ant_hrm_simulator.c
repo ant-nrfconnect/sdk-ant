@@ -1,11 +1,18 @@
 /*
+ * Copyright (c) 2023 by Garmin Ltd. or its subsidiaries.
+ * All rights reserved.
+ *
+ * Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
+ * and Associated Software. The Agreement accompanies the Software in the root directory of
+ * the repository.
+ *
  * Copyright (c) 2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
 #include <ant_profiles/hrm/simulator/ant_hrm_simulator.h>
-#include <ant_profiles/ant_hrm_utils.h>
+#include <ant_profiles/hrm/ant_hrm_utils.h>
 
 #define ITERATION_ANT_CYCLES HRM_MSG_PERIOD_4Hz                                  ///< period of calculation [1/32678 s], defined in ANT device profile
 #define ITERATION_PERIOD     (ITERATION_ANT_CYCLES * 1024 / ANT_CLOCK_FREQUENCY) ///< integer part of calculation's period [1/1024 s]

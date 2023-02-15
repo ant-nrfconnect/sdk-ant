@@ -16,6 +16,8 @@
 #include "ant_np_remote_burst.h"
 #include "ant_rpc_net.h"
 
+#include "multithreading_lock.h"
+
 LOG_MODULE_REGISTER(ant_np_remote, CONFIG_ANT_LOG_LEVEL);
 
 // TODO: tie this into ANT stack cfg
@@ -839,7 +841,17 @@ void ant_np_remote_process_cmd(ANT_MESSAGE *cmd, ANT_MESSAGE *rsp) {
 
   // TODO: buffering/threading processing required?
 
+  int err;
+  // safeguard ANT api calls from being interrupted or switched to ANT stack
+  // processes running from mpsl_low_prio_work_handler
+  err = MULTITHREADING_LOCK_ACQUIRE();
+  if (err) {
+    LOG_WRN("multithreading lock failed");
+  }
+
   process_msg(cmd, rsp);
+
+  MULTITHREADING_LOCK_RELEASE();
 }
 
 void ant_np_remote_process_evt(ant_evt_t *evt) {

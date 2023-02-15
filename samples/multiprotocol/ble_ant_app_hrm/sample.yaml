@@ -2,7 +2,7 @@ sample:
   description: Multiprotocol ANT and BLE Heart Rate Monitor Relay
   name: BLE ANT Heart Rate Monitor Relay
 tests:
-  sample.multiprotocol.ble_ant_app_hrm:
+  sample.ble_ant_app_hrm:
     platform_allow: nrf5340dk_nrf5340_cpuapp
     integration_platforms:
       - nrf5340dk_nrf5340_cpuapp

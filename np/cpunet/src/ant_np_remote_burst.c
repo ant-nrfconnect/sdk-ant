@@ -77,21 +77,26 @@ ant_err_t ant_np_remote_burst_cmd(ANT_MESSAGE *cmd) {
         burst_seg |= BURST_SEGMENT_END;
       }
 
+      // copy cmd content into static burst_cmd buffer. Contents of the buffer must remain static until
+      // requested from the ANT stack for next data block via EVENT_TRANSFER_NEXT_DATA_BLOCK event
+      static ANT_MESSAGE burst_cmd;
+      memcpy(&burst_cmd, cmd, MESG_BUFFER_SIZE);
+
       // send to ant stack
-      switch (cmd->ANT_MESSAGE_ucMesgID) {
+      switch (burst_cmd.ANT_MESSAGE_ucMesgID) {
       case MESG_EXT_BURST_DATA_ID: {
         ant_err = ant_burst_handler_request(
-            cmd->ANT_MESSAGE_ucChannel,
-            cmd->ANT_MESSAGE_ucSize - (ANT_ID_SIZE + MESG_CHANNEL_NUM_SIZE),
-            cmd->ANT_MESSAGE_aucPayload + ANT_ID_SIZE, burst_seg);
+            burst_cmd.ANT_MESSAGE_ucChannel,
+            burst_cmd.ANT_MESSAGE_ucSize - (ANT_ID_SIZE + MESG_CHANNEL_NUM_SIZE),
+            burst_cmd.ANT_MESSAGE_aucPayload + ANT_ID_SIZE, burst_seg);
         break;
       }
 
       case MESG_ADV_BURST_DATA_ID:
       case MESG_BURST_DATA_ID: {
-        ant_err = ant_burst_handler_request(cmd->ANT_MESSAGE_ucChannel,
-                    (cmd->ANT_MESSAGE_ucSize - MESG_CHANNEL_NUM_SIZE),
-                    cmd->ANT_MESSAGE_aucPayload, burst_seg);
+        ant_err = ant_burst_handler_request(burst_cmd.ANT_MESSAGE_ucChannel,
+                    (burst_cmd.ANT_MESSAGE_ucSize - MESG_CHANNEL_NUM_SIZE),
+                    burst_cmd.ANT_MESSAGE_aucPayload, burst_seg);
         break;
       }
 
@@ -99,7 +104,7 @@ ant_err_t ant_np_remote_burst_cmd(ANT_MESSAGE *cmd) {
         // unexpected. Reset state
         burst_handler_init();
         ant_err = TRANSFER_IN_ERROR;
-        LOG_ERR("burst cmd unknown id %d", cmd->ANT_MESSAGE_ucMesgID);
+        LOG_ERR("burst cmd unknown id %d", burst_cmd.ANT_MESSAGE_ucMesgID);
         break;
       }
     }

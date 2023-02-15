@@ -54,7 +54,7 @@ typedef struct
  *
  * @param[in]  p_config        Pointer to the channel configuration structure.
  *
- * @retval     NRF_SUCCESS     If the channel was successfully configured. Otherwise, an error code is returned.
+ * @retval     0 If the channel was successfully configured. Otherwise, an error code is returned.
  */
 ant_err_t ant_channel_init(ant_channel_config_t const * p_config);
 

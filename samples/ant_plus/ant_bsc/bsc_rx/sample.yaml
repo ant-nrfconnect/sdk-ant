@@ -1,0 +1,11 @@
+sample:
+  description: ANT+ Bicycle Speed and Cadence Receiver Sample
+  name: ANT+ Bicycle Speed and Cadence Receiver
+tests:
+  sample.bsc_rx:
+    platform_allow: nrf5340dk_nrf5340_cpuapp
+    integration_platforms:
+      - nrf5340dk_nrf5340_cpuapp
+    tags: ant
+    build_only: true
+    extra_args: ant_rpc_CONFIG_ANT_EVALUATION_KEY=y

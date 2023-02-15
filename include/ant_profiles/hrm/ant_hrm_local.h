@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "ant_profiles/ant_hrm.h"
+#include "ant_profiles/hrm/ant_hrm.h"
 
 #ifdef __cplusplus
 extern "C" {

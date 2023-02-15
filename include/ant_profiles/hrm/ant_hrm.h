@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023 by Garmin Ltd. or its subsidiaries.
+ * All rights reserved.
+ *
+ * Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
+ * and Associated Software. The Agreement accompanies the Software in the root directory of
+ * the repository.
+ *
  * Copyright (c) 2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
@@ -134,7 +141,7 @@ typedef struct ant_hrm_profile_s ant_hrm_profile_t;
 /**@brief HRM event handler type. */
 typedef void (* ant_hrm_evt_handler_t) (ant_hrm_profile_t *, ant_hrm_evt_t);
 
-#include "ant_profiles/ant_hrm_local.h"
+#include "ant_profiles/hrm/ant_hrm_local.h"
 
 #ifdef __cplusplus
 extern "C" {

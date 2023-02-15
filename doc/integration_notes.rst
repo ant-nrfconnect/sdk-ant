@@ -18,6 +18,14 @@ In nRF Connect SDK applications, you can enable ANT Wireless using the ``CONFIG_
 
 On dual-core platforms (nRF5340), ANT configurations should be supplied to both the application and network core processors. To include ANT multicore API serialization, use ``CONFIG_ANT_NP=y`` Kconfig option. This will include the interproccessor communication layers with the default underlying transport (nRF RPC).
 
+Architecture
+************
+
+The following image shows how ANT is enabled on dual core processors (nRF5340).
+
+.. figure:: img/dual_core_architecture.svg
+   :alt: ANT for nRF Connect SDK on dual core processors
+
 Single Protocol
 ***************
 
@@ -47,7 +55,9 @@ License Keys
 
 You MUST obtain a valid commercial license key BEFORE releasing a product to market that uses ANT.
 
-You may use the Evaluation license key for non-commerical use by setting ``CONFIG ANT_EVALUATION_KEY=y`` or defining ``CONFIG_ANT_LICENSE_KEY`` in the Kconfig configuration file for the network core (cpunet).
+You may use the Evaluation license key for non-commerical use by setting ``CONFIG ANT_EVALUATION_KEY=y`` or defining ``CONFIG_ANT_LICENSE_KEY`` in the Kconfig configuration file for the network core image (cpunet). If using the automatic child image, this will be either ``child_image/ant_rpc.conf`` or ``child_image/hci_rpmsg.conf``.
+
+If your organization already has a unique commercial license key, you can continue to use the same license key for all products based on Nordic Semiconductor's nRF52 and nRF53 SoCs. Use ``CONFIG_ANT_LICENSE_KEY="your-key"`` to define your unique key as described above.
 
 For more information about ANT licensing visit the following website: https://www.thisisant.com/developer/ant/licensing
 
