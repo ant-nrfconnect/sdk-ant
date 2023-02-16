@@ -1,0 +1,32 @@
+#
+# Copyright 2023 by Garmin Ltd. or its subsidiaries.
+# All rights reserved.
+#
+# Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
+# and Associated Software. The Agreement accompanies the Software in the root directory of
+# the repository.
+#
+
+menuconfig ANT_BSC
+    bool "ANT+ Bike Speed and Cadence profile"
+    help
+      Support for ANT+ Bike Speed and Cadence constants and pages
+
+if ANT_BSC
+
+config ANT_BSC_SIMULATOR
+    bool "Enable ANT+ Bike Speed and Cadence Simulator"
+    select SENSORSIM
+
+rsource "pages/Kconfig"
+
+if ANT_BSC_SIMULATOR
+rsource "simulator/Kconfig"
+endif # ANT_BSC_SIMULATOR
+
+module=ANT_BSC
+module-str=ANT+ BSC
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # ANT_BSC
+

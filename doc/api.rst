@@ -10,3 +10,6 @@ API Reference
    api/interface
    api/parameters
    api/error
+   profiles/bpwr
+   profiles/bsc
+   profiles/hrm

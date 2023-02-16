@@ -74,7 +74,7 @@
 #include <ant_parameters.h>
 #include <ant_state_indicator.h>
 #include <ant_key_manager.h>
-#include <ant_profiles/ant_hrm.h>
+#include <ant_profiles/hrm/ant_hrm.h>
 #include "ant_interface.h"
 
 #include <dk_buttons_and_leds.h>
@@ -87,21 +87,17 @@ LOG_MODULE_REGISTER(hrm_relay, LOG_LEVEL_INF);
 
 static struct bt_conn *default_conn;
 
-HRM_DISP_CHANNEL_CONFIG_DEF(hrm,
-  CONFIG_HRM_RX_CHANNEL_NUM,
-  CONFIG_HRM_RX_CHAN_ID_TRANS_TYPE,
-  CONFIG_HRM_RX_CHAN_ID_DEV_NUM,
-  CONFIG_HRM_RX_NETWORK_NUM,
-  HRM_MSG_PERIOD_4Hz);
+HRM_DISP_CHANNEL_CONFIG_DEF(hrm, CONFIG_HRM_RX_CHANNEL_NUM, CONFIG_HRM_RX_CHAN_ID_TRANS_TYPE,
+                            CONFIG_HRM_RX_CHAN_ID_DEV_NUM, CONFIG_HRM_RX_NETWORK_NUM,
+                            HRM_MSG_PERIOD_4Hz);
 
 static ant_hrm_profile_t hrm;
 
-static void ant_hrm_evt_handler(ant_hrm_profile_t * p_profile, ant_hrm_evt_t event);
+static void ant_hrm_evt_handler(ant_hrm_profile_t *p_profile, ant_hrm_evt_t event);
 
 static const struct bt_data ad[] = {
     BT_DATA_BYTES(BT_DATA_FLAGS, (BT_LE_AD_GENERAL | BT_LE_AD_NO_BREDR)),
-    BT_DATA_BYTES(BT_DATA_UUID16_ALL,
-                  BT_UUID_16_ENCODE(BT_UUID_HRS_VAL),
+    BT_DATA_BYTES(BT_DATA_UUID16_ALL, BT_UUID_16_ENCODE(BT_UUID_HRS_VAL),
                   BT_UUID_16_ENCODE(BT_UUID_DIS_VAL))};
 
 K_MSGQ_DEFINE(hrs_queue, sizeof(ant_hrm_profile_t), HRS_QUEUE_SIZE, 4);
@@ -327,5 +323,5 @@ ERROR_EXIT:
   k_oops();
 }
 
-K_THREAD_DEFINE(hrs_notify_thread_id, STACKSIZE, hrs_notify_thread,
-                NULL, NULL, NULL, PRIORITY, 0, 0);
+K_THREAD_DEFINE(hrs_notify_thread_id, STACKSIZE, hrs_notify_thread, NULL, NULL, NULL, PRIORITY, 0,
+                0);

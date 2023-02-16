@@ -143,9 +143,9 @@ ant_err_t ant_np_host_burst_cmd(uint8_t ucChannel, uint16_t usSize,
 
   default: {
     // unexpected. Reset state
+    LOG_ERR("burst cmd unknown state %d", state);
     ant_np_host_burst_init();
     err = NRF_ANT_ERROR_TRANSFER_IN_ERROR;
-    LOG_ERR("burst cmd unknown state %d", state);
     break;
   }
   }
@@ -197,12 +197,18 @@ void ant_np_host_burst_evt(ANT_MESSAGE *evt, ANT_MESSAGE *cmd) {
         break;
       }
 
+      case HANDLER_WAIT_ON_APP_DATA: {
+        // shouldn't happen, consume the evt. Already waiting for data from app
+        LOG_WRN("ant_np_host_burst_evt() already waiting for data");
+        evt->ANT_MESSAGE_ucSize = 0;
+        break;
+      }
+
       case HANDLER_IDLE:
-      case HANDLER_WAIT_ON_APP_DATA:
       default: {
         // unexpected. Reset state
-        ant_np_host_burst_init();
         LOG_ERR("burst evt unknown state %d", state);
+        ant_np_host_burst_init();
         break;
       }
       }

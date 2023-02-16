@@ -20,9 +20,9 @@ subprocess.call('doxygen Doxyfile.in', shell=True)
 # -- Project information -----------------------------------------------------
 
 project = 'ANT for nRF Connect SDK'
-copyright = '2022, Garmin Canada Inc.'
+copyright = '2022, Garmin Canada Inc'
 author = 'Garmin Canada Inc.'
-version = '0.4.0'
+version = '0.5.0'
 
 # -- General configuration ---------------------------------------------------
 
@@ -48,6 +48,8 @@ html_theme = "sphinx_rtd_theme"
 
 html_static_path = ['_static']
 html_css_files = ['custom.css']
+html_logo = "this-is-ant.png"
+html_favicon = 'favicon.ico'
 html_theme_options = {
     'display_version': True,
 }

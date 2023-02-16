@@ -1,4 +1,11 @@
 /*
+ * Copyright (c) 2023 by Garmin Ltd. or its subsidiaries.
+ * All rights reserved.
+ *
+ * Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
+ * and Associated Software. The Agreement accompanies the Software in the root directory of
+ * the repository.
+ *
  * Copyright (c) 2022 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
@@ -22,8 +29,8 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <ant_profiles/ant_hrm.h>
-#include <ant_profiles/ant_hrm_utils.h>
+#include <ant_profiles/hrm/ant_hrm.h>
+#include <ant_profiles/hrm/ant_hrm_utils.h>
 #include <ant_profiles/hrm/simulator/ant_hrm_simulator_local.h>
 #include <sensorsim.h>
 

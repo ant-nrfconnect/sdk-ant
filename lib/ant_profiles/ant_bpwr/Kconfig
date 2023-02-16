@@ -1,0 +1,33 @@
+#
+# Copyright 2023 by Garmin Ltd. or its subsidiaries.
+# All rights reserved.
+#
+# Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
+# and Associated Software. The Agreement accompanies the Software in the root directory of
+# the repository.
+#
+
+menuconfig ANT_BPWR
+    bool "ANT+ Bicycle Power profile"
+    select ANT_COMMON
+    help
+      Support for ANT+ BPWR constants and pages
+
+if ANT_BPWR
+
+config ANT_BPWR_SIMULATOR
+    bool "Enable ANT+ HRM Simulator"
+    select SENSORSIM
+
+rsource "pages/Kconfig"
+
+if ANT_BPWR_SIMULATOR
+rsource "simulator/Kconfig"
+endif # ANT_BPWR_SIMULATOR
+
+module=ANT_BPWR
+module-str=ANT+ BPWR
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # ANT_BPWR
+

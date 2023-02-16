@@ -1108,7 +1108,7 @@ ant_err_t ant_coex_config_get(uint8_t ucChannel, ANT_BUFFER_PTR *pstCoexConfig,
 
   cmd.ANT_MESSAGE_ucSize = MESG_REQUEST_SIZE;
   cmd.ANT_MESSAGE_ucMesgID = MESG_REQUEST_ID;
-  cmd.ANT_MESSAGE_ucChannel = 0;
+  cmd.ANT_MESSAGE_ucChannel = ucChannel;
   if (pstAdvCoexConfig == NULL) {
     cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = MESG_COEX_PRIORITY_CONFIG_ID;
   } else {
@@ -1122,10 +1122,10 @@ ant_err_t ant_coex_config_get(uint8_t ucChannel, ANT_BUFFER_PTR *pstCoexConfig,
   err = decode_cmd_rsp(&rsp);
   if (!err) {
     if (pstAdvCoexConfig == NULL) {
-      memcpy(pstCoexConfig->pucBuffer, rsp.ANT_MESSAGE_aucMesgData, rsp.ANT_MESSAGE_ucSize);
+      memcpy(pstCoexConfig->pucBuffer, rsp.ANT_MESSAGE_aucPayload, rsp.ANT_MESSAGE_ucSize);
       pstCoexConfig->ucBufferSize = rsp.ANT_MESSAGE_ucSize;
     } else {
-      memcpy(pstAdvCoexConfig->pucBuffer, rsp.ANT_MESSAGE_aucMesgData, rsp.ANT_MESSAGE_ucSize);
+      memcpy(pstAdvCoexConfig->pucBuffer, rsp.ANT_MESSAGE_aucPayload, rsp.ANT_MESSAGE_ucSize);
       pstAdvCoexConfig->ucBufferSize = rsp.ANT_MESSAGE_ucSize;
     }
   }

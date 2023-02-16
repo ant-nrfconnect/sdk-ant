@@ -1,37 +1,39 @@
 /* expand to full window width */
 .wy-nav-content {
-max-width: none;
+    max-width: none;
 }
 
 /* space between pointer symbols and variable names:
     ex: WpObject *<-padding->self */
 .rst-content .sig span.p+span.n {
-padding-left: 0.3em;
+    padding-left: 0.3em;
 }
 
 /* space betweens names and their definitions */
 .rst-content .sig-name+.pre {
-padding-left: 0.5em;
+    padding-left: 0.5em;
 }
 
+/* link spacing */
 .rst-content .sig-name+a {
     padding-left: 0.5em;
 }
 
+/* more link spacing */
 .rst-content .sig-paren+a {
     padding-left: 0.5em;
 }
 
 /* space between badges */
 img+img {
-padding-left: 0.5em;
+    padding-left: 0.5em;
 }
 
+/* override theme colors */
 .wy-side-nav-search input[type=text] {
     border-color: #FFF;
 }
 
-/* override theme colors */
 .wy-menu-vertical header, .wy-menu-vertical p.caption {
     color: #999;
 }
@@ -42,4 +44,8 @@ padding-left: 0.5em;
 
 .wy-side-nav-search {
     background-color: #999;
+}
+
+.wy-side-nav-search div.version {
+    color: hsla(0,0%,100%);
 }
