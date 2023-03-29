@@ -22,7 +22,7 @@
 // ////////////////////////////////////////////
 /** @brief ANT Version String */
 // ////////////////////////////////////////////
-#define ANT_VERSION_STRING "BNQ0.05.00"  ///< ANT version number
+#define ANT_VERSION_STRING "BNQ0.05.01"  ///< ANT version number
 
 
 // ////////////////////////////////////////////
@@ -37,10 +37,10 @@
 #define MIN_ANT_TX_BURST_QUEUE_SIZE                ((uint8_t)64) ///< Minumum burst queue size
 #define MIN_ANT_EVENT_QUEUE_SIZE                   ((uint8_t)32) ///< Minumum number of events in the queue
 
-#define IS_POWER_OF_TWO(A) ( ((A) != 0) && ((((A) - 1) & (A)) == 0) )
+#define ANT_QSIZE_IS_POWER_OF_TWO(A) ( ((A) != 0) && ((((A) - 1) & (A)) == 0) )
 
 #define GET_ANT_TX_BURST_QUEUE_SIZE(usTxQueueByteSize) \
-   ((usTxQueueByteSize > MIN_ANT_TX_BURST_QUEUE_SIZE) ? (IS_POWER_OF_TWO(usTxQueueByteSize) ? usTxQueueByteSize : MIN_ANT_TX_BURST_QUEUE_SIZE) : MIN_ANT_TX_BURST_QUEUE_SIZE)
+   ((usTxQueueByteSize > MIN_ANT_TX_BURST_QUEUE_SIZE) ? (ANT_QSIZE_IS_POWER_OF_TWO(usTxQueueByteSize) ? usTxQueueByteSize : MIN_ANT_TX_BURST_QUEUE_SIZE) : MIN_ANT_TX_BURST_QUEUE_SIZE)
 
 #define GET_ANT_CHANNEL_SIZE(ucTotalNumberOfChannels) \
    ((ucTotalNumberOfChannels > 2) ? ((ucTotalNumberOfChannels - 2) * SIZE_OF_NONENCRYPTED_ANT_CHANNEL) : 0)
