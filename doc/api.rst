@@ -10,6 +10,6 @@ API Reference
    api/interface
    api/parameters
    api/error
-   profiles/bpwr
-   profiles/bsc
-   profiles/hrm
+   init/ant_init_host_cpuapp
+   profiles/ant_plus
+   lib/libraries

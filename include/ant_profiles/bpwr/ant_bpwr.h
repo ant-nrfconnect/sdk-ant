@@ -324,13 +324,9 @@ void ant_bpwr_disp_evt_handler(ant_evt_t * p_ant_evt, void * p_context);
  * @param [in]   p_profile       Pointer to the profile instance.
  * @param [in]   p_page_1        Pointer to the prepared page 1.
  *
- * @return Values returned by the @ref sd_ant_acknowledge_message_tx SVC callback.
+ * @return Values returned by the @ref ant_acknowledge_message_tx function.
  */
 int ant_bpwr_calib_request(ant_bpwr_profile_t * p_profile, ant_bpwr_page1_data_t * p_page_1);
-
-/**
- * @}
- */
 
 /**
  * @}

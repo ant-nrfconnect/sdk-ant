@@ -171,7 +171,7 @@ ant_err_t ant_stack_setup(void) {
   return err_code;
 }
 
-void main(void) {
+int main(void) {
   ant_err_t err_code;
 
   err_code = ant_stack_setup();
@@ -187,8 +187,10 @@ void main(void) {
 
   LOG_INF("ANT Advanced Burst example started");
 
-  return;
+  return 0;
 
 ERROR_EXIT:
   k_oops();
+
+  return 0;
 }

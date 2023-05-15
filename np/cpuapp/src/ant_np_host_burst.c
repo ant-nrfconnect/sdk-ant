@@ -205,9 +205,11 @@ void ant_np_host_burst_evt(ANT_MESSAGE *evt, ANT_MESSAGE *cmd) {
       }
 
       case HANDLER_IDLE:
+      // may occur if stack event is recieved after re-initialization of the burst
+      // handler when handling an input related error
       default: {
-        // unexpected. Reset state
-        LOG_ERR("burst evt unknown state %d", state);
+        // unexpected. Reset state.
+        LOG_WRN("burst evt unknown state %d", state);
         ant_np_host_burst_init();
         break;
       }

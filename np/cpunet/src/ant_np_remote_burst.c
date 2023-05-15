@@ -89,6 +89,9 @@ ant_err_t ant_np_remote_burst_cmd(ANT_MESSAGE *cmd) {
             burst_cmd.ANT_MESSAGE_ucChannel,
             burst_cmd.ANT_MESSAGE_ucSize - (ANT_ID_SIZE + MESG_CHANNEL_NUM_SIZE),
             burst_cmd.ANT_MESSAGE_aucPayload + ANT_ID_SIZE, burst_seg);
+        if (ant_err) {
+          burst_handler_init();
+        }
         break;
       }
 
@@ -97,6 +100,9 @@ ant_err_t ant_np_remote_burst_cmd(ANT_MESSAGE *cmd) {
         ant_err = ant_burst_handler_request(burst_cmd.ANT_MESSAGE_ucChannel,
                     (burst_cmd.ANT_MESSAGE_ucSize - MESG_CHANNEL_NUM_SIZE),
                     burst_cmd.ANT_MESSAGE_aucPayload, burst_seg);
+        if (ant_err) {
+          burst_handler_init();
+        }
         break;
       }
 

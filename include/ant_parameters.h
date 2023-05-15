@@ -22,7 +22,7 @@
 // ////////////////////////////////////////////
 /** @brief ANT Version String */
 // ////////////////////////////////////////////
-#define ANT_VERSION_STRING "BNQ0.05.00"  ///< ANT version number
+#define ANT_VERSION_STRING "BNQ1.00.00"  ///< ANT version number
 
 
 // ////////////////////////////////////////////
@@ -37,10 +37,10 @@
 #define MIN_ANT_TX_BURST_QUEUE_SIZE                ((uint8_t)64) ///< Minumum burst queue size
 #define MIN_ANT_EVENT_QUEUE_SIZE                   ((uint8_t)32) ///< Minumum number of events in the queue
 
-#define IS_POWER_OF_TWO(A) ( ((A) != 0) && ((((A) - 1) & (A)) == 0) )
+#define ANT_QSIZE_IS_POWER_OF_TWO(A) ( ((A) != 0) && ((((A) - 1) & (A)) == 0) )
 
 #define GET_ANT_TX_BURST_QUEUE_SIZE(usTxQueueByteSize) \
-   ((usTxQueueByteSize > MIN_ANT_TX_BURST_QUEUE_SIZE) ? (IS_POWER_OF_TWO(usTxQueueByteSize) ? usTxQueueByteSize : MIN_ANT_TX_BURST_QUEUE_SIZE) : MIN_ANT_TX_BURST_QUEUE_SIZE)
+   ((usTxQueueByteSize > MIN_ANT_TX_BURST_QUEUE_SIZE) ? (ANT_QSIZE_IS_POWER_OF_TWO(usTxQueueByteSize) ? usTxQueueByteSize : MIN_ANT_TX_BURST_QUEUE_SIZE) : MIN_ANT_TX_BURST_QUEUE_SIZE)
 
 #define GET_ANT_CHANNEL_SIZE(ucTotalNumberOfChannels) \
    ((ucTotalNumberOfChannels > 2) ? ((ucTotalNumberOfChannels - 2) * SIZE_OF_NONENCRYPTED_ANT_CHANNEL) : 0)
@@ -372,7 +372,7 @@
 
 #define ENCRYPTION_INFO_SET_CRYPTO_ID              ((uint8_t)0x00) ///< Set configured crypto ID to be exchanged during encryption negotiation
 #define ENCRYPTION_INFO_SET_CUSTOM_USER_DATA       ((uint8_t)0x01) ///< Set configured custom user data to be exchanged during encryption negotation
-#define ENCRYPTION_INFO_SET_RNG_SEED               ((uint8_t)0x02) ///< Set RNG seed
+#define ENCRYPTION_INFO_SET_RNG_SEED               ((uint8_t)0x02) ///< Set RNG seed. Platform specific.
 
 #define ENCRYPTION_INFO_GET_SUPPORTED_MODE         ((uint8_t)0x00) ///< Get supported encrytped mode
 #define ENCRYPTION_INFO_GET_CRYPTO_ID              ((uint8_t)0x01) ///< Get configured crypto ID to be exchanged during encryption negotiation
@@ -719,9 +719,7 @@ typedef struct {
 #define MESG_EXT_ACKNOWLEDGED_DATA_ID        ((uint8_t)0x5E) ///< ANT application - extended acknowledged message ID
 #define MESG_EXT_BURST_DATA_ID               ((uint8_t)0x5F) ///< ANT application - extended burst message ID
 #define MESG_CHANNEL_RADIO_TX_POWER_ID       ((uint8_t)0x60) ///< ANT stack - channel transmit power message ID
-#define MESG_GET_SERIAL_NUM_ID               ((uint8_t)0x61) ///< ANT application - device serial number request message ID
 #define MESG_SET_LP_SEARCH_TIMEOUT_ID        ((uint8_t)0x63) ///< ANT stack - channel (low priority) search timeout message ID
-#define MESG_SERIAL_NUM_SET_CHANNEL_ID_ID    ((uint8_t)0x65) ///< ANT application - use serial number to set channel message ID
 #define MESG_RX_EXT_MESGS_ENABLE_ID          ((uint8_t)0x66) ///< ANT stack - extended rx message enable message ID
 #define MESG_ANTLIB_CONFIG_ID                ((uint8_t)0x6E) ///< ANT stack - lib config message ID
 #define MESG_STARTUP_MESG_ID                 ((uint8_t)0x6F) ///< ANT application - startup message ID
@@ -743,8 +741,10 @@ typedef struct {
 #define MESG_COEX_ADV_PRIORITY_CONFIG_ID     ((uint8_t)0x82) ///< ANT stack - advanced/platform specific coexistence priority config message ID
 #define MESG_RFACTIVE_NOTIFICATION_ID        ((uint8_t)0x84) ///< ANT stack - RF active notification config message ID
 #define MESG_PA_LNA_CONFIG_ID                ((uint8_t)0x88) ///< ANT stack - PA/LNA support config message ID
+#define MESG_ECS_ENABLE_ID                   ((uint8_t)0x89) ///< ANT stack - enhanced channel spacing enable message ID
+#define MESG_PENDING_TRANSMIT_CLEAR_ID       ((uint8_t)0x8C) ///< ANT stack - pending transmit clear message ID
 
-#define MESG_SLEEP_ID                        ((uint8_t)0xC5) ///< ANT application - sleep config message ID
+#define MESG_STACK_ENABLE_DISABLE_ID         ((uint8_t)0xD3) ///< ANT stack - enable/disable config message ID
 /** @} */
 
 // ////////////////////////////////////////////
@@ -764,17 +764,11 @@ typedef struct {
 // 0xE1 extended IDs
 #define MESG_EXT_REQUEST_ID                  ((uint16_t)0xE100) ///< Reserved for future use. ANT request messages using extended message IDs
 
+// 0xE2 extended IDs
 
 // 0xE3 extended IDs
-#define MESG_SET_SYNC_SERIAL_BIT_RATE        ((uint16_t)0xE300) ///< ANT application - configure byte synchronous serial interface bit rate
-#define MESG_SET_SYNC_SERIAL_SRDY_SLEEP      ((uint16_t)0xE301) ///< ANT application - configure byte synchronous serial interface SRDY sleep delay
-#define MESG_SET_ASYNC_BAUDRATE              ((uint16_t)0xE302) ///< ANT application - configure asynchronous serial interface baud rate
 
 // 0xE4 extended IDs
-#define MESG_ANTFS_OTA_FW_UPDATE             ((uint16_t)0xE400) ///< ANT application - run ANTFS over-the-air (OTA) device firmware update
-#define MESG_SET_DC_TO_DC                    ((uint16_t)0xE401) ///< ANT application - set DC to DC
-#define MESG_RSSI_CAL_ID                     ((uint16_t)0xE402) ///< ANT application - RSSI calibration config ID
-#define MESG_SET_SERIAL_NUM_ID               ((uint16_t)0xE403) ///< ANT application - serial number config message ID
 /** @} */
 
 // ////////////////////////////////////////////
@@ -791,14 +785,11 @@ typedef struct {
 #define MESG_INVALID_SIZE                             ((uint8_t)0)
 #define MESG_VERSION_SIZE                             ((uint8_t)20)
 #define MESG_RESPONSE_EVENT_SIZE                      ((uint8_t)3)
-#define MESG_CHANNEL_STATUS_SIZE                      ((uint8_t)2)
 #define MESG_UNASSIGN_CHANNEL_SIZE                    ((uint8_t)1)
 #define MESG_ASSIGN_CHANNEL_SIZE                      ((uint8_t)3)
-#define MESG_CHANNEL_ID_SIZE                          ((uint8_t)5)
 #define MESG_CHANNEL_MESG_PERIOD_SIZE                 ((uint8_t)3)
 #define MESG_CHANNEL_SEARCH_TIMEOUT_SIZE              ((uint8_t)2)
 #define MESG_CHANNEL_RADIO_FREQ_SIZE                  ((uint8_t)2)
-#define MESG_CHANNEL_RADIO_TX_POWER_SIZE              ((uint8_t)2)
 #define MESG_NETWORK_KEY_SIZE                         ((uint8_t)9)
 #define MESG_RADIO_TX_POWER_SIZE                      ((uint8_t)2)
 #define MESG_RADIO_CW_MODE_SIZE                       ((uint8_t)3)
@@ -809,17 +800,16 @@ typedef struct {
 #define MESG_OPEN_CHANNEL_WITH_OFFSET_SIZE            ((uint8_t)3)
 #define MESG_CLOSE_CHANNEL_SIZE                       ((uint8_t)1)
 #define MESG_REQUEST_SIZE                             ((uint8_t)2)
+#define MESG_CHANNEL_ID_SIZE                          ((uint8_t)5)
+#define MESG_CHANNEL_STATUS_SIZE                      ((uint8_t)2)
 #define MESG_CAPABILITIES_SIZE                        ((uint8_t)9)
 #define MESG_CHANNEL_CRC_MODE_SIZE                    ((uint8_t)2)
 #define MESG_ID_LIST_ADD_SIZE                         ((uint8_t)6)
 #define MESG_ID_LIST_CONFIG_SIZE                      ((uint8_t)3)
 #define MESG_OPEN_RX_SCAN_SIZE                        ((uint8_t)2)
-#define MESG_EXT_CHANNEL_RADIO_FREQ_SIZE              ((uint8_t)3)
-#define MESG_RADIO_CONFIG_ALWAYS_SIZE                 ((uint8_t)2)
-#define MESG_RX_EXT_MESGS_ENABLE_SIZE                 ((uint8_t)2)
-#define MESG_SET_TX_SEARCH_ON_NEXT_SIZE               ((uint8_t)2)
+#define MESG_CHANNEL_RADIO_TX_POWER_SIZE              ((uint8_t)2)
 #define MESG_SET_LP_SEARCH_TIMEOUT_SIZE               ((uint8_t)2)
-#define MESG_GET_SERIAL_NUM_SIZE                      ((uint8_t)4)
+#define MESG_RX_EXT_MESGS_ENABLE_SIZE                 ((uint8_t)2)
 #define MESG_ANTLIB_CONFIG_SIZE                       ((uint8_t)2)
 #define MESG_STARTUP_MESG_SIZE                        ((uint8_t)1)
 #define MESG_AUTO_FREQ_CONFIG_SIZE                    ((uint8_t)4)
@@ -831,22 +821,19 @@ typedef struct {
 #define MESG_HIGH_DUTY_SEARCH_MODE_REQ_SIZE           ((uint8_t)5)
 #define MESG_CONFIG_ADV_BURST_REQ_CAPABILITIES_SIZE   ((uint8_t)4)
 #define MESG_CONFIG_ADV_BURST_REQ_CONFIG_SIZE         ((uint8_t)10)
+#define MESG_EVENT_FILTER_CONFIG_REQ_SIZE             ((uint8_t)3)
 #define MESG_CONFIG_ENCRYPT_REQ_CAPABILITIES_SIZE     ((uint8_t)2)
 #define MESG_CONFIG_ENCRYPT_REQ_CONFIG_ID_SIZE        ((uint8_t)5)
 #define MESG_CONFIG_ENCRYPT_REQ_CONFIG_USER_DATA_SIZE ((uint8_t)20)
 #define MESG_CONFIG_ENCRYPT_REQ_CURRENT_CTR           ((uint8_t)17)
-#define MESG_EVENT_FILTER_CONFIG_REQ_SIZE             ((uint8_t)3)
 #define MESG_ACTIVE_SEARCH_SHARING_REQ_SIZE           ((uint8_t)2)
 #define MESG_COEX_ADV_PRIORITY_CONFIG_REQ_SIZE        ((uint8_t)9)
 #define MESG_RFACTIVE_NOTIFICATION_SIZE               ((uint8_t)4)
-#define MESG_SCALABLE_CHANNELS_SIZE                   ((uint8_t)5)
-#define MESG_FLASH_PROTECTION_CHECK_SIZE              ((uint8_t)1)
-#define MESG_BIST_SIZE                                ((uint8_t)6)
-#define MESG_SET_BAUDRATE_REQ_SIZE                    ((uint8_t)4)
-#define MESG_SET_BIT_RATE_REQ_SIZE                    ((uint8_t)3)
 #define MESG_PA_LNA_CONFIG_SIZE                       ((uint8_t)5)
-#define MESG_RSSI_CAL_SIZE                            ((uint8_t)2)
-#define MESG_SET_DC_TO_DC_SIZE                        ((uint8_t)2)
+#define MESG_ECS_ENABLE_SIZE                          ((uint8_t)2)
+#define MESG_PENDING_TRANSMIT_CLEAR_SIZE              ((uint8_t)1)
+#define MESG_PENDING_TRANSMIT_GET_SIZE                ((uint8_t)2)
+#define MESG_STACK_ENABLE_DISABLE_SIZE                ((uint8_t)2)
 /** @} */
 
 

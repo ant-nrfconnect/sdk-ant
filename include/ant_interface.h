@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Garmin Ltd. or its subsidiaries.
+ * Copyright 2023 by Garmin Ltd. or its subsidiaries.
  * All rights reserved.
  *
  * Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
@@ -26,39 +26,65 @@
 * @brief ANT Stack Application Programming Interface (API).
 */
 
-//////////////////////////////////////////////
-/** @name ANT enable channel structure
+typedef struct {
+    uint8_t aucKey[16];
+    uint8_t aucClearText[16];
+    uint8_t aucCipherText[16];
+  } ANT_ECB_DATA;
+
+typedef void (*ant_stack_crypto_rand_get)(uint8_t *pucBuf, uint8_t ucLength);
+typedef void (*ant_stack_crypto_ecb_encrypt)(ANT_ECB_DATA *data);
+
+/** @struct ANT_STACK_FUNCS
+ *  Table of specific functions supplied to ANT stack.
  *
- * @brief Structure for setting up ANT stack channels
- * @{ */
-//////////////////////////////////////////////
+ *  @var ANT_STACK_FUNCS::fpRANDGet
+ *    Function pointer providing random number for cryptographic purposes
+ *  @var ANT_STACK_FUNCS::fpECBEncrypt
+ *    Function pointer providing ECB encrypt process via HW ECB block
+ */
 typedef struct
 {
-   /*Total number of channels wanted in ANT stack*/
+   ant_stack_crypto_rand_get fpRANDGet;
+   ant_stack_crypto_ecb_encrypt fpECBEncrypt;
+} ANT_STACK_FUNCS;
+
+/** @struct ANT_ENABLE
+ *  Structure for setting up ANT stack channels.
+ *
+ *  @var ANT_ENABLE::ucTotalNumberOfChannels
+ *    Total number of channels wanted in ANT stack.
+ *  @var ANT_ENABLE::ucNumberOfEncryptedChannels
+ *    Number of encrypted channels wanted (subset of total channels).
+ *  @var ANT_ENABLE::usNumberOfEvents
+ *    Number of events in the event queue.
+ *  @var ANT_ENABLE::pucMemoryBlockStartLocation
+ *    Memory location pointer to start allocating ANT channels.
+ *  @var ANT_ENABLE::usMemoryBlockByteSize
+ *    Block byte size available for ANT channels starting at memory location pointerNumber of events in the event queue.
+ */
+typedef struct
+{
    uint8_t ucTotalNumberOfChannels;
-   /*Number of encrypted channels wanted (subset of total channels)*/
    uint8_t ucNumberOfEncryptedChannels;
-   /*Number of events in the event queue*/
    uint16_t usNumberOfEvents;
-   /*Memory location pointer to start allocating ANT channels*/
    uint8_t* pucMemoryBlockStartLocation;
-   /*Block byte size available for ANT channels starting at memory location pointer*/
    uint16_t usMemoryBlockByteSize;
 } ANT_ENABLE;
-/** @} */
 
-//////////////////////////////////////////////
-/** @name Buffer pointer structure.
+/** @struct ANT_BUFFER_PTR
+ *  Buffer pointer structure. Used for passing dynamically sized buffers to the coex apis.
  *
- * @brief Used for passing dynamically sized buffers to the coex apis.
- * @{ */
-//////////////////////////////////////////////
+ *  @var ANT_BUFFER_PTR::ucBufferSize
+ *    The length of the buffer in bytes.
+ *  @var ANT_BUFFER_PTR::pucBuffer
+ *    Pointer to the first byte of the buffer.
+ */
 typedef struct
 {
-   uint8_t ucBufferSize;      //<! The length of the buffer in bytes.
-   uint8_t *pucBuffer;        //<! Pointer to the first byte of the buffer.
+   uint8_t ucBufferSize;
+   uint8_t *pucBuffer;
 } ANT_BUFFER_PTR;
-/** @} */
 
 /******************************************************************************/
 /** @name ANT API functions
@@ -67,8 +93,10 @@ typedef struct
 
 /******************************* RE/INITIALIZATION API *******************/
 
- /** @brief This is an internal glue function used by the nRF Connect SDK initialization code for ANT. It should not be called directly.
- *          This function initializes the ANT stack (including stack variables) and checks for a valid license key.
+ /** @brief This function checks for a valid license key and initializes the ANT stack (including stack variables). It must be executed prior to any wireless protocol activity.
+ *          By default, it will be called during kernel initialization by ANT for nRF Connect SDK initialization code.
+ *
+ * @warning This is an internal glue function intended for SYS_INIT, it is not necessary to call it directly. This function is only meaningful on processor cores used for radio communication and may have a dummy implementation on multicore SoC's.
  *
  * @param[in] aucLicenseKey is a pointer to an ANT License Key. This key is managed via the :kconfig:option:`CONFIG_ANT_LICENSE_KEY`.
  *
@@ -76,31 +104,60 @@ typedef struct
  * @retval  -NRF_EPERM if the stack is not enabled
  * @retval  -NRF_EINVAL if the ANT License Key argument is invalid
  */
-ant_err_t ant_stack_init(const uint8_t *aucLicenseKey);
+ant_err_t ant_stack_init (const uint8_t *aucLicenseKey);
 
- /** @brief This is a glue function called by the nRF Connect SDK initialization code for ANT. It is not necessary to call it directly.
-  *         It is used to specify the total number of ANT channels, number of encrypted channels (subset of total ANT channels) and transmit burst queue size to be supported by the ANT stack.
+ /** @brief This is an internal glue function used by the nRF Connect SDK initialization code for ANT. It should not be called directly.
+ *          This registers platform specific functions to the ANT stack
+ *
+ * @param[in] pstFuncs is a pointer to a function table
+ *
+ * @retval  0 Success
+ * @retval  -NRF_EPERM if the stack is not enabled
+ */
+ant_err_t ant_stack_funcs_register(ANT_STACK_FUNCS * const pstFuncs);
+
+ /** @brief This function is used to specify the total number of ANT channels, number of encrypted channels (subset of total ANT channels) and transmit burst queue size to be supported by the ANT stack.
  *          Upon enabling successfully, the ANT stack defaults to the values defined by Kconfigs ANT_TOTAL_CHANNELS_ALLOCATED, ANT_ENCRYPTED_CHANNELS and ANT_EVENT_QUEUE_SIZE.
  *          If more channels are needed and/or more encrypted channels are needed and/or larger tx burst buffer size is needed, then the desired configuration can be specified to the ANT stack using these configuration variables.
  *          In this case, a static RAM buffer (of minimum size defined by @ref ANT_ENABLE_GET_REQUIRED_SPACE) is supplied by the initialization code to be used by the ANT stack.
  *
- *          Notes: - Using ant_stack_reset() will not reset ANT stack channel allocation configuration. It will be maintained.
+ * @warning By default, this function is called automatically by the ANT for nRF Connect SDK initialization code. This function is only meaningful on processor cores used for radio communication and may have a dummy implementation on multicore SoC's.
+ * @note    @ref ant_stack_reset will not reset this ANT stack channel allocation configuration. It will be maintained.
  *
- * @param[in] pstChannelEnable is a pointer to ANT_ENABLE structure.
- *                  where ucTotalNumberOfChannels is an unsigned char (1 octet) denoting the total number of ANT channels desired (1 to @ref MAX_ANT_CHANNELS, defined in ant_parameters.h)
- *                  where ucTotalNumberOfEncryptedChannels is an unsigned char (1 octet) denoting the total number of ANT channels (0 to ucTotalNumberOfChannels) that support encryption
- *                  where pucMemoryBlockStartLocation is the pointer to an application supplied buffer to be used by the ANT stack.
- *                  where usMemoryBlockByteSize is an unsigned short (2 octet) denoting the size of the given memory block (pucMemoryBlockStartLocation). The defined @ref ANT_ENABLE_GET_REQUIRED_SPACE
- *                        macro (see ant_parameters.h) should be used to determine the minimum buffer size requirement
+ * @param[in] pstChannelEnable is a pointer to @ref ANT_ENABLE structure.
+ *                  @ref ANT_ENABLE::ucTotalNumberOfChannels is an unsigned char (1 octet) denoting the total number of ANT channels desired (1 to @ref MAX_ANT_CHANNELS, defined in ant_parameters.h).
+ *                  @ref ANT_ENABLE::ucNumberOfEncryptedChannels is an unsigned char (1 octet) denoting the total number of ANT channels (0 to ucTotalNumberOfChannels) that support encryption.
+ *                  @ref ANT_ENABLE::pucMemoryBlockStartLocation is the pointer to an application supplied buffer to be used by the ANT stack.
+ *                  @ref ANT_ENABLE::usMemoryBlockByteSize is an unsigned short (2 octet) denoting the size of the given memory block (pucMemoryBlockStartLocation). The defined @ref ANT_ENABLE_GET_REQUIRED_SPACE
+ *                        macro (see ant_parameters.h) should be used to determine the minimum buffer size requirement.
  *
  * @retval  0 Success
  * @retval  -NRF_EPERM if the stack is not enabled
  * @retval  -NRF_EINVAL
  */
-ant_err_t ant_enable(ANT_ENABLE * const pstChannelEnable);
+ant_err_t ant_stack_config (ANT_ENABLE * const pstChannelEnable);
+
+ /** @brief This function enables the ANT stack. It is only permitted after the stack is configured with @ref ant_stack_config.
+ *          It can be used to re-enable the stack after a call to @ref ant_stack_disable.
+ *
+ * @warning By default, this function is called automatically by the ANT for nRF Connect SDK initialization code.
+ *
+ * @retval  0 Success
+ * @retval  -NRF_EPERM if not permitted
+ */
+ant_err_t ant_stack_enable (void);
+
+/** @brief This function stops all pending ANT activity and disables the ANT stack. This is a blocking operation. If the operation has timed out (after ~2 seconds), then -NRF_ETIMEDOUT is returned and the
+ *         application may try again. Otherwise, upon success, 0 is returned. This API affects ANT activity only and does not surrender any system resources allocated for the use of ANT.
+ *
+ * @retval  0 Success
+ * @retval -NRF_ETIMEDOUT
+ * @retval -NRF_EPERM if not permitted (ie. the stack is not enabled)
+ */
+ant_err_t ant_stack_disable (void);
 
 /** @brief Function for resetting the ANT Stack. This is a blocking operation. If the operation has timed out (after ~2 seconds), then -NRF_ETIMEDOUT is returned and the application must try again. Otherwise,
-  *        upon successful reset, 0 is returned.
+ *         upon successful reset, 0 is returned.
  *
  * @retval 0 Success
  * @retval -NRF_ETIMEDOUT
@@ -114,7 +171,7 @@ ant_err_t ant_stack_reset (void);
  *
  * @param[out] pucChannel is the pointer to an unsigned char (1 octet) where the channel number will be copied.
  * @param[out] pucEvent is the pointer to an unsigned char (1 octet) where the event code will be copied. See Channel Events and Command Response Codes in ant_parameters.h.
- * @param[out] aucANTMesg is the buffer where event's message will be copied. The array size must be at least @ref MESG_BUFFER_SIZE to accommadate the entire @ref ANT_MESSAGE structure size. See ANT Message Structure in ant_parameters.h.
+ * @param[out] aucANTMesg is the buffer where event's message will be copied. The array size must be at least @ref MESG_BUFFER_SIZE to accommodate the entire @ref ANT_MESSAGE structure size. See ANT Message Structure in ant_parameters.h.
  *
  * @retval 0 Success
  * @retval -NRF_EINVAL
@@ -236,6 +293,17 @@ ant_err_t ant_acknowledge_message_tx (uint8_t ucChannel, uint8_t ucSize, uint8_t
  */
 ant_err_t ant_burst_handler_request(uint8_t ucChannel, uint16_t usSize, uint8_t *aucData, uint8_t ucBurstSegment);
 
+/** @brief This function clears a pending transmit. Primarily intended for shared slave channels (receive channel).
+ *
+ * @param[in] ucChannel is an unsigned char (1 octet) denoting the channel to clear pending transmit.
+ * @param[out] pucSuccess is the pointer to an unsigned char (1 octet) where the result will be stored.
+ *
+ * @retval  0 Success
+ * @retval  -NRF_EINVAL
+ * @retval  ::NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED
+ */
+ant_err_t ant_pending_transmit_clear (uint8_t ucChannel, uint8_t *pucSuccess);
+
 /********************** RADIO CONFIGURATION APIS *************************/
 
 /** @brief This function sets the 64bit network address.
@@ -260,6 +328,17 @@ ant_err_t ant_network_address_set (uint8_t ucNetwork, const uint8_t *aucNetworkK
  */
 ant_err_t ant_channel_radio_freq_set (uint8_t ucChannel, uint8_t ucFreq);
 
+/** @brief This function returns the radio frequency of an ANT channel.
+ *
+ * @param[in] ucChannel is an unsigned char (1 octet) denoting the channel number to query.
+ * @param[out] pucRfreq is the pointer to an unsigned char (1 octet) where the frequency will be stored.
+ *
+ * @retval  0 Success
+ * @retval  -NRF_EINVAL
+ * @retval  ::NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED
+ */
+ant_err_t ant_channel_radio_freq_get (uint8_t ucChannel, uint8_t *pucRfreq);
+
 /** @brief This function sets the radio tx power.
  *
  * @param[in] ucChannel is an unsigned char (1 octet) denoting the channel number to assign the radio tx power.
@@ -283,7 +362,32 @@ ant_err_t ant_channel_radio_tx_power_set (uint8_t ucChannel, uint8_t ucTxPower, 
  */
 ant_err_t ant_prox_search_set (uint8_t ucChannel, uint8_t ucProxThreshold, uint8_t ucCustomProxThreshold);
 
+/** @brief Set the CRC mode used by the ANT radio for a specific channel.
+*
+* CAUTION: Changing this will break compatability with existing ant radio devices. Channels using
+* an alternate CRC mode will only be able to communicate with other channels using the same CRC
+* mode, and should generally be used with frequency/network-key combinations that are not widely
+* used by other ANT devices.
+*
+* @param[in] ucChannel is an unsigned char (1 octet) denoting the channel to change the CRC mode on.
+* @param[in] ucCRCMode is an unsigned char (1 octet) denoting the "CRC mode" to use (@ref CRC_MODE_STANDARD_ANT or @ref CRC_MODE_3BYTE)
+*
+* @retval   0 Success
+* @retval   ::NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED
+*/
+ant_err_t ant_channel_radio_crc_mode_set(uint8_t ucChannel, uint8_t ucCRCMode);
 
+/** @brief Get the current CRC mode used by the ANT radio for a specific channel.
+*
+* @param[in] ucChannel is an unsigned char (1 octet) denoting the channel to get the CRC mode for.
+* @param[out] ucCRCModeOut is a pointer to unsigned char (1 octet) that will be set to the current
+*                          "CRC mode" used by the channel.
+*
+* @retval   0 Success
+* @retval   -NRF_EINVAL
+* @retval   ::NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED
+*/
+ant_err_t ant_channel_radio_crc_mode_get(uint8_t ucChannel, uint8_t *ucCRCModeOut);
 
 /********************** CONFIGURATION APIS *******************************/
 
@@ -296,6 +400,17 @@ ant_err_t ant_prox_search_set (uint8_t ucChannel, uint8_t ucProxThreshold, uint8
  * @retval  ::NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED
  */
 ant_err_t ant_channel_period_set (uint8_t ucChannel, uint16_t usPeriod);
+
+/** @brief This function returns the current channel period.
+ *
+ * @param[in] ucChannel is an unsigned char (1 octet) denoting the channel number to query.
+ * @param[out] pusPeriod is the pointer to an unsigned short (2 octets) where the channel period will be stored.
+ *
+ * @retval  0 Success
+ * @retval  -NRF_EINVAL
+ * @retval  ::NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED
+ */
+ant_err_t ant_channel_period_get (uint8_t ucChannel, uint16_t *pusPeriod);
 
 /** @brief This function sets the channel ID.
  *
@@ -356,6 +471,17 @@ ant_err_t ant_channel_search_timeout_set (uint8_t ucChannel, uint8_t ucTimeout);
  * @retval ::NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED
  */
 ant_err_t ant_search_channel_priority_set (uint8_t ucChannel, uint8_t ucSearchPriority);
+
+/** @brief Get the configured search channel priority
+ *
+ * @param[in] ucChannel is an unsigned char (1 octet denoting the channel)
+ * @param[out] pucSearchPriority is a pointer to an unsigned char (1 octet) denoting the configured search channel priority
+ *
+ * @retval   0 Success
+ * @retval   -NRF_EINVAL
+ * @retval   ::NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED
+ */
+ant_err_t ant_search_channel_priority_get (uint8_t ucChannel, uint8_t* pucSearchPriority);
 
 /** @brief This function sets the search cycle number of separate searching channels for active search time sharing.
  *
@@ -455,6 +581,15 @@ ant_err_t ant_lib_config_set (uint8_t ucANTLibConfig);
  */
 ant_err_t ant_lib_config_clear (uint8_t ucANTLibConfig);
 
+/** @brief This function returns current ANT Messaging Library Configuration.
+ *
+ * @param[out] pucANTLibConfig is the pointer to an unsigned char (1 octet) where the bit flags will be stored. See ANT Library Config in ant_parameters.h.
+ *
+ * @retval  0 Success
+ * @retval  -NRF_EINVAL
+ */
+ant_err_t ant_lib_config_get (uint8_t *pucANTLibConfig);
+
 /** @brief This function is used to add a Device ID to an include or exclude list.
  *
  * @param[in] ucChannel is an unsigned char (1 octet) denoting the channel number to add the list entry to.
@@ -496,6 +631,23 @@ ant_err_t ant_id_list_config (uint8_t ucChannel, uint8_t ucIDListSize, uint8_t u
  */
 ant_err_t ant_auto_freq_hop_table_set (uint8_t ucChannel, uint8_t ucFreq0, uint8_t ucFreq1, uint8_t ucFreq2);
 
+/** @brief This function is used to specify filter configuration for channel event message generation.
+ *
+ * @param[in] usFilter is an unsigned short (2 octets) denoting the filter configuration bitfield. See Event Filtering in ant_parameters.h.
+ *
+ * @retval  0 Success
+ */
+ant_err_t ant_event_filtering_set (uint16_t usFilter);
+
+/** @brief This function is used to retrieve the filter configuration for channel event message generation.
+ *
+ * @param[out] pusFilter is the pointer to an unsigned short (2 octets) where the filter configuration will be stored. See Event Filtering in ant_parameters.h.
+ *
+ * @retval  0 Success
+ * @retval  -NRF_EINVAL
+ */
+ant_err_t ant_event_filtering_get (uint16_t *pusFilter);
+
 /** @brief This function is used to assign a selective data update (SDU) mask (8 octets) to an identifier, ucMask.
  *
  * @param[in] ucMask is an unsigned char (1 octet) denoting the index representing the SDU data mask.
@@ -527,6 +679,62 @@ ant_err_t ant_sdu_mask_get (uint8_t ucMask, uint8_t *aucMask);
  * @retval  ::NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED
  */
 ant_err_t ant_sdu_mask_config (uint8_t ucChannel, uint8_t ucMaskConfig);
+
+/** @brief This function enables/disables 128-bit AES encryption mode to the specified channel. Advanced burst must be enabled beforehand to enable encrypted channel.
+ *
+ * @param[in] ucChannel is an unsigned char (1 octet) denoting the channel in which encryption mode is set.
+ * @param[in] ucEnable is an unsigned char (1 octet) denoting the encryption mode. See Encrypted Channel Defines in ant_parameters.h.
+ * @param[in] ucKeyNum is an unsigned char (1 octet) denoting the key index of the 128-bit key to be used for encryption. The key index range is bound by the number of
+              encrypted channels configured by ant_stack_config(). If ant_stack_config() is not used then by default ucKeyNum is 0. Range is [0 to (num encrypted channels - 1)],
+              if 1 or more encrypted channels are configured.
+ * @param[in] ucDecimationRate is an unsigned char (1 octet) denoting the decimate rate to apply for encrypted slave channel. Must be > 0.
+ *
+ * @retval  0 Success
+ * @retval  ::NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED
+ * @retval  ::NRF_ANT_ERROR_INVALID_SCAN_TX_CHANNEL
+ * @retval  ::NRF_ANT_ERROR_CHANNEL_NOT_OPENED
+ * @retval  ::NRF_ANT_ERROR_TRANSFER_SEQUENCE_NUMBER_ERROR
+ * @retval  ::NRF_ANT_ERROR_TRANSFER_IN_PROGRESS
+ * @retval  ::NRF_ANT_ERROR_TRANSFER_IN_ERROR
+ * @retval  ::NRF_ANT_ERROR_MESSAGE_SIZE_EXCEEDS_LIMIT
+ * @retval  ::NRF_ANT_ERROR_CHANNEL_IN_WRONG_STATE
+ * @retval  ::NRF_ANT_ERROR_TRANSFER_BUSY
+ */
+ant_err_t ant_crypto_channel_enable (uint8_t ucChannel, uint8_t ucEnable, uint8_t ucKeyNum, uint8_t ucDecimationRate);
+
+/** @brief This function assigns a 128-bit AES encryption key to a key index.
+ *
+ * @param[in] ucKeyNum is an unsigned char (1 octet) denoting the key index for assignment. The key index range is bound by the number of encrypted channels configured
+              by ant_stack_config(). If ant_stack_config() is not used then by default ucKeyNum is 0. Range is [0 to (num encrypted channels - 1)], if 1 or more
+              encrypted channels are configured.
+ * @param[in] aucKey is a buffer (16 octets) containing the 128-bit AES key to be assigned to the key index.
+ *
+ * @retval  0 Success
+ * @retval  -NRF_EINVAL
+ * @retval  ::NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED
+ */
+ant_err_t ant_crypto_key_set (uint8_t ucKeyNum, uint8_t *aucKey);
+
+ /** @brief This function sets specific information to be exchanged between the channel master and slave during encryption channel set-up/negotiation.
+ *
+ * @param[in] ucType is an unsigned char (1 octet) denoting the type of information being set. See Encrypted Channel Defines in ant_parameters.h.
+ * @param[in] aucInfo is a buffer containing the information being set (4 octets for ID, 19 octets for custom user data).
+ *
+ * @retval  0 Success
+ * @retval  -NRF_EINVAL
+ * @retval  ::NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED
+ */
+ant_err_t ant_crypto_info_set (uint8_t ucType, uint8_t *aucInfo);
+
+ /** @brief This function retrieves specific information to be exchanged between the channel master and slave during encryption channel set-up/negotiation.
+ *
+ * @param[in] ucType is an unsigned char (1 octet) denoting the type of information being requested. See Encrypted Channel Defines in ant_parameters.h.
+ * @param[out] aucInfo is a pointer to a buffer in which the information retrieved will be copied to (1 octet for supported mode, 4 octets for ID, 19 octets for custom user data).
+ *
+ * @retval  0 Success
+ * @retval  -NRF_EINVAL
+ */
+ant_err_t ant_crypto_info_get (uint8_t ucType, uint8_t *aucInfo);
 
  /** @brief This function sets ANT radio coexistence behaviour. Supported only if ANT is sharing radio HW concurrently with another wireless protocol.
  *          ANT Priority <-> Priority Mapping
@@ -589,6 +797,17 @@ ant_err_t ant_coex_config_set (uint8_t ucChannel, ANT_BUFFER_PTR *pstCoexConfig,
  */
 ant_err_t ant_coex_config_get (uint8_t ucChannel, ANT_BUFFER_PTR *pstCoexConfig, ANT_BUFFER_PTR *pstAdvCoexConfig);
 
+/** @brief This function enables or disables the enhanced channel spacing feature. This feature is enabled by
+*          default and is used to reduce internal channel collisions when running multiple tracking channels
+*          with channel periods that are synchronous with each other.
+*
+* @param[in] ucEnable is a unsigned char (1 octet) denoting enable/disable control. See Enhanced Channel Spacing Defines in ant_parameters.h
+*
+* @retval  0 Success
+* @retval  -NRF_EINVAL
+*/
+ant_err_t ant_enhanced_channel_spacing_enable(uint8_t ucEnable);
+
 /*************************** STATUS APIS *********************************/
 
 /** @brief This function gets a specific channel's status.
@@ -601,6 +820,17 @@ ant_err_t ant_coex_config_get (uint8_t ucChannel, ANT_BUFFER_PTR *pstCoexConfig,
  * @retval  ::NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED
  */
 ant_err_t ant_channel_status_get (uint8_t ucChannel, uint8_t *pucStatus);
+
+/** @brief This function determines if there is a pending transmission on a specific channel.
+ *
+ * @param[in] ucChannel is an unsigned char (1 octet) denoting the channel number to query.
+ * @param[out] pucPending is the pointer to an unsigned char (1 octet) where the pending result will be stored. 1 = pending, 0 = otherwise.
+ *
+ * @retval  0 Success
+ * @retval  -NRF_EINVAL
+ * @retval  ::NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED
+ */
+ant_err_t ant_pending_transmit (uint8_t ucChannel, uint8_t *pucPending);
 
 /** @brief This function gets the version string of the ANT stack.
  *

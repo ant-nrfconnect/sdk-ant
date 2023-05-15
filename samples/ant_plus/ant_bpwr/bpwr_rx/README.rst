@@ -25,7 +25,7 @@ This example uses the default channel configuration:
 +===================+=================+==================+
 | Channel type      | Master (0x10)   | Slave (0x00)     |
 +-------------------+-----------------+------------------+
-| Network key       | Public          | Public           |
+| Network key       | ANT+            | ANT+             |
 +-------------------+-----------------+------------------+
 | RF channel        | 57 (2457 MHz)   | 57 (2457 MHz)    |
 +-------------------+-----------------+------------------+
@@ -69,7 +69,7 @@ After programming the sample to your development kit, you can test the Bicycle P
 1. Compile and program the Bicycle Power Receiver.
 2. Compile and program the Bicycle Power Transmitter. Alternatively, use SimulANT+ as described below.
 
-   On the nRF DK side, the virtual COM port will show the ANT+ BPWR pages received. Below is an example of the pages recieved from a Power only sensor.
+   On the nRF DK side, the virtual COM port will show the ANT+ BPWR pages received. Below is an example of the pages received from a Power only sensor.
 
    .. parsed-literal::
       :class: highlight

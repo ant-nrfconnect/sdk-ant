@@ -76,8 +76,7 @@ static void master_beacon_process(ant_evt_t * p_ant_evt);
 
 static uint8_t m_last_rssi       = 0;
 static uint16_t m_last_device_id = 0;
-static uint8_t m_recieved        = 0;
-
+static uint8_t m_received = 0;
 
 /**@brief Function for setting payload for ANT message and sending it via
  *        ANT master beacon channel.
@@ -103,7 +102,7 @@ void ant_message_send()
     tx_buffer[2] = (uint8_t) m_last_device_id;        // LSB
     tx_buffer[3] = (uint8_t) (m_last_device_id >> 8); // MSB
     tx_buffer[6] = counter++;
-    tx_buffer[7] = m_recieved;
+    tx_buffer[7] = m_received;
 
     err_code = ant_broadcast_message_tx(CONFIG_ANT_MS_CHANNEL_NUMBER,
                                            ANT_STANDARD_DATA_PAYLOAD_SIZE,
@@ -227,11 +226,11 @@ static void background_scanner_process(ant_evt_t * p_ant_evt)
             }
 
             LOG_INF("=============================================================");
-            LOG_INF("Message number %d", m_recieved);
+            LOG_INF("Message number %d", m_received);
             LOG_INF("Device ID:     %d", m_last_device_id);
             LOG_INF("RSSI:          %d", m_last_rssi);
 
-            m_recieved++;
+            m_received++;
             break;
         }
         default:
@@ -316,7 +315,7 @@ static int utils_setup(void)
 
 
 /* Main function */
-void main(void)
+int main(void)
 {
     LOG_INF("Application starting...");
 
@@ -348,9 +347,6 @@ void main(void)
 ERROR_EXIT:
     ant_state_indicator_fatal_error();
     k_oops();
+
+    return 0;
 }
-
-
-/**
- *@}
- **/

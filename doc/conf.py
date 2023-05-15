@@ -20,9 +20,9 @@ subprocess.call('doxygen Doxyfile.in', shell=True)
 # -- Project information -----------------------------------------------------
 
 project = 'ANT for nRF Connect SDK'
-copyright = '2022, Garmin Canada Inc'
+copyright = '2023, Garmin Canada Inc'
 author = 'Garmin Canada Inc.'
-version = '0.5.0'
+version = '1.0.0'
 
 # -- General configuration ---------------------------------------------------
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2022 by Garmin Ltd. or its subsidiaries.
  * All rights reserved.
  *

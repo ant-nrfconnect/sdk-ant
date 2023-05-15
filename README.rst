@@ -49,15 +49,15 @@ What version of nRF Connect SDK do I need? What version of sdk-ant should I use 
 
 sdk-nrf v2.1.99-dev1 was the first revision containing ANT for nRF Connect SDK in the west manifest. Significant changes to the sdk-ant repository will be tagged as releases, and each release will contain sdk-nrf compatibility information. Check the Releases section on the sidebar for details. Since ANT depends on the sdk-nrfxlib repository, working on sdk-nrf main branch may lead to occasional compatibility issues as we accommodate upstream changes. We recommend pulling your sdk-ant revision up to the most recent release tag compatible with your sdk-nrf revision to get the latest features, samples and changes.
 
-When will ANT for nRF Connect SDK on the nRF52 series be supported?
-===================================================================
+Which nRF SoC series are supported?
+===================================
 
-At this time, we are focusing on fully enabling nRF53 Series support. Are you designing a product that requires nRF Connect SDK support on the nRF52 Series? Contact us.
+At this time, ANT for nRF Connect SDK exclusively supports the nRF5340 SoC. nRF52 and nRF54 are being considered for future releases. Are you designing a product that requires nRF Connect SDK support for another SoC? Contact us for release timelines.
 
-When can I plan to release products built with ANT for nRF Connect SDK?
-=======================================================================
+Can I release products built with ANT for nRF Connect SDK?
+==========================================================
 
-ANT for nRF Connect SDK is currently experimental. Production-ready ANT support for the nRF5340 SoC is targeted for mid-2023.
+ANT for nRF Connect SDK v1.0.0 has been released for production-ready integrations. Please see the release notes for more information.
 
 Does enabling ANT affect the Bluetooth QDID used for certification?
 ===================================================================

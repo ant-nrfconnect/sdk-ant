@@ -66,7 +66,7 @@ void ant_request_controller_init(ant_request_controller_t * p_controller);
  * @param[in]  channel_number   Channel number.
  * @param[in]  p_page_70        Pointer to the prepared page 70.
  *
- * @return     Error code returned by @ref sd_ant_acknowledge_message_tx().
+ * @return     Error code returned by @ref ant_acknowledge_message_tx().
  */
 uint32_t ant_request_controller_request(ant_request_controller_t * p_controller,
                                         uint8_t                    channel_number,
@@ -115,7 +115,6 @@ ant_request_controller_evt_t ant_request_controller_disp_evt_handler(
  *
  * @param[in]  p_controller             Pointer to the controller instance.
  * @param[in]  p_ant_evt                Event received from the ANT stack.
- * @retval     TRUE                     If there was a pending page.
  */
 void ant_request_controller_sens_evt_handler(ant_request_controller_t * p_controller,
                                              ant_evt_t                * p_ant_evt);

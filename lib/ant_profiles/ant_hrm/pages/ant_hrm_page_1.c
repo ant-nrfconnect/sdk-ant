@@ -27,7 +27,6 @@ typedef struct
 
 /**@brief Function for tracing page 1 and common data.
  *
- * @param[in]  p_common_data    Pointer to the common data.
  * @param[in]  p_page_data      Pointer to the page 1 data.
  */
 static void page1_data_log(ant_hrm_page1_data_t const * p_page_data)

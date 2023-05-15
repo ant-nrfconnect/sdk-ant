@@ -1,0 +1,47 @@
+#
+# Copyright 2022 by Garmin Ltd. or its subsidiaries.
+# All rights reserved.
+#
+# Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
+# and Associated Software. The Agreement accompanies the Software in the root directory of
+# the repository.
+#
+
+source "Kconfig.zephyr"
+
+menuconfig MULTI_CHANNELS_ENCRYPTED_RX
+	bool "ANT Multi-channels Encrypted RX sample"
+	select ANT
+	select ANT_CHANNEL_CONFIG
+	select ANT_SEARCH_CONFIG
+	select ANT_ENCRYPT_CONFIG
+	select ANT_STATE_INDICATOR
+	select DK_LIBRARY
+	default y
+
+menu "Channel configuration"
+
+config ID_DEV_TYPE
+	int "Channel ID: Device type"
+	default 2
+	range 0 127
+
+config ID_TRANS_TYPE
+	int "Channel ID: Transmission type"
+	default 1
+	range 0 255
+
+config CHAN_PERIOD
+	int "Channel Period"
+	default 8192
+	range 0 65535
+
+config RF_FREQ
+	int "Radio Frequency"
+	default 66
+
+config ANT_ENCRYPTION_NEGOTIATION_SLAVE
+	bool "ANT ENCRYPT_CONFIG negotiation for encrypted ANT slave (rx) channels"
+	default y
+
+endmenu

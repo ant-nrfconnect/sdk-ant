@@ -1,5 +1,5 @@
 #
-# Copyright 2022 by Garmin Ltd. or its subsidiaries.
+# Copyright 2023 by Garmin Ltd. or its subsidiaries.
 # All rights reserved.
 #
 # Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
@@ -8,9 +8,9 @@
 #
 
 rsource "ant_channel_config/Kconfig"
+rsource "ant_encryption/Kconfig"
 rsource "ant_key_manager/Kconfig"
 rsource "ant_profiles/Kconfig"
 rsource "ant_state_indicator/Kconfig"
 rsource "sensorsim/Kconfig"
 rsource "ant_search_config/Kconfig"
-

@@ -200,7 +200,7 @@ static ant_err_t ant_channel_rx_broadcast_setup(void) {
   return 0;
 }
 
-void main(void) {
+int main(void) {
   ant_err_t err_code;
 
   err_code = ant_stack_setup();
@@ -216,8 +216,10 @@ void main(void) {
 
   LOG_INF("ANT Broadcast RX example started");
 
-  return;
+  return 0;
 
 ERROR_EXIT:
   k_oops();
+
+  return 0;
 }

@@ -21,9 +21,7 @@
 #include <stdint.h>
 #include "ant_error.h"
 
-#ifndef CONFIG_ANT_ENCRYPTED_CHANNELS
-    #error Undefined NRF_ANT_ENCRYPTED_CHANNELS.
-#elif CONFIG_ANT_ENCRYPTED_CHANNELS > 0
+#if defined(CONFIG_ANT_ENCRYPTION_NUM_CHANNELS) && (CONFIG_ANT_ENCRYPTION_NUM_CHANNELS > 0)
     #include "ant_encrypt_config.h"
 #endif
 
@@ -44,7 +42,7 @@ typedef struct
     uint16_t channel_period;        ///< The period in 32 kHz counts.
     uint8_t  network_number;        ///< Network number denoting the network key.
 
-#if CONFIG_ANT_ENCRYPTED_CHANNELS > 0
+#if defined(CONFIG_ANT_ENCRYPTION_NUM_CHANNELS) && (CONFIG_ANT_ENCRYPTION_NUM_CHANNELS > 0)
     ant_encrypt_channel_settings_t * p_crypto_settings; ///< Pointer to cryptographic settings, NULL if this configuration have to be omitted.
 #endif
 

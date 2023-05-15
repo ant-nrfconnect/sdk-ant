@@ -211,7 +211,7 @@ int ant_stack_setup(void)
   return err;
 }
 
-void main(void)
+int main(void)
 {
   LOG_INF("ANT+ HRM TX sample starting...");
 
@@ -233,9 +233,11 @@ void main(void)
   }
 
   k_timer_start(&timer, K_MSEC(TIMER_TICK_MS), K_MSEC(TIMER_TICK_MS));
-  return;
+  return 0;
 
 ERROR_EXIT:
   ant_state_indicator_fatal_error();
   k_oops();
+
+  return 0;
 }
