@@ -1,5 +1,5 @@
 #
-# Copyright 2022 by Garmin Ltd. or its subsidiaries.
+# Copyright 2023 by Garmin Ltd. or its subsidiaries.
 # All rights reserved.
 #
 # Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
@@ -31,9 +31,21 @@ config ANT_NP_REMOTE
     depends on SOC_NRF5340_CPUNET
     default n
     help
-        ANT Remote (network core) configuration for multicore applications.
+       ANT Remote (network core) configuration for multicore applications.
 
 config ANT_RPC
     bool "ANT over RPC"
     default n
     select NRF_RPC
+
+config ANT_NP_HOST_SYS_INIT
+    bool "Initialize ANT network processor host during SYS_INIT"
+    depends on ANT_NP_HOST
+    default y
+    help
+       In most cases, the network processor host module handles initialization using
+       the SYS_INIT macro. This Kconfig is provided to bypass initialization and expose
+       the ant_rpc_app_init function for applications that have unique initialization
+       requirements. When enabled, it becomes the responisbility of the application to
+       ensure that ant_init() is called on the application core prior to any ANT API usage
+       so RPC messages from the network core can be processed.

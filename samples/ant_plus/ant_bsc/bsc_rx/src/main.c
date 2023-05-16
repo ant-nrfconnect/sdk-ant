@@ -223,13 +223,13 @@ static int utils_setup(void) {
 static int profile_setup(void) {
   int err = ant_bsc_disp_init(&bsc, BSC_DISP_CHANNEL_CONFIG(bsc), BSC_DISP_PROFILE_CONFIG(bsc));
   if (err) {
-    LOG_ERR("ant_hrm_disp_init failed: %d", err);
+    LOG_ERR("ant_bsc_disp_init failed: %d", err);
     return err;
   }
 
   err = ant_bsc_disp_open(&bsc);
   if (err) {
-    LOG_ERR("ant_hrm_disp_open failed: %d", err);
+    LOG_ERR("ant_bsc_disp_open failed: %d", err);
     return err;
   }
 
@@ -258,7 +258,7 @@ static int ant_stack_setup(void) {
   return err;
 }
 
-void main(void) {
+int main(void) {
   LOG_INF("ANT+ Bicycle Speed and Cadence RX sample starting...");
 
   int err = ant_stack_setup();
@@ -276,9 +276,11 @@ void main(void) {
     goto ERROR_EXIT;
   }
 
-  return;
+  return 0;
 
 ERROR_EXIT:
   ant_state_indicator_fatal_error();
   k_oops();
+
+  return 0;
 }

@@ -60,6 +60,14 @@ static uint16_t get_ushort(uint8_t *data) {
   return stData.usData;
 }
 
+/*****************************************************************************/
+
+#if (CONFIG_ANT_INTERNAL)
+  #include "internal/ant_np_remote_internal.c"
+#endif
+
+/*****************************************************************************/
+
 // ant data msg processing
 static void process_msg_data(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE *tx_msg) {
   switch (cmd_rsp->response_id) {
@@ -142,6 +150,7 @@ static void process_msg_data(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAG
   }
 
   default:
+    // intentionally fall-through to other msg processors if no match found
     break;
   }
 }
@@ -177,6 +186,28 @@ static void process_msg_req(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE
         tx_msg->ANT_MESSAGE_ucMesgID = MESG_CHANNEL_ID_ID;
         tx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = (uint8_t)temp;
         tx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2] = (uint8_t)(temp >> 8);
+      }
+      break;
+    }
+
+    case MESG_CHANNEL_MESG_PERIOD_ID: {
+      uint16_t temp;
+      cmd_rsp->response = ant_channel_period_get(cmd_rsp->channel, &temp);
+      if (!cmd_rsp->response) {
+        tx_msg->ANT_MESSAGE_ucSize = MESG_CHANNEL_MESG_PERIOD_SIZE;
+        tx_msg->ANT_MESSAGE_ucMesgID = MESG_CHANNEL_MESG_PERIOD_ID;
+        tx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = (uint8_t)temp;
+        tx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2] = (uint8_t)(temp >> 8);
+      }
+      break;
+    }
+
+    case MESG_CHANNEL_RADIO_FREQ_ID: {
+      cmd_rsp->response = ant_channel_radio_freq_get(cmd_rsp->channel,
+                            &tx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
+      if (!cmd_rsp->response) {
+        tx_msg->ANT_MESSAGE_ucSize = MESG_CHANNEL_RADIO_FREQ_SIZE;
+        tx_msg->ANT_MESSAGE_ucMesgID = MESG_CHANNEL_RADIO_FREQ_ID;
       }
       break;
     }
@@ -263,12 +294,17 @@ static void process_msg_req(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE
       break;
     }
 
-/*
     case MESG_EVENT_FILTER_CONFIG_ID: {
-      // TODO:
+      uint16_t temp;
+      cmd_rsp->response = ant_event_filtering_get(&temp);
+      if (!cmd_rsp->response) {
+        tx_msg->ANT_MESSAGE_ucSize = MESG_EVENT_FILTER_CONFIG_REQ_SIZE;
+        tx_msg->ANT_MESSAGE_ucMesgID = MESG_EVENT_FILTER_CONFIG_ID;
+        tx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = (uint8_t)temp;
+        tx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2] = (uint8_t)(temp >> 8);
+      }
       break;
     }
-*/
 
     case MESG_SDU_SET_MASK_ID: {
       cmd_rsp->response = ant_sdu_mask_get(cmd_rsp->channel, tx_msg->ANT_MESSAGE_aucPayload);
@@ -279,7 +315,6 @@ static void process_msg_req(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE
       break;
     }
 
-/*
     case MESG_ENCRYPT_ENABLE_ID: {
       cmd_rsp->response = ant_crypto_info_get(cmd_rsp->channel, tx_msg->ANT_MESSAGE_aucPayload);
       if (!cmd_rsp->response) {
@@ -299,7 +334,6 @@ static void process_msg_req(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE
       }
       break;
     }
-*/
 
 /*
     case MESG_RFACTIVE_NOTIFICATION_ID: {
@@ -324,37 +358,60 @@ static void process_msg_req(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE
     }
 */
 
-/*
     case MESG_CHANNEL_CRC_MODE_ID: {
-      tx_msg->ANT_MESSAGE_ucSize = MESG_CHANNEL_CRC_MODE_SIZE;
-      tx_msg->ANT_MESSAGE_ucMesgID = MESG_CHANNEL_CRC_MODE_ID;
-      ant_channel_radio_crc_mode_get(tx_msg->ANT_MESSAGE_ucChannel,
-        &tx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
-      break;
-    }
-*/
-
-/*
-    case MESG_SET_SEARCH_CH_PRIORITY_ID: {
-      uint8_t search_priority;
-      cmd_rsp->response = ant_search_channel_priority_get(cmd_rsp->channel, &search_priority);
+      cmd_rsp->response = ant_channel_radio_crc_mode_get(tx_msg->ANT_MESSAGE_ucChannel,
+                            &tx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
       if (!cmd_rsp->response) {
-        tx_msg->ANT_MESSAGE_ucSize = MESG_SET_SEARCH_CH_PRIORITY_SIZE;
-        tx_msg->ANT_MESSAGE_ucMesgID = MESG_SET_SEARCH_CH_PRIORITY_ID;
-        tx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = search_priority;
+        tx_msg->ANT_MESSAGE_ucSize = MESG_CHANNEL_CRC_MODE_SIZE;
+        tx_msg->ANT_MESSAGE_ucMesgID = MESG_CHANNEL_CRC_MODE_ID;
       }
       break;
     }
-*/
+
+    case MESG_SET_SEARCH_CH_PRIORITY_ID: {
+      cmd_rsp->response = ant_search_channel_priority_get(cmd_rsp->channel,
+                            &tx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
+      if (!cmd_rsp->response) {
+        tx_msg->ANT_MESSAGE_ucSize = MESG_SET_SEARCH_CH_PRIORITY_SIZE;
+        tx_msg->ANT_MESSAGE_ucMesgID = MESG_SET_SEARCH_CH_PRIORITY_ID;
+      }
+      break;
+    }
+
+    case MESG_PENDING_TRANSMIT_CLEAR_ID: {
+      cmd_rsp->response = ant_pending_transmit(cmd_rsp->channel,
+                            &tx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
+      if (!cmd_rsp->response) {
+        tx_msg->ANT_MESSAGE_ucSize = MESG_PENDING_TRANSMIT_GET_SIZE;
+        tx_msg->ANT_MESSAGE_ucMesgID = MESG_PENDING_TRANSMIT_CLEAR_ID;
+      }
+      break;
+    }
+
+    case MESG_ANTLIB_CONFIG_ID: {
+      cmd_rsp->response = ant_lib_config_get(&tx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
+      if (!cmd_rsp->response) {
+        tx_msg->ANT_MESSAGE_ucSize = MESG_ANTLIB_CONFIG_SIZE;
+        tx_msg->ANT_MESSAGE_ucMesgID = MESG_ANTLIB_CONFIG_ID;
+      }
+      break;
+    }
 
     default:
+      // forward to internal
+#if (CONFIG_ANT_INTERNAL)
+      process_msg_req_internal(cmd_rsp, rx_msg, tx_msg);
+#else
+      // need to set invalid message here if no matching id found with mesg req
       cmd_rsp->response = INVALID_MESSAGE;
+#endif
       break;
     }
     break;
   }
 
   default:
+    // intentionally fall-through to other msg processors if no match found
     break;
   }
 }
@@ -413,13 +470,13 @@ static void process_msg_cmd(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE
 
   case MESG_PROX_SEARCH_CONFIG_ID: {
     if (rx_msg->ANT_MESSAGE_ucSize > MESG_PROX_SEARCH_CONFIG_SIZE) {
-      ant_prox_search_set(cmd_rsp->channel,
-        rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1],
-        rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2]);
+      cmd_rsp->response = ant_prox_search_set(cmd_rsp->channel,
+                            rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1],
+                            rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2]);
     } else {
-      ant_prox_search_set(cmd_rsp->channel,
-        rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1],
-        0);
+      cmd_rsp->response = ant_prox_search_set(cmd_rsp->channel,
+                            rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1],
+                            0);
     }
     break;
   }
@@ -448,41 +505,42 @@ static void process_msg_cmd(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE
 
   case MESG_CHANNEL_RADIO_TX_POWER_ID: {
     if (rx_msg->ANT_MESSAGE_ucSize > MESG_CHANNEL_RADIO_TX_POWER_SIZE) {
-      ant_channel_radio_tx_power_set(cmd_rsp->channel,
-        rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1],
-        rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2]);
+      cmd_rsp->response = ant_channel_radio_tx_power_set(cmd_rsp->channel,
+                            rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1],
+                            rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2]);
     } else {
-      ant_channel_radio_tx_power_set(cmd_rsp->channel,
-        rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1], 0);
+      cmd_rsp->response = ant_channel_radio_tx_power_set(cmd_rsp->channel,
+                            rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1], 0);
     }
     break;
   }
 
   case MESG_CHANNEL_SEARCH_TIMEOUT_ID: {
-    ant_channel_rx_search_timeout_set(cmd_rsp->channel,
-      rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
+    cmd_rsp->response = ant_channel_rx_search_timeout_set(cmd_rsp->channel,
+                          rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
     break;
   }
 
   case MESG_SEARCH_WAVEFORM_ID: {
-    ant_search_waveform_set(cmd_rsp->channel,
-      get_ushort(rx_msg->ANT_MESSAGE_aucPayload));
+    cmd_rsp->response = ant_search_waveform_set(cmd_rsp->channel,
+                          get_ushort(rx_msg->ANT_MESSAGE_aucPayload));
     break;
   }
 
   case MESG_NETWORK_KEY_ID: {
-    if (cmd_rsp->channel < MAX_NETWORKS) {
-      ant_network_address_set(cmd_rsp->channel, rx_msg->ANT_MESSAGE_aucPayload);
-    } else {
-      cmd_rsp->response = INVALID_MESSAGE;
-    }
+    cmd_rsp->response = ant_network_address_set(cmd_rsp->channel,
+                            rx_msg->ANT_MESSAGE_aucPayload);
     break;
   }
 
   case MESG_ANTLIB_CONFIG_ID: {
     ant_lib_config_clear(ANT_LIB_CONFIG_MASK_ALL);
-    cmd_rsp->response = ant_lib_config_set( ANT_LIB_CONFIG_RADIO_CONFIG_ALWAYS |
-                          rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
+    if (cmd_rsp->channel) { // note: repurposed so that 0 = set, 1 = clear
+      cmd_rsp->response = ant_lib_config_clear(rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
+    } else {
+      cmd_rsp->response = ant_lib_config_set( ANT_LIB_CONFIG_RADIO_CONFIG_ALWAYS |
+                            rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
+    }
     break;
   }
 
@@ -490,13 +548,13 @@ static void process_msg_cmd(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE
     if (rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]) {
       cmd_rsp->response = ant_lib_config_set(ANT_LIB_CONFIG_MESG_OUT_INC_DEVICE_ID);
     } else {
-      ant_lib_config_clear(ANT_LIB_CONFIG_MESG_OUT_INC_DEVICE_ID);
+      cmd_rsp->response = ant_lib_config_clear(ANT_LIB_CONFIG_MESG_OUT_INC_DEVICE_ID);
     }
     break;
   }
 
   case MESG_RADIO_CW_INIT_ID: {
-    ant_cw_test_mode_init();
+    cmd_rsp->response = ant_cw_test_mode_init();
     break;
   }
 
@@ -504,20 +562,20 @@ static void process_msg_cmd(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE
     // TODO: does hfclk need to be forced on?
     // TODO: MESG_RADIO_CW_MODE_SIZE not updated with ucMode
     if (rx_msg->ANT_MESSAGE_ucSize >= (MESG_RADIO_CW_MODE_SIZE + 2)) {
-      ant_cw_test_mode(rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2],
-        rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1],
-        rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_3],
-        rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_4]);
+      cmd_rsp->response = ant_cw_test_mode(rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2],
+                            rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1],
+                            rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_3],
+                            rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_4]);
     } else if (rx_msg->ANT_MESSAGE_ucSize > MESG_RADIO_CW_MODE_SIZE) {
-      ant_cw_test_mode(rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2],
-        rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1],
-        rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_3],
-        0);
+      cmd_rsp->response = ant_cw_test_mode(rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2],
+                            rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1],
+                            rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_3],
+                            0);
     } else {
-      ant_cw_test_mode(rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2],
-        rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1],
-        0,
-        0);
+      cmd_rsp->response = ant_cw_test_mode(rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2],
+                            rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1],
+                            0,
+                            0);
     }
     break;
   }
@@ -568,28 +626,28 @@ static void process_msg_cmd(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE
 */
 
   case MESG_SET_LP_SEARCH_TIMEOUT_ID: {
-    ant_channel_low_priority_rx_search_timeout_set(cmd_rsp->channel,
-      rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
+    cmd_rsp->response = ant_channel_low_priority_rx_search_timeout_set(cmd_rsp->channel,
+                          rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
     break;
   }
 
   case MESG_SET_SEARCH_CH_PRIORITY_ID: {
-    ant_search_channel_priority_set(cmd_rsp->channel,
-      rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
+    cmd_rsp->response = ant_search_channel_priority_set(cmd_rsp->channel,
+                          rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
     break;
   }
 
   case MESG_AUTO_FREQ_CONFIG_ID: {
-    ant_auto_freq_hop_table_set(cmd_rsp->channel,
-        rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1],
-        rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2],
-        rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_3]);
+    cmd_rsp->response = ant_auto_freq_hop_table_set(cmd_rsp->channel,
+                          rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1],
+                          rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2],
+                          rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_3]);
     break;
   }
 
   case MESG_CONFIG_ADV_BURST_ID: {
     cmd_rsp->response = ant_adv_burst_config_set(rx_msg->ANT_MESSAGE_aucPayload,
-                          (rx_msg->ANT_MESSAGE_ucSize - MESG_ID_SIZE));
+                          (rx_msg->ANT_MESSAGE_ucSize - MESG_CHANNEL_NUM_SIZE));
     break;
   }
 
@@ -597,7 +655,7 @@ static void process_msg_cmd(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE
     ANT_BUFFER_PTR stBuf;
     stBuf.pucBuffer = rx_msg->ANT_MESSAGE_aucPayload;
     stBuf.ucBufferSize = rx_msg->ANT_MESSAGE_ucSize - MESG_CHANNEL_NUM_SIZE;
-    ant_coex_config_set(cmd_rsp->channel, &stBuf, NULL);
+    cmd_rsp->response = ant_coex_config_set(cmd_rsp->channel, &stBuf, NULL);
     break;
   }
 
@@ -605,7 +663,7 @@ static void process_msg_cmd(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE
     ANT_BUFFER_PTR stBuf;
     stBuf.pucBuffer = rx_msg->ANT_MESSAGE_aucPayload;
     stBuf.ucBufferSize = rx_msg->ANT_MESSAGE_ucSize - MESG_CHANNEL_NUM_SIZE;
-    ant_coex_config_set(cmd_rsp->channel, NULL, &stBuf);
+    cmd_rsp->response = ant_coex_config_set(cmd_rsp->channel, NULL, &stBuf);
     break;
   }
 
@@ -629,16 +687,15 @@ static void process_msg_cmd(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE
   }
 */
 
-/*
   case MESG_EVENT_FILTER_CONFIG_ID: {
-    // TODO:
+    cmd_rsp->response = ant_event_filtering_set(get_ushort(rx_msg->ANT_MESSAGE_aucPayload));
     break;
   }
-*/
+
 
   case MESG_ACTIVE_SEARCH_SHARING_ID: {
-    ant_active_search_sharing_cycles_set(cmd_rsp->channel,
-      rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
+    cmd_rsp->response = ant_active_search_sharing_cycles_set(cmd_rsp->channel,
+                          rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
     break;
   }
 
@@ -654,7 +711,6 @@ static void process_msg_cmd(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE
     break;
   }
 
-/*
   case MESG_ENCRYPT_ENABLE_ID: {
     cmd_rsp->response = ant_crypto_channel_enable(cmd_rsp->channel,
                           rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1],
@@ -662,23 +718,18 @@ static void process_msg_cmd(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE
                           rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_3]);
     break;
   }
-*/
 
-/*
   case MESG_SET_ENCRYPT_KEY_ID: {
     cmd_rsp->response = ant_crypto_key_set(cmd_rsp->channel,
                           rx_msg->ANT_MESSAGE_aucPayload);
     break;
   }
-*/
 
-/*
   case MESG_SET_ENCRYPT_INFO_ID: {
     cmd_rsp->response = ant_crypto_info_set(cmd_rsp->channel,
                           rx_msg->ANT_MESSAGE_aucPayload);
     break;
   }
-*/
 
 /*
   case MESG_RFACTIVE_NOTIFICATION_ID: {
@@ -689,46 +740,65 @@ static void process_msg_cmd(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MESSAGE
   }
 */
 
-// TODO:
-//  case MESG_SCALABLE_CHANNEL_CONFIG_ID: {
-//    break;
-//  }
-
-// TODO:
-//  case MESG_ECS_ENABLE_ID: {
-//    break;
-//  }
-
-// TODO:
-//  case MESG_CHANNEL_SPACING_CONFIG_ID: {
-//    break;
-//  }
-
-// TODO:
-//  case MESG_PA_LNA_CONFIG_ID: {
-//    break;
-//  }
-
 /*
-  case MESG_CHANNEL_CRC_MODE_ID: {
-    if (rx_msg->ANT_MESSAGE_ucSize < MESG_CHANNEL_CRC_MODE_SIZE) {
-      cmd_rsp->response = INVALID_MESSAGE;
-      break;
-    }
-    cmd_rsp->response = ant_channel_radio_crc_mode_set(rx_msg->ANT_MESSAGE_ucChannel,
-                          rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
-    break;
-  }
-*/
-
-/*
-  case MESG_DROP_TO_SEARCH_EXTENSION_ID: {
+  case MESG_SCALABLE_CHANNEL_CONFIG_ID: {
     // TODO:
     break;
   }
 */
 
+  case MESG_ECS_ENABLE_ID: {
+    cmd_rsp->response = ant_enhanced_channel_spacing_enable(rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
+    break;
+  }
+
+/*
+  case MESG_PA_LNA_CONFIG_ID: {
+    // TODO:
+    break;
+  }
+*/
+
+  case MESG_CHANNEL_CRC_MODE_ID: {
+    cmd_rsp->response = ant_channel_radio_crc_mode_set(rx_msg->ANT_MESSAGE_ucChannel,
+                          rx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
+    break;
+  }
+
+  case MESG_PENDING_TRANSMIT_CLEAR_ID: {
+    cmd_rsp->response = ant_pending_transmit_clear(cmd_rsp->channel,
+                          &tx_msg->ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1]);
+    if (!cmd_rsp->response) {
+      tx_msg->ANT_MESSAGE_ucSize = MESG_PENDING_TRANSMIT_CLEAR_SIZE + 1; // +1 extra to return Success param
+      tx_msg->ANT_MESSAGE_ucMesgID = MESG_PENDING_TRANSMIT_CLEAR_ID;
+      tx_msg->ANT_MESSAGE_ucChannel = cmd_rsp->channel;
+    }
+    break;
+  }
+
+  case MESG_STACK_ENABLE_DISABLE_ID: {
+    // blocking call. TODO: revise this if rpc cannot afford to be blocked for up to 2s
+    ant_stack_reset_in_progress = true;
+
+    if (cmd_rsp->channel) { // note: channel reused for desired API call, 0 = enable, 1 = disable
+      cmd_rsp->response = ant_stack_enable();
+    } else {
+      cmd_rsp->response = ant_stack_disable();
+    }
+
+    // reset remote burst handler state
+    ant_np_remote_burst_init();
+
+    ant_stack_reset_in_progress = false;
+    break;
+  }
+
   default:
+    // forward to internal
+#if (CONFIG_ANT_INTERNAL)
+    process_msg_cmd_internal(cmd_rsp, rx_msg, tx_msg);
+#endif
+    // intentionally fall-through to other msg processors if no match found
     break;
   }
 }
@@ -782,6 +852,7 @@ static void process_msg_ext_ids(cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MES
   }
 
   default:
+    // intentionally fall-through to other msg processors if no match found
     break;
   }
 }
@@ -804,17 +875,11 @@ static void process_msg(ANT_MESSAGE *rx_msg, ANT_MESSAGE *tx_msg) {
     // TODO: For time being, report back as wrong channel state error in cmd rsp
     cmd_rsp.response = CHANNEL_IN_WRONG_STATE;
   } else {
-    // TODO: re-assess this
-    if ((cmd_rsp.channel < CONFIG_ANT_TOTAL_CHANNELS_ALLOCATED) ||
-        (MAX_NETWORKS > CONFIG_ANT_TOTAL_CHANNELS_ALLOCATED &&
-        rx_msg->ANT_MESSAGE_ucMesgID == MESG_NETWORK_KEY_ID) ||
-        ((rx_msg->ANT_MESSAGE_ucMesgID & MSG_EXT_ID_MASK) == MSG_EXT_ID_MASK)) {
-      // send through msg type processors. TODO: optimzation
-      process_msg_data(&cmd_rsp, rx_msg, tx_msg);
-      process_msg_req(&cmd_rsp, rx_msg, tx_msg);
-      process_msg_cmd(&cmd_rsp, rx_msg, tx_msg);
-      process_msg_ext_ids(&cmd_rsp, rx_msg, tx_msg);
-    }
+    // send through msg type processors. TODO: optimzation
+    process_msg_data(&cmd_rsp, rx_msg, tx_msg);
+    process_msg_req(&cmd_rsp, rx_msg, tx_msg);
+    process_msg_cmd(&cmd_rsp, rx_msg, tx_msg);
+    process_msg_ext_ids(&cmd_rsp, rx_msg, tx_msg);
   }
 
   if (!tx_msg->ANT_MESSAGE_ucSize) {

@@ -13,10 +13,7 @@ Setting up nRF Connect SDK
 
 The nRF Connect SDK (sdk-nrf) uses west to manage a combination of multiple Git repositories and versions.
 
-You must use the west tool to install all components of the nRF Connect SDK including ANT. The required version of west is 0.10.0 or higher.
-
-.. note::
-   ANT for nRF Connect SDK is available for sdk-nrf version **v2.1.99-dev1** and up
+You must use the west tool to install all components of the nRF Connect SDK including ANT. The required version of west is dictated by sdk-nrf.
 
 Follow the installation instuctions in the `nRF Connect SDK Getting started <https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/getting_started.html>`_ guide.
 
@@ -34,11 +31,11 @@ Once your access is set up, you will be able to browse the repository here: http
 
      west config manifest.group-filter +ant
 
-2. Verify that the ANT repository was added to the west list::
+2. Use the west list command to verify the ANT repository version::
 
      west list ant
 
-   If the new configuration is correct, the output will display remote and revision information about the repository defined in ``nrf/west.yml``. For example::
+   The output will display remote and revision information about the repository defined in ``nrf/west.yml``. For example::
 
      ant          ant                          8f6e2b0470d11b5c1a97c92df35eb1350e84c5f8 https://github.com/ant-nrfconnect/sdk-ant
 

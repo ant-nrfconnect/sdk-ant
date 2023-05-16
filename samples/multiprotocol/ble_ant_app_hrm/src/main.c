@@ -1,7 +1,7 @@
 /**
  * This software is subject to the ANT+ Shared Source License
  * www.thisisant.com/swlicenses
- * Copyright (c) Garmin Canada Inc. 2022
+ * Copyright (c) Garmin Canada Inc. 2023
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or
@@ -145,7 +145,7 @@ static int bt_ready(void) {
 
   LOG_INF("Bluetooth initialized");
 
-  err = bt_le_adv_start(BT_LE_ADV_CONN_NAME, ad, ARRAY_SIZE(ad), NULL, 0);
+  err = bt_le_adv_start(BT_LE_ADV_CONN_NAME_AD, ad, ARRAY_SIZE(ad), NULL, 0);
   if (err && err != -EALREADY) {
     LOG_INF("Advertising failed to start (err %x)", err);
     return err;
@@ -282,7 +282,7 @@ int ant_stack_setup(void) {
   return err;
 }
 
-void main(void) {
+int main(void) {
   int err;
 
   LOG_INF("BLE ANT+ HRM Relay sample starting...");
@@ -316,11 +316,13 @@ void main(void) {
 
   bt_conn_auth_cb_register(&auth_cb_display);
 
-  return;
+  return 0;
 
 ERROR_EXIT:
   ant_state_indicator_fatal_error();
   k_oops();
+
+  return 0;
 }
 
 K_THREAD_DEFINE(hrs_notify_thread_id, STACKSIZE, hrs_notify_thread, NULL, NULL, NULL, PRIORITY, 0,

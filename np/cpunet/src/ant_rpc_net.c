@@ -129,8 +129,7 @@ static void ant_rpc_init_err_handler(const struct nrf_rpc_err_report *report) {
   LOG_ERR("init err %d", report->code);
 }
 
-int32_t ant_rpc_net_init(const struct device *dev) {
-  ARG_UNUSED(dev);
+int32_t ant_rpc_net_init(void) {
   int err;
 
   // TODO: refine logging

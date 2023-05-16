@@ -25,7 +25,7 @@ This example uses the default channel configuration:
 +===================+===============+=================+
 | Channel type      | Master (0x10) | Slave (0x00)    |
 +-------------------+---------------+-----------------+
-| Network key       | Public        | Public          |
+| Network key       | ANT+          | ANT+            |
 +-------------------+---------------+-----------------+
 | RF channel        | 57 (2457 MHz) | 57 (2457 MHz)   |
 +-------------------+---------------+-----------------+

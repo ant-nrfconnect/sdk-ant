@@ -48,7 +48,7 @@ ant_err_t ant_channel_init(ant_channel_config_t const * p_config)
     }
 
 
-#if NRF_SDH_ANT_ENCRYPTED_CHANNELS > 0
+#if defined(CONFIG_ANT_ENCRYPTION_NUM_CHANNELS) && (CONFIG_ANT_ENCRYPTION_NUM_CHANNELS > 0)
     if(err_code) {
         return err_code;
     }

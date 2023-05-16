@@ -62,7 +62,7 @@ config ANT_TOTAL_CHANNELS_ALLOCATED
 config ANT_ENCRYPTED_CHANNELS
 	int
 	default 0
-	prompt "Encrypted ANT channels will be supported in a future release."
+	prompt "Allocated ANT encrypted channels."
 
 config ANT_EVENT_QUEUE_SIZE
 	int
@@ -73,6 +73,18 @@ config ANT_BURST_QUEUE_SIZE
 	int
 	default 128
 	prompt "ANT burst queue size."
+
+config ANT_SDC_INIT
+	bool "Allow ANT Init to initialize the Softdevice Controller (sdc_init)"
+	depends on BT
+	depends on SOC_NRF5340_CPUNET
+	default n
+	help
+	  Allow ANT initialization on the network core to also initialize the softdevice
+	  controller. This is to allow the ANT library stack to utlize the sdc_soc
+	  interface for cryptographic purposes. If sdc_init() is run prior to ANT
+	  initialization (eg. for BT), then this configuration is not needed as long as
+	  it is run before using any ANT library stack cryptographic functions. 
 
 module=ANT
 module-str=ANT

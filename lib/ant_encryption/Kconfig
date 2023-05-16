@@ -1,0 +1,31 @@
+#
+# Copyright 2023 by Garmin Ltd. or its subsidiaries.
+# All rights reserved.
+#
+# Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
+# and Associated Software. The Agreement accompanies the Software in the root directory of
+# the repository.
+#
+
+menuconfig ANT_ENCRYPT_CONFIG
+	bool "ANT Encrypt Config Library"
+	help
+	  Helper functions for ANT encrypt configuration
+
+if ANT_ENCRYPT_CONFIG
+
+module=ANT_ENCRYPT_CONFIG
+module-str=ANT Encrypt Config
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+config ANT_ENCRYPTION_NUM_CHANNELS
+	int
+	range 1 15
+	default 1
+	prompt "Number of encrypted channels to configure. Must be <= CONFIG_ANT_ENCRYPTED_CHANNELS"
+
+config ANT_ENCRYPTION_NEGOTIATION_SLAVE
+	bool "Negotiation for encrypted ANT slave (rx) channels"
+	default n
+
+endif # ANT_ENCRYPT_CONFIG

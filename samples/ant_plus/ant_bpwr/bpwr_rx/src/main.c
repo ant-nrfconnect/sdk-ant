@@ -179,7 +179,7 @@ int ant_stack_setup(void) {
   return err;
 }
 
-void main(void) {
+int main(void) {
   LOG_INF("ANT+ Bicycle Power RX sample started.");
 
   int err = ant_stack_setup();
@@ -197,9 +197,11 @@ void main(void) {
     goto ERROR_EXIT;
   }
 
-  return;
+  return 0;
 
 ERROR_EXIT:
   ant_state_indicator_fatal_error();
   k_oops();
+
+  return 0;
 }

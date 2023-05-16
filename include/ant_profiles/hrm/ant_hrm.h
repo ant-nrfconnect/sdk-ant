@@ -254,4 +254,3 @@ void ant_hrm_disp_evt_handler(ant_evt_t * p_ant_evt, void * p_context);
 #endif
 
 #endif // ANT_HRM_H__
-/** @} */

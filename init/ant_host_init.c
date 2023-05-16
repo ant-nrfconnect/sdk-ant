@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Garmin Ltd. or its subsidiaries.
+ * Copyright 2023 by Garmin Ltd. or its subsidiaries.
  * All rights reserved.
  *
  * Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
@@ -15,6 +15,10 @@
 
 #include "ant_host_init.h"
 #include "ant_interface.h"
+
+#if !defined(CONFIG_ANT_NP_HOST_SYS_INIT)
+#include "ant_rpc_app.h"
+#endif // !CONFIG_ANT_NP_HOST_SYS_INIT
 
 static struct k_work ant_work;
 struct k_work_q ant_work_q;
@@ -36,6 +40,16 @@ ant_err_t ant_init(void)
 {
    // Note: ANT stack initializations of resources for configured # channels, buffers.. etc performed by cpunet core
    //       cpuapp core does not initiate this
+
+#if !defined(CONFIG_ANT_NP_HOST_SYS_INIT)
+   // If Kconfig has been used to delay RPC init via SYS_INIT, complete the initialization here
+   ant_err_t err = ant_rpc_app_init(NULL);
+   if (err) {
+      LOG_ERR("ant_rpc_app_init() failed: %d", err);
+      return err;
+   }
+#endif // !CONFIG_ANT_NP_HOST_SYS_INIT
+
    return 0;
 }
 
@@ -115,10 +129,8 @@ static void ant_work_handler(struct k_work *item)
    return;
 }
 
-static int ant_thread_init(const struct device *dev)
+static int ant_thread_init(void)
 {
-   ARG_UNUSED(dev);
-
    k_work_queue_start(&ant_work_q, ant_work_stack,
                   K_THREAD_STACK_SIZEOF(ant_work_stack),
                   K_PRIO_COOP(CONFIG_ANT_THREAD_COOP_PRIO), NULL);

@@ -25,6 +25,9 @@ LOG_MODULE_REGISTER(ant_np_host, CONFIG_ANT_LOG_LEVEL);
 #define SERIAL_DATA_OFFSET_4 ((uint8_t)3)
 #define SERIAL_DATA_OFFSET_5 ((uint8_t)4)
 
+#define ANT_NP_EVENT_FILTER_PROHIBITED_EVENTS (FILTER_EVENT_TRANSFER_TX_COMPLETED | FILTER_EVENT_TRANSFER_TX_FAILED)
+uint16_t ant_np_event_filter_mask = 0;
+
 extern struct k_sem ant_event_sem;
 
 typedef struct {
@@ -54,20 +57,52 @@ static uint32_t decode_cmd_rsp(ANT_MESSAGE *rsp) {
 /******************************* RE/INITIALIZATION API *******************/
 
 ant_err_t ant_stack_init(const uint8_t *aucLicenseKey) {
-  // TODO: clean up - ANT stack is initialized on the remote, nothing to do
+  // Initialization handled on remote, nothing to do
   return NRF_ANT_SUCCESS;
 }
 
-ant_err_t ant_enable(ANT_ENABLE *const pstChannelEnable) {
-  // TODO: clean up - ANT is enabled on the remote, nothing to do
+ant_err_t ant_stack_config(ANT_ENABLE *const pstChannelEnable) {
+  // Stack config handled on remote, nothing to do
   return NRF_ANT_SUCCESS;
 }
 
-/*
-void ant_stack_disable(void) {
-  // TODO:
+ant_err_t ant_stack_enable(void) {
+  ant_err_t err;
+  ANT_MESSAGE cmd;
+  ANT_MESSAGE rsp;
+
+  cmd.ANT_MESSAGE_ucSize = MESG_STACK_ENABLE_DISABLE_SIZE;
+  cmd.ANT_MESSAGE_ucMesgID = MESG_STACK_ENABLE_DISABLE_ID;
+  cmd.ANT_MESSAGE_ucChannel = 0; // 0 = enable
+  err = ant_rpc_app_send_cmd(&cmd, &rsp);
+  if (err) {
+    return err;
+  }
+  err = decode_cmd_rsp(&rsp);
+
+  // reset host burst handler state
+  ant_np_host_burst_init();
+
+  // reset ant_np event filter mask
+  ant_np_event_filter_mask = 0;
+
+  return err;
 }
-*/
+
+ant_err_t ant_stack_disable(void) {
+  ant_err_t err;
+  ANT_MESSAGE cmd;
+  ANT_MESSAGE rsp;
+
+  cmd.ANT_MESSAGE_ucSize = MESG_STACK_ENABLE_DISABLE_SIZE;
+  cmd.ANT_MESSAGE_ucMesgID = MESG_STACK_ENABLE_DISABLE_ID;
+  cmd.ANT_MESSAGE_ucChannel = 1; // 1 = disable
+  err = ant_rpc_app_send_cmd(&cmd, &rsp);
+  if (err) {
+    return err;
+  }
+  return decode_cmd_rsp(&rsp);
+}
 
 ant_err_t ant_stack_reset(void) {
   ant_err_t err;
@@ -85,6 +120,9 @@ ant_err_t ant_stack_reset(void) {
 
   // reset host burst handler state
   ant_np_host_burst_init();
+
+  // reset ant_np event filter mask
+  ant_np_event_filter_mask = 0;
 
   return err;
 }
@@ -314,12 +352,24 @@ ant_err_t ant_burst_handler_request(uint8_t ucChannel, uint16_t usSize,
   return err;
 }
 
-/*
 ant_err_t ant_pending_transmit_clear(uint8_t ucChannel, uint8_t *pucSuccess) {
-  // TODO:
-  return NRF_ANT_ERROR_INVALID_MESSAGE;
+  ant_err_t err;
+  ANT_MESSAGE cmd;
+  ANT_MESSAGE rsp;
+
+  cmd.ANT_MESSAGE_ucSize = MESG_PENDING_TRANSMIT_CLEAR_SIZE;
+  cmd.ANT_MESSAGE_ucMesgID = MESG_PENDING_TRANSMIT_CLEAR_ID;
+  cmd.ANT_MESSAGE_ucChannel = ucChannel;
+  err = ant_rpc_app_send_cmd(&cmd, &rsp);
+  if (err) {
+    return err;
+  }
+  err = decode_cmd_rsp(&rsp);
+  if (!err) {
+    *pucSuccess = rsp.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1];
+  }
+  return err;
 }
-*/
 
 /*
 ant_err_t ant_transfer_stop(void) {
@@ -382,8 +432,27 @@ ant_err_t ant_channel_radio_freq_set(uint8_t ucChannel, uint8_t ucFreq) {
 }
 
 ant_err_t ant_channel_radio_freq_get(uint8_t ucChannel, uint8_t *pucRfreq) {
-  // TODO:
-  return NRF_ANT_ERROR_INVALID_MESSAGE;
+  ant_err_t err;
+  ANT_MESSAGE cmd;
+  ANT_MESSAGE rsp;
+
+  // check parameters that affect serialization of the msg, rest is handled by the ANT library
+  if (pucRfreq == NULL)
+    return NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED;
+
+  cmd.ANT_MESSAGE_ucSize = MESG_REQUEST_SIZE;
+  cmd.ANT_MESSAGE_ucMesgID = MESG_REQUEST_ID;
+  cmd.ANT_MESSAGE_ucChannel = ucChannel;
+  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = MESG_CHANNEL_RADIO_FREQ_ID;
+  err = ant_rpc_app_send_cmd(&cmd, &rsp);
+  if (err) {
+    return err;
+  }
+  err = decode_cmd_rsp(&rsp);
+  if (!err) {
+    *pucRfreq = rsp.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1];
+  }
+  return err;
 }
 
 ant_err_t ant_channel_radio_tx_power_set(uint8_t ucChannel, uint8_t ucTxPower,
@@ -456,19 +525,45 @@ ant_err_t ant_config_pa_lna_get(ANT_PA_LNA_CONFIG *pstAmpConfig) {
 }
 */
 
-/*
 ant_err_t ant_channel_radio_crc_mode_set(uint8_t ucChannel, uint8_t ucCRCMode) {
-  // TODO:
-  return NRF_ANT_ERROR_INVALID_MESSAGE;
-}
-*/
+  ant_err_t err;
+  ANT_MESSAGE cmd;
+  ANT_MESSAGE rsp;
 
-/*
-ant_err_t ant_channel_radio_crc_mode_get(uint8_t ucChannel, uint8_t *ucCRCModeOut) {
-  // TODO:
-  return NRF_ANT_ERROR_INVALID_MESSAGE;
+  cmd.ANT_MESSAGE_ucSize = MESG_CHANNEL_CRC_MODE_SIZE;
+  cmd.ANT_MESSAGE_ucMesgID = MESG_CHANNEL_CRC_MODE_ID;
+  cmd.ANT_MESSAGE_ucChannel = ucChannel;
+  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = ucCRCMode;
+  err = ant_rpc_app_send_cmd(&cmd, &rsp);
+  if (err) {
+    return err;
+  }
+  return decode_cmd_rsp(&rsp);
 }
-*/
+
+ant_err_t ant_channel_radio_crc_mode_get(uint8_t ucChannel, uint8_t *ucCRCModeOut) {
+  ant_err_t err;
+  ANT_MESSAGE cmd;
+  ANT_MESSAGE rsp;
+
+  // check parameters that affect serialization of the msg, rest is handled by the ANT library
+  if (ucCRCModeOut == NULL)
+    return NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED;
+
+  cmd.ANT_MESSAGE_ucSize = MESG_REQUEST_SIZE;
+  cmd.ANT_MESSAGE_ucMesgID = MESG_REQUEST_ID;
+  cmd.ANT_MESSAGE_ucChannel = ucChannel;
+  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = MESG_CHANNEL_CRC_MODE_ID;
+  err = ant_rpc_app_send_cmd(&cmd, &rsp);
+  if (err) {
+    return err;
+  }
+  err = decode_cmd_rsp(&rsp);
+  if (!err) {
+    *ucCRCModeOut = rsp.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1];
+  }
+  return err;
+}
 
 /********************** CONFIGURATION APIS *******************************/
 
@@ -489,12 +584,30 @@ ant_err_t ant_channel_period_set(uint8_t ucChannel, uint16_t usPeriod) {
   return decode_cmd_rsp(&rsp);
 }
 
-/*
 ant_err_t ant_channel_period_get(uint8_t ucChannel, uint16_t *pusPeriod) {
-  // TODO:
-  return NRF_ANT_ERROR_INVALID_MESSAGE;
+  ant_err_t err;
+  ANT_MESSAGE cmd;
+  ANT_MESSAGE rsp;
+
+  // check parameters that affect serialization of the msg, rest is handled by the ANT library
+  if (pusPeriod == NULL)
+    return NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED;
+
+  cmd.ANT_MESSAGE_ucSize = MESG_REQUEST_SIZE;
+  cmd.ANT_MESSAGE_ucMesgID = MESG_REQUEST_ID;
+  cmd.ANT_MESSAGE_ucChannel = ucChannel;
+  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = MESG_CHANNEL_MESG_PERIOD_ID;
+  err = ant_rpc_app_send_cmd(&cmd, &rsp);
+  if (err) {
+    return err;
+  }
+  err = decode_cmd_rsp(&rsp);
+  if (!err) {
+    *pusPeriod = (uint16_t)rsp.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] |
+                 (uint16_t)rsp.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2] << 8;
+  }
+  return err;
 }
-*/
 
 ant_err_t ant_channel_id_set(uint8_t ucChannel, uint16_t usDeviceNumber,
                             uint8_t ucDeviceType, uint8_t ucTransmitType) {
@@ -594,7 +707,6 @@ ant_err_t ant_search_channel_priority_set(uint8_t ucChannel, uint8_t ucSearchPri
   return decode_cmd_rsp(&rsp);
 }
 
-/*
 ant_err_t ant_search_channel_priority_get(uint8_t ucChannel, uint8_t *pucSearchPriority) {
   ant_err_t err;
   ANT_MESSAGE cmd;
@@ -614,13 +726,10 @@ ant_err_t ant_search_channel_priority_get(uint8_t ucChannel, uint8_t *pucSearchP
   }
   err = decode_cmd_rsp(&rsp);
   if (!err) {
-    memcpy(pucSearchPriority,
-      &rsp.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1],
-      MESG_ANT_MAX_PAYLOAD_SIZE);
+    *pucSearchPriority = rsp.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1];
   }
   return err;
 }
-*/
 
 ant_err_t ant_active_search_sharing_cycles_set(uint8_t ucChannel, uint8_t ucCycles) {
   ant_err_t err;
@@ -736,7 +845,7 @@ ant_err_t ant_lib_config_set(uint8_t ucANTLibConfig) {
 
   cmd.ANT_MESSAGE_ucSize = MESG_ANTLIB_CONFIG_SIZE;
   cmd.ANT_MESSAGE_ucMesgID = MESG_ANTLIB_CONFIG_ID;
-  cmd.ANT_MESSAGE_ucChannel = 0;
+  cmd.ANT_MESSAGE_ucChannel = 0; // note: repurposed so that 0 = set, 1 = clear
   cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = ucANTLibConfig;
   err = ant_rpc_app_send_cmd(&cmd, &rsp);
   if (err) {
@@ -746,16 +855,44 @@ ant_err_t ant_lib_config_set(uint8_t ucANTLibConfig) {
 }
 
 ant_err_t ant_lib_config_clear(uint8_t ucANTLibConfig) {
-  // TODO:
-  return NRF_ANT_ERROR_INVALID_MESSAGE;
+  ant_err_t err;
+  ANT_MESSAGE cmd;
+  ANT_MESSAGE rsp;
+
+  cmd.ANT_MESSAGE_ucSize = MESG_ANTLIB_CONFIG_SIZE;
+  cmd.ANT_MESSAGE_ucMesgID = MESG_ANTLIB_CONFIG_ID;
+  cmd.ANT_MESSAGE_ucChannel = 1; // note: repurposed so that 0 = set, 1 = clear
+  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = ucANTLibConfig;
+  err = ant_rpc_app_send_cmd(&cmd, &rsp);
+  if (err) {
+    return err;
+  }
+  return decode_cmd_rsp(&rsp);
 }
 
-/*
 ant_err_t ant_lib_config_get(uint8_t *pucANTLibConfig) {
-  // TODO:
-  return NRF_ANT_ERROR_INVALID_MESSAGE;
+  ant_err_t err;
+  ANT_MESSAGE cmd;
+  ANT_MESSAGE rsp;
+
+  // check parameters that affect serialization of the msg, rest is handled by the ANT library
+  if (pucANTLibConfig == NULL)
+    return NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED;
+
+  cmd.ANT_MESSAGE_ucSize = MESG_REQUEST_SIZE;
+  cmd.ANT_MESSAGE_ucMesgID = MESG_REQUEST_ID;
+  cmd.ANT_MESSAGE_ucChannel = 0;
+  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = MESG_ANTLIB_CONFIG_ID;
+  err = ant_rpc_app_send_cmd(&cmd, &rsp);
+  if (err) {
+    return err;
+  }
+  err = decode_cmd_rsp(&rsp);
+  if (!err) {
+    *pucANTLibConfig = rsp.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1];
+  }
+  return err;
 }
-*/
 
 ant_err_t ant_id_list_add(uint8_t ucChannel, uint8_t *aucDevId, uint8_t ucListIndex) {
   ant_err_t err;
@@ -810,7 +947,7 @@ ant_err_t ant_auto_freq_hop_table_set(uint8_t ucChannel, uint8_t ucFreq0,
   cmd.ANT_MESSAGE_ucChannel = ucChannel;
   cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = ucFreq0;
   cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2] = ucFreq1;
-  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2] = ucFreq2;
+  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_3] = ucFreq2;
   err = ant_rpc_app_send_cmd(&cmd, &rsp);
   if (err) {
     return err;
@@ -818,19 +955,58 @@ ant_err_t ant_auto_freq_hop_table_set(uint8_t ucChannel, uint8_t ucFreq0,
   return decode_cmd_rsp(&rsp);
 }
 
-/*
 ant_err_t ant_event_filtering_set(uint16_t usFilter) {
-  // TODO:
-  return NRF_ANT_ERROR_INVALID_MESSAGE;
-}
-*/
+  ant_err_t err;
+  ANT_MESSAGE cmd;
+  ANT_MESSAGE rsp;
 
-/*
-ant_err_t ant_event_filtering_get(uint16_t *pusFilter) {
-  // TODO:
-  return NRF_ANT_ERROR_INVALID_MESSAGE;
+  // ant_np requires certain events to not be filtered out by the ant_stack in order
+  // to function correctly. Instead, ant_np will filter them out before they reach
+  // the application.
+  ant_np_event_filter_mask = usFilter;
+  usFilter &= ~ANT_NP_EVENT_FILTER_PROHIBITED_EVENTS;
+
+  cmd.ANT_MESSAGE_ucSize = MESG_EVENT_FILTER_CONFIG_REQ_SIZE;
+  cmd.ANT_MESSAGE_ucMesgID = MESG_EVENT_FILTER_CONFIG_ID;
+  cmd.ANT_MESSAGE_ucChannel = 0;
+  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = usFilter;
+  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2] = usFilter >> 8;
+  err = ant_rpc_app_send_cmd(&cmd, &rsp);
+  if (err) {
+    return err;
+  }
+  // set up ant_np based filtering
+  ant_np_event_filter_mask &= ANT_NP_EVENT_FILTER_PROHIBITED_EVENTS;
+  return decode_cmd_rsp(&rsp);
 }
-*/
+
+ant_err_t ant_event_filtering_get(uint16_t *pusFilter) {
+  ant_err_t err;
+  ANT_MESSAGE cmd;
+  ANT_MESSAGE rsp;
+
+  // check parameters that affect serialization of the msg, rest is handled by the ANT library
+  if (pusFilter == NULL)
+    return NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED;
+
+  cmd.ANT_MESSAGE_ucSize = MESG_REQUEST_SIZE;
+  cmd.ANT_MESSAGE_ucMesgID = MESG_REQUEST_ID;
+  cmd.ANT_MESSAGE_ucChannel = 0;
+  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = MESG_EVENT_FILTER_CONFIG_ID;
+  err = ant_rpc_app_send_cmd(&cmd, &rsp);
+  if (err) {
+    return err;
+  }
+  err = decode_cmd_rsp(&rsp);
+  if (!err) {
+    *pusFilter = (uint16_t)rsp.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] |
+                 (uint16_t)rsp.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_2] << 8;
+
+    // add in events that are filtered by ant_np
+    *pusFilter |= ant_np_event_filter_mask;
+  }
+  return err;
+}
 
 ant_err_t ant_sdu_mask_set(uint8_t ucMask, uint8_t *aucMask) {
   ant_err_t err;
@@ -895,7 +1071,6 @@ ant_err_t ant_sdu_mask_config(uint8_t ucChannel, uint8_t ucMaskConfig) {
   return decode_cmd_rsp(&rsp);
 }
 
-/*
 ant_err_t ant_crypto_channel_enable(uint8_t ucChannel, uint8_t ucEnable,
                                    uint8_t ucKeyNum, uint8_t ucDecimationRate) {
   ant_err_t err;
@@ -915,9 +1090,7 @@ ant_err_t ant_crypto_channel_enable(uint8_t ucChannel, uint8_t ucEnable,
   }
   return decode_cmd_rsp(&rsp);
 }
-*/
 
-/*
 ant_err_t ant_crypto_key_set(uint8_t ucKeyNum, uint8_t *aucKey) {
   ant_err_t err;
   ANT_MESSAGE cmd;
@@ -939,9 +1112,7 @@ ant_err_t ant_crypto_key_set(uint8_t ucKeyNum, uint8_t *aucKey) {
   }
   return decode_cmd_rsp(&rsp);
 }
-*/
 
-/*
 ant_err_t ant_crypto_info_set(uint8_t ucType, uint8_t *aucInfo) {
   ant_err_t err;
   ANT_MESSAGE cmd;
@@ -972,9 +1143,7 @@ ant_err_t ant_crypto_info_set(uint8_t ucType, uint8_t *aucInfo) {
   }
   return decode_cmd_rsp(&rsp);
 }
-*/
 
-/*
 ant_err_t ant_crypto_info_get(uint8_t ucType, uint8_t *aucInfo) {
   ant_err_t err;
   ANT_MESSAGE cmd;
@@ -1008,7 +1177,6 @@ ant_err_t ant_crypto_info_get(uint8_t ucType, uint8_t *aucInfo) {
   }
   return err;
 }
-*/
 
 /*
 ant_err_t ant_rfactive_notification_config_set(uint8_t ucMode, uint16_t usTimeThreshold) {
@@ -1044,7 +1212,7 @@ ant_err_t ant_rfactive_notification_config_get(uint8_t *pucMode, uint16_t *pusTi
   cmd.ANT_MESSAGE_ucSize = MESG_REQUEST_SIZE;
   cmd.ANT_MESSAGE_ucMesgID = MESG_REQUEST_ID;
   cmd.ANT_MESSAGE_ucChannel = 0;
-  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = MESG_SDU_SET_MASK_ID;
+  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = MESG_RFACTIVE_NOTIFICATION_ID;
   err = ant_rpc_app_send_cmd(&cmd, &rsp);
   if (err) {
     return err;
@@ -1062,82 +1230,130 @@ ant_err_t ant_rfactive_notification_config_get(uint8_t *pucMode, uint16_t *pusTi
 
 ant_err_t ant_coex_config_set(uint8_t ucChannel, ANT_BUFFER_PTR *pstCoexConfig,
                              ANT_BUFFER_PTR *pstAdvCoexConfig) {
-  ant_err_t err;
+  ant_err_t err = NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED;
   ANT_MESSAGE cmd;
   ANT_MESSAGE rsp;
 
   // check parameters that affect serialization of the msg, rest is handled by the ANT library
   if (pstCoexConfig == NULL && pstAdvCoexConfig == NULL) {
     return NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED;
-  } else if (pstCoexConfig != NULL && pstCoexConfig->ucBufferSize > MESG_MAX_DATA_SIZE) {
+  } else if (pstCoexConfig != NULL && (pstCoexConfig->pucBuffer == NULL || pstCoexConfig->ucBufferSize > MESG_MAX_DATA_SIZE)) {
     return NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED;
-  } else if (pstAdvCoexConfig != NULL && pstAdvCoexConfig->ucBufferSize > MESG_MAX_DATA_SIZE) {
+  } else if (pstAdvCoexConfig != NULL && (pstAdvCoexConfig->pucBuffer == NULL || pstAdvCoexConfig->ucBufferSize > MESG_MAX_DATA_SIZE)) {
     return NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED;
   }
 
   cmd.ANT_MESSAGE_ucChannel = ucChannel;
-  if (pstAdvCoexConfig == NULL) {
+
+  // set pstCoexConfig
+  if (pstCoexConfig != NULL) {
     cmd.ANT_MESSAGE_ucSize = MESG_CHANNEL_NUM_SIZE + pstCoexConfig->ucBufferSize;
     cmd.ANT_MESSAGE_ucMesgID = MESG_COEX_PRIORITY_CONFIG_ID;
     memcpy(cmd.ANT_MESSAGE_aucPayload,
            pstCoexConfig->pucBuffer,
            pstCoexConfig->ucBufferSize);
-  } else {
+    err = ant_rpc_app_send_cmd(&cmd, &rsp);
+    if (err) {
+      return err;
+    }
+    err = decode_cmd_rsp(&rsp);
+    if (err) {
+      return err;
+    }
+  }
+
+  // set pstAdvCoexConfig
+  if (pstAdvCoexConfig != NULL) {
     cmd.ANT_MESSAGE_ucSize = MESG_CHANNEL_NUM_SIZE + pstAdvCoexConfig->ucBufferSize;
     cmd.ANT_MESSAGE_ucMesgID = MESG_COEX_ADV_PRIORITY_CONFIG_ID;
     memcpy(cmd.ANT_MESSAGE_aucPayload,
            pstAdvCoexConfig->pucBuffer,
            pstAdvCoexConfig->ucBufferSize);
+    err = ant_rpc_app_send_cmd(&cmd, &rsp);
+    if (err) {
+      return err;
+    }
+    err = decode_cmd_rsp(&rsp);
+    if (err) {
+      return err;
+    }
   }
-  err = ant_rpc_app_send_cmd(&cmd, &rsp);
-  if (err) {
-    return err;
-  }
-  return decode_cmd_rsp(&rsp);
+
+  return err;
 }
 
 ant_err_t ant_coex_config_get(uint8_t ucChannel, ANT_BUFFER_PTR *pstCoexConfig,
                              ANT_BUFFER_PTR *pstAdvCoexConfig) {
-  ant_err_t err;
+  ant_err_t err = NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED;
   ANT_MESSAGE cmd;
   ANT_MESSAGE rsp;
 
   // check parameters that affect serialization of the msg, rest is handled by the ANT library
   if (pstCoexConfig == NULL && pstAdvCoexConfig == NULL)
     return NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED;
+  else if (pstCoexConfig != NULL && (pstCoexConfig->pucBuffer == NULL || !pstCoexConfig->ucBufferSize)) {
+    return NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED;
+  } else if (pstAdvCoexConfig != NULL && (pstAdvCoexConfig->pucBuffer == NULL || !pstAdvCoexConfig->ucBufferSize)) {
+    return NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED;
+  }
 
   cmd.ANT_MESSAGE_ucSize = MESG_REQUEST_SIZE;
   cmd.ANT_MESSAGE_ucMesgID = MESG_REQUEST_ID;
   cmd.ANT_MESSAGE_ucChannel = ucChannel;
-  if (pstAdvCoexConfig == NULL) {
+
+  // get pstCoexConfig
+  if (pstCoexConfig != NULL) {
     cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = MESG_COEX_PRIORITY_CONFIG_ID;
-  } else {
-    cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = MESG_COEX_ADV_PRIORITY_CONFIG_ID;
+    err = ant_rpc_app_send_cmd(&cmd, &rsp);
+    if (err) {
+      return err;
+    }
+    err = decode_cmd_rsp(&rsp);
+    if (err) {
+      return err;
+    }
+    // use supplied buffer size or cap to returned size
+    if (pstCoexConfig->ucBufferSize > rsp.ANT_MESSAGE_ucSize - MESG_CHANNEL_NUM_SIZE) {
+      pstCoexConfig->ucBufferSize = rsp.ANT_MESSAGE_ucSize - MESG_CHANNEL_NUM_SIZE;
+    }
+    memcpy(pstCoexConfig->pucBuffer, rsp.ANT_MESSAGE_aucPayload, pstCoexConfig->ucBufferSize);
   }
 
+  if (pstAdvCoexConfig != NULL) {
+    cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = MESG_COEX_ADV_PRIORITY_CONFIG_ID;
+    err = ant_rpc_app_send_cmd(&cmd, &rsp);
+    if (err) {
+      return err;
+    }
+    err = decode_cmd_rsp(&rsp);
+    if (err) {
+      return err;
+    }
+    // use supplied buffer size or cap to returned size
+    if (pstAdvCoexConfig->ucBufferSize > rsp.ANT_MESSAGE_ucSize - MESG_CHANNEL_NUM_SIZE) {
+      pstAdvCoexConfig->ucBufferSize = rsp.ANT_MESSAGE_ucSize - MESG_CHANNEL_NUM_SIZE;
+    }
+    memcpy(pstAdvCoexConfig->pucBuffer, rsp.ANT_MESSAGE_aucPayload, pstAdvCoexConfig->ucBufferSize);
+  }
+
+  return err;
+}
+
+ant_err_t ant_enhanced_channel_spacing_enable(uint8_t ucEnable) {
+  ant_err_t err;
+  ANT_MESSAGE cmd;
+  ANT_MESSAGE rsp;
+
+  cmd.ANT_MESSAGE_ucSize = MESG_ECS_ENABLE_SIZE;
+  cmd.ANT_MESSAGE_ucMesgID = MESG_ECS_ENABLE_ID;
+  cmd.ANT_MESSAGE_ucChannel = 0; // dummy
+  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = ucEnable;
   err = ant_rpc_app_send_cmd(&cmd, &rsp);
   if (err) {
     return err;
   }
-  err = decode_cmd_rsp(&rsp);
-  if (!err) {
-    if (pstAdvCoexConfig == NULL) {
-      memcpy(pstCoexConfig->pucBuffer, rsp.ANT_MESSAGE_aucPayload, rsp.ANT_MESSAGE_ucSize);
-      pstCoexConfig->ucBufferSize = rsp.ANT_MESSAGE_ucSize;
-    } else {
-      memcpy(pstAdvCoexConfig->pucBuffer, rsp.ANT_MESSAGE_aucPayload, rsp.ANT_MESSAGE_ucSize);
-      pstAdvCoexConfig->ucBufferSize = rsp.ANT_MESSAGE_ucSize;
-    }
-  }
-  return err;
+  return decode_cmd_rsp(&rsp);
 }
-
-/*
-ant_err_t ant_enhanced_channel_spacing_enable(uint8_t ucEnable) {
-  // TODO:
-  return NRF_ANT_ERROR_INVALID_MESSAGE;
-}
-*/
 
 /*
 ant_err_t ant_time_stamp_config_set(ANT_TIME_STAMP_CONFIG *pstTimeStampConfig) {
@@ -1228,12 +1444,30 @@ ant_err_t ant_channel_status_get(uint8_t ucChannel, uint8_t *pucStatus) {
   return err;
 }
 
-/*
 ant_err_t ant_pending_transmit(uint8_t ucChannel, uint8_t *pucPending) {
-  // TODO:
-  return NRF_ANT_ERROR_INVALID_MESSAGE;
+  ant_err_t err;
+  ANT_MESSAGE cmd;
+  ANT_MESSAGE rsp;
+
+  // check parameters that affect serialization of the msg, rest is handled by the ANT library
+  if (pucPending == NULL) {
+    return NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED;
+  }
+
+  cmd.ANT_MESSAGE_ucSize = MESG_REQUEST_SIZE;
+  cmd.ANT_MESSAGE_ucMesgID = MESG_REQUEST_ID;
+  cmd.ANT_MESSAGE_ucChannel = ucChannel;
+  cmd.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1] = MESG_PENDING_TRANSMIT_CLEAR_ID; // note: repurposed to get status w/ request mesg
+  err = ant_rpc_app_send_cmd(&cmd, &rsp);
+  if (err) {
+    return err;
+  }
+  err = decode_cmd_rsp(&rsp);
+  if (!err) {
+    *pucPending = rsp.ANT_MESSAGE_aucPayload[SERIAL_DATA_OFFSET_1];
+  }
+  return err;
 }
-*/
 
 ant_err_t ant_version_get(uint8_t *aucVersion) {
   ant_err_t err;
@@ -1325,6 +1559,12 @@ ant_err_t ant_cw_test_mode(uint8_t ucRadioFreq, uint8_t ucTxPower,
 
 /*****************************************************************************/
 
+#if (CONFIG_ANT_INTERNAL)
+  #include "internal/ant_np_host_internal.c"
+#endif
+
+/*****************************************************************************/
+
 ant_err_t ant_np_host_cmd_passthrough(ANT_MESSAGE *cmd, ANT_MESSAGE *rsp) {
   ant_err_t err;
 
@@ -1379,7 +1619,15 @@ void ant_np_host_process_evt(ANT_MESSAGE *evt) {
       }
     }
 
-    // if evt not consumed by burst handler, send to application
+    // if evt not consumed by burst handler, check if filtered by ant_np
+    if ((evt->ANT_MESSAGE_ucSize) &&
+        (evt->ANT_MESSAGE_ucMesgID == MESG_RESPONSE_EVENT_ID) &&
+        (((uint16_t)(1 << (evt->ANT_MESSAGE_aucPayload[1] - 1))) & ant_np_event_filter_mask)) {
+      // event is filtered by ant_np, consume it
+      evt->ANT_MESSAGE_ucSize = 0;
+    }
+
+    // if evt not consumed by burst handler or ant_np event filter mask, send to application
     if (evt->ANT_MESSAGE_ucSize) {
       ant_msg_kfifo_item_t *ant_msg = k_malloc(sizeof(ant_msg_kfifo_item_t));
 
@@ -1409,6 +1657,9 @@ ant_err_t ant_np_host_init(void) {
 
   // intialize host side burst handler
   ant_np_host_burst_init();
+
+  // initialize ant_np event filter mask
+  ant_np_event_filter_mask = 0;
 
   return 0;
 }

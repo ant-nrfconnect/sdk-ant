@@ -34,9 +34,3 @@ You must program this sample to the nRF5340 network core.
 
 The recommended way of building the sample is to use the multi-image feature of the build system.
 The sample is built automatically as a child image when both CONFIG_ANT_NP and CONFIG_ANT_INCLUDE_NP_CHILD_IMAGE are enabled.
-
-Testing
-*******
-
-Dependencies
-************

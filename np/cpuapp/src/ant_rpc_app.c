@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Garmin Ltd. or its subsidiaries.
+ * Copyright 2023 by Garmin Ltd. or its subsidiaries.
  * All rights reserved.
  *
  * Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
@@ -60,8 +60,7 @@ static void ant_rpc_init_err_handler(const struct nrf_rpc_err_report *report) {
   LOG_ERR("init err %d", report->code);
 }
 
-ant_err_t ant_rpc_app_init(const struct device *dev) {
-  ARG_UNUSED(dev);
+ant_err_t ant_rpc_app_init(void) {
   ant_err_t err;
 
   // TODO: refine logging
@@ -80,7 +79,10 @@ ant_err_t ant_rpc_app_init(const struct device *dev) {
 
   return 0;
 }
+
+#if defined(CONFIG_ANT_NP_HOST_SYS_INIT)
 SYS_INIT(ant_rpc_app_init, POST_KERNEL, CONFIG_APPLICATION_INIT_PRIORITY);
+#endif // CONFIG_ANT_NP_HOST_SYS_INIT
 
 ant_err_t ant_rpc_app_send_cmd(ANT_MESSAGE *cmd, ANT_MESSAGE *rsp) {
   ant_err_t err;
