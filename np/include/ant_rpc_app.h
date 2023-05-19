@@ -24,7 +24,7 @@ ant_err_t ant_rpc_app_send_cmd(ANT_MESSAGE *cmd, ANT_MESSAGE *rsp);
 ant_err_t ant_rpc_app_register_evt_cb(ant_rpc_app_evt_cb_t cb);
 
 #if !defined(CONFIG_ANT_NP_HOST_SYS_INIT)
-ant_err_t ant_rpc_app_init(const struct device *dev);
+ant_err_t ant_rpc_app_init(void);
 #endif // CONFIG_ANT_NP_HOST_SYS_INIT
 
 #endif  // ANT_RPC_APP_H__

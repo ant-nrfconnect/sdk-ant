@@ -43,7 +43,7 @@ ant_err_t ant_init(void)
 
 #if !defined(CONFIG_ANT_NP_HOST_SYS_INIT)
    // If Kconfig has been used to delay RPC init via SYS_INIT, complete the initialization here
-   ant_err_t err = ant_rpc_app_init(NULL);
+   ant_err_t err = ant_rpc_app_init();
    if (err) {
       LOG_ERR("ant_rpc_app_init() failed: %d", err);
       return err;
