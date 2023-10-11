@@ -51,16 +51,16 @@ Changelog
 *********
 * Encryption support:
 
-  - Can be enabled via ``CONFIG_ANT_ENCRYPTED_CHANNELS`` (cpunet) and ``CONFIG_ANT_ENCRYPTION_NUM_CHANNELS`` (ANT Encrypt Library, cpuapp)
-  - Encrypted receivers must also set ``CONFIG_ANT_ENCRYPTION_NEGOTIATION_SLAVE`` (ANT Encrypt Library, cpuapp)
+  - Can be enabled via :option:`CONFIG_ANT_ENCRYPTED_CHANNELS` (cpunet) and :option:`CONFIG_ANT_ENCRYPTION_NUM_CHANNELS` (ANT Encrypt Library, cpuapp)
+  - Encrypted receivers must also set :option:`CONFIG_ANT_ENCRYPTION_NEGOTIATION_SLAVE` (ANT Encrypt Library, cpuapp)
   - Utilizes the Softdevice Controller (sdc_soc) interface for cryptographic purposes when ``CONFIG_BT`` is enabled
 
-    - Optional init: ``CONFIG_ANT_SDC_INIT`` is only required if sdc_init() has not been run prior to ANT initialization (ie. for ``CONFIG_BT``)
+    - Optional init: :option:`CONFIG_ANT_SDC_INIT` is only required if sdc_init() has not been run prior to ANT initialization (ie. for ``CONFIG_BT``)
 
 * Initialization changes:
 
   - nRF5340 cpunet: ant_stack_init() is now called exclusively on SYS_INIT, internal glue function ant_enable() renamed to ant_stack_config()
-  - nRF5340 cpuapp optional init delay: Provide Kconfig ``CONFIG_ANT_NP_HOST_SYS_INIT`` for use on cpuapp to delay ANT RPC host init on multicore SOCs (users must call ant_init())
+  - nRF5340 cpuapp optional init delay: Provide Kconfig :option:`CONFIG_ANT_NP_HOST_SYS_INIT` for use on cpuapp to delay ANT RPC host init on multicore SOCs (users must call ant_init())
 
 * sdk-nrf alignment: void main() changed to int main() in sample applications, SYS_INIT function signatures updated
 

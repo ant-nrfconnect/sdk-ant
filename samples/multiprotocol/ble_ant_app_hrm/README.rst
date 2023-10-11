@@ -43,7 +43,7 @@ Requirements
 
 Building and running
 ********************
-This sample can be found under ant/samples/ant_plus/ant_hrm/hrm_rx in the nRF Connect SDK folder structure.
+This sample can be found under ant/samples/multiprotocol/ble_ant_app_hrm in the nRF Connect SDK folder structure.
 
 ANT+ Network Key
 ================
