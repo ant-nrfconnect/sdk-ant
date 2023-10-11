@@ -1,3 +1,4 @@
 Sphinx==4.5
 breathe==4.32
 sphinx-rtd-theme>=1.0.0
+kconfiglib==14.1.0

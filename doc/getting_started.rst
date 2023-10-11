@@ -55,7 +55,7 @@ See the :ref:`Integration notes <ant_integration_notes>` and :ref:`Samples <ant_
 Updating ANT for nRF Connect SDK
 ********************************
 
-When new releases are available, they will be tagged with a version and appear in the ``Releases`` sidebar on GitHub. sdk-nrf compatibility information will be made available for each release.
+When new releases are available, they will be tagged with a version and appear in the ``Releases`` sidebar on GitHub. ANT and sdk-nrf :ref:`ant_compatibility` information will be made available for each release.
 
 To update your SDK, you can edit the ``revision:`` field for ANT in the sdk-nrf west manifest (``nrf/west.yml``) to reference a new tag or SHA and run west update.
 
