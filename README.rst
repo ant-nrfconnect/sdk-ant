@@ -1,4 +1,4 @@
-ANT for nRF Connect SDK
+ANT for nRF Connect SDK - DUMMY CHANGE
 ########################
 
 .. contents::
