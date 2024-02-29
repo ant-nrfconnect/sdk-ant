@@ -13,6 +13,7 @@ config ANT_NP
     select ANT_NP_HOST if SOC_NRF5340_CPUAPP
     select ANT_NP_REMOTE if SOC_NRF5340_CPUNET
     select ANT_RPC
+    default y if SOC_NRF5340_CPUAPP || SOC_NRF5340_CPUNET
     default n
     help
        Serialize API calls for execution on remote CPU. 

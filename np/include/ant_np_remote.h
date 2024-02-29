@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 by Garmin Ltd. or its subsidiaries.
+ * Copyright 2022-2023 by Garmin Ltd. or its subsidiaries.
  * All rights reserved.
  *
  * Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
@@ -17,7 +17,7 @@
 #include "ant_parameters.h"
 
 ant_err_t ant_np_remote_init(void);
-void ant_np_remote_process_cmd(ANT_MESSAGE *cmd, ANT_MESSAGE *_rsp);
+void ant_np_remote_process_cmd(ANT_MESSAGE *rx_msg, ANT_MESSAGE *tx_msg);
 void ant_np_remote_process_evt(ant_evt_t *evt);
 
 #endif  // ANT_NP_REMOTE_H__

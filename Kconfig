@@ -1,5 +1,5 @@
 #
-# Copyright 2022 by Garmin Ltd. or its subsidiaries.
+# Copyright 2023 by Garmin Ltd. or its subsidiaries.
 # All rights reserved.
 #
 # Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
@@ -11,19 +11,22 @@ menu "ANT Wireless"
 
 config ANT
     bool "ANT Wireless"
-    depends on (SOC_NRF5340_CPUNET || SOC_NRF5340_CPUAPP)
-
-    # include multiprotocol service layer (MPSL):
-    #   - ANT stack radio scheduling access via radio event manager (REM)
-    select MPSL if SOC_NRF5340_CPUNET
-
-    # include entropy:
-    #   - ANT stack encrypted channel support using random number for cryptographic services
-    select ENTROPY_GENERATOR if SOC_NRF5340_CPUNET
-
+    depends on (SOC_NRF5340_CPUNET || SOC_NRF5340_CPUAPP || SOC_NRF52840)
     help
        Enable ANT ultra low power wireless protocol by Garmin Canada Inc.
-       The nRF Connect SDK ANT Wireless library exclusively supports the nRF53 series SOC.
+
+config ANT_LIBRARY_CORE
+    bool "Defines the core used for ANT radio communication"
+    # include multiprotocol service layer (MPSL):
+    #   - ANT stack radio scheduling access via radio event manager (REM)
+    select MPSL
+    # include entropy:
+    #  - ANT stack encrypted channel support using random number for cryptographic services
+    select ENTROPY_GENERATOR
+    default n if (SOC_NRF5340_CPUAPP)
+    default y
+    help
+      This configuration is required for all single core builds and for network core builds on dual-core systems.
 
 config ANT_INTERNAL
     bool "ANT Internal"

@@ -38,7 +38,13 @@ LOG_MODULE_REGISTER(ant_init, CONFIG_ANT_LOG_LEVEL);
 
 IRQn_Type const ant_evt_irqn = ANT_SWI_IRQN;
 
-static ant_evt_callback_t ant_cb;
+static sys_slist_t ant_callbacks = SYS_SLIST_STATIC_INIT(&ant_callbacks);
+static struct k_mutex ant_callbacks_mut;
+
+struct ant_evt_cb_entry {
+  sys_snode_t node;
+  ant_evt_callback_t handler;
+};
 
 // Memory buffer provided in order to support channel configuration.
 __ALIGN(4) static uint8_t m_ant_stack_buffer[NRF_ANT_BUF_SIZE];
@@ -124,8 +130,31 @@ ant_err_t ant_cb_register(ant_evt_callback_t evt_handler) {
   if (evt_handler == NULL) {
     return -EINVAL;
   }
-  ant_cb = evt_handler;
 
+  struct ant_evt_cb_entry *cb;
+
+  // check if handler is already registered
+  k_mutex_lock(&ant_callbacks_mut, K_FOREVER);
+  SYS_SLIST_FOR_EACH_CONTAINER(&ant_callbacks, cb, node) {
+    if (cb->handler == evt_handler) {
+      LOG_DBG("handler is registered, nothing to do");
+      k_mutex_unlock(&ant_callbacks_mut);
+      return 0;
+    }
+  }
+
+  // allocate memory for the callback entry
+  cb = (struct ant_evt_cb_entry *)k_malloc(sizeof(struct ant_evt_cb_entry));
+  if (cb == NULL) {
+    k_mutex_unlock(&ant_callbacks_mut);
+    return -ENOBUFS;
+  }
+  memset(cb, 0, sizeof(struct ant_evt_cb_entry));
+  cb->handler = evt_handler;
+
+  // insert the handler in the list
+  sys_slist_append(&ant_callbacks, &cb->node);
+  k_mutex_unlock(&ant_callbacks_mut);
   return 0;
 }
 
@@ -152,21 +181,34 @@ static void ant_evt_irq_handler(const void *arg) { k_work_submit_to_queue(&ant_w
 static void ant_work_handler(struct k_work *item) {
   ARG_UNUSED(item);
 
-  ant_err_t err;
   ant_evt_t ant_evt;
 
   do {
     ant_evt.event = NO_EVENT;
-    err = ant_event_get(&ant_evt.channel, &ant_evt.event, ant_evt.message.aucMessage);
-    if (err && (err != -ENOENT)) {
-      LOG_ERR("ant_event_get() failed: %d", err);
-    } else {
-      // valid event ( != NO_EVENT )
-      if (ant_cb && ant_evt.event) {
-        ant_cb(&ant_evt);
+    ant_event_get(&ant_evt.channel, &ant_evt.event, ant_evt.message.aucMessage);
+
+    // valid event ( != NO_EVENT )
+    if (ant_evt.event) {
+      struct ant_evt_cb_entry *curr, *tmp;
+
+      if (sys_slist_is_empty(&ant_callbacks)) {
+        return;
       }
+
+      k_mutex_lock(&ant_callbacks_mut, K_FOREVER);
+
+      // dispatch events to registered callbacks
+      LOG_DBG("dispatching events:");
+      SYS_SLIST_FOR_EACH_CONTAINER_SAFE(&ant_callbacks, curr, tmp, node) {
+        LOG_DBG(" - handler=0x%08X", (uint32_t)curr->handler);
+        curr->handler(&ant_evt);
+      }
+
+      k_mutex_unlock(&ant_callbacks_mut);
     }
   } while (ant_evt.event);
+
+  return;
 }
 
 static int ant_thread_init(void) {

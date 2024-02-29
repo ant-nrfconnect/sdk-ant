@@ -1,5 +1,5 @@
 #
-# Copyright 2022 by Garmin Ltd. or its subsidiaries.
+# Copyright 2023 by Garmin Ltd. or its subsidiaries.
 # All rights reserved.
 #
 # Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
@@ -7,9 +7,9 @@
 # the repository.
 #
 
-if(CONFIG_ANT_NP_HOST)
+zephyr_include_directories(include)
 
-    zephyr_include_directories(include)
+if(CONFIG_ANT_NP_HOST)
 
     add_subdirectory(cpuapp)
 
@@ -17,8 +17,12 @@ endif()
 
 if(CONFIG_ANT_NP_REMOTE)
 
-    zephyr_include_directories(include)
-
     add_subdirectory(cpunet)
+
+endif()
+
+if(CONFIG_ANT_LIBRARY_CORE)
+
+    add_subdirectory(src)
 
 endif()

@@ -22,12 +22,12 @@ config ANT_INCLUDE_NP_CHILD_IMAGE
 
 	  This setting conflicts with CONFIG_BT since dual protocol samples (ANT
 	  and BLE) are built on the on the default network core sample (typically
-	  hci_rpmsg, see NCS_INCLUDE_RPMSG_CHILD_IMAGE for details) with
+	  hci_ipc, see NCS_INCLUDE_RPMSG_CHILD_IMAGE for details) with
 	  additional configurations to enable ANT.
 
 if ANT_INCLUDE_NP_CHILD_IMAGE
 
-# The ANT stack currently supports a single IPC transport mechanism: 
+# The ANT stack currently supports a single IPC transport mechanism:
 # - ANT nRF RPC (ant_rpc)
 
 config ANT_SAMPLE_RPC_CHILD_IMAGE

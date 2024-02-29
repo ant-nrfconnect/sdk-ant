@@ -39,25 +39,22 @@ I have applied for evaluation or commercial access, but I'm not sure what to do 
 
 nRF Connect SDK uses the west tool to manage all repositories that make up the SDK, including ANT (this repository). After following Nordic's instructions to download the SDK, the west manifest in the sdk-nrf repository can be used to activate the ``ant`` group filter and manage the repository revision. See the Getting Started guide in the documentation above for details.
 
-Are there code samples available in the repo?
-=============================================
+Where can I find sample applications?
+=====================================
 
 Check the samples folder in the sdk-ant repository for the latest samples. Each sample contains a README with instructions for building and running the sample.
 
 What version of nRF Connect SDK do I need? What version of sdk-ant should I use for development?
 ================================================================================================
 
-sdk-nrf v2.1.99-dev1 was the first revision containing ANT for nRF Connect SDK in the west manifest. Significant changes to the sdk-ant repository will be tagged as releases, and each release will contain sdk-nrf compatibility information. Check the Releases section on the sidebar for details. Since ANT depends on the sdk-nrfxlib repository, working on sdk-nrf main branch may lead to occasional compatibility issues as we accommodate upstream changes. We recommend pulling your sdk-ant revision up to the most recent release tag compatible with your sdk-nrf revision to get the latest features, samples and changes.
+Significant changes to the sdk-ant repository are tagged as releases, and each release contains sdk-nrf compatibility information in the Integration Notes and Release Notes sections of the official documentation. Check the Releases section on the sidebar for details. 
+
+Since ANT must be kept in sync with the sdk-nrf and sdk-nrfxlib repositories, working on the sdk-nrf main branch will lead to occasional compatibility issues as we accommodate upstream changes and is not recommended. We recommend using the the most recent sdk-ant revision tagged as compatible with your sdk-nrf revision.
 
 Which nRF SoC series are supported?
 ===================================
 
-At this time, ANT for nRF Connect SDK exclusively supports the nRF5340 SoC. nRF52 and nRF54 are being considered for future releases. Are you designing a product that requires nRF Connect SDK support for another SoC? Contact us for release timelines.
-
-Can I release products built with ANT for nRF Connect SDK?
-==========================================================
-
-ANT for nRF Connect SDK v1.0.0 has been released for production-ready integrations. Please see the release notes for more information.
+ANT for nRF Connect SDK supports selected parts in the nRF52 series (nRF52840) and nRF53 series (nRF5340). Future releases will support nRF54 series SoCs. Contact https://www.thisisant.com/support for release timelines.
 
 Does enabling ANT affect the Bluetooth QDID used for certification?
 ===================================================================
