@@ -16,7 +16,7 @@ menuconfig ANT_BPWR
 if ANT_BPWR
 
 config ANT_BPWR_SIMULATOR
-    bool "Enable ANT+ HRM Simulator"
+    bool "Enable ANT+ Bicycle Power Simulator"
     select SENSORSIM
 
 rsource "pages/Kconfig"
