@@ -12,9 +12,9 @@ The Multi Channel Encrypted examples demonstrate transmitter and receiver operat
 Overview
 ********
 
-This sample uses the ''CONFIG_ANT_NP'' and ''CONFIG_ANT_INCLUDE_NP_CHILD_IMAGE'' Kconfig options to automatically configure a child image for multicore platforms.
+On dual core, this sample uses the ''CONFIG_ANT_NP'' and ''CONFIG_ANT_INCLUDE_NP_CHILD_IMAGE'' Kconfig options to automatically configure a child image on the network core.
 
-The ''CONFIG_ANT_ENCRYPTED_CHANNELS'' Kconfig must be set to a value between 1 and ''CONFIG_ANT_TOTAL_CHANNELS_ALLOCATED'' Kconfig to allocate encrypted channnels within the ANT stack library, present on cpunet. In this example, this is set in the child image configuration.
+The ''CONFIG_ANT_ENCRYPTED_CHANNELS'' Kconfig must be set to a value between 1 and ''CONFIG_ANT_TOTAL_CHANNELS_ALLOCATED'' Kconfig to allocate encrypted channnels within the ANT stack library. It must be set on the radio-adjacent or ``CONFIG_ANT_LIBRARY_CORE``. In the dual core case, this is set in the child image configuration.
 
 This sample utilizes the ANT Encrypt Config Library to configure the encrypted channel(s). The following configurations apply:
 
@@ -46,22 +46,21 @@ This example uses the following channel configuration:
 Requirements
 ************
 
-+--------------------+----------+--------------------+----------------------------+
-| Hardware platforms | PCA      | Board name         | Build target               |
-+--------------------+----------+--------------------+----------------------------+
-| nRF5340 DK         | PCA10095 | nrf5340dk_nrf5340  | nrf5340dk_nrf5340_cpuapp   |
-+--------------------+----------+--------------------+----------------------------+
++--------------------+----------+---------------------+----------------------------+
+| Hardware platforms | PCA      | Board name          | Build target               |
++--------------------+----------+---------------------+----------------------------+
+| nRF5340 DK         | PCA10095 | nrf5340dk_nrf5340   | nrf5340dk_nrf5340_cpuapp   |
++--------------------+----------+---------------------+----------------------------+
+| nRF52840 DK        | PCA10056 | nrf52840dk_nrf52840 | nrf52840dk_nrf52840        |
++--------------------+----------+---------------------+----------------------------+
 
 Configuration
 *************
 
-nRF5340 configuration files
-===========================
-
 This sample configuration is split into the following two files:
 
-* generic configuration (cpuapp) is available in the **prj.conf** file
-* configuration for the ant_rpc child image (cpunet) is stored in the **child_image** subdirectory.
+* generic configuration is available in the **prj.conf** file (single core, or dual core cpuapp)
+* configuration for the ant_rpc child image is stored in the **child_image** subdirectory (dual core cpunet)
 
 Building and running
 ********************

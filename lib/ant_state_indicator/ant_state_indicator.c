@@ -309,7 +309,7 @@ static void set_indicate(indication_t indicate)
  *
  * @param[in]   p_ant_evt       Event received from the ANT stack.
  */
-static void ant_evt_handler(ant_evt_t * p_ant_evt)
+static void ant_state_indicator_evt_handler(ant_evt_t * p_ant_evt)
 {
   if (m_channel != p_ant_evt->channel)
   {
@@ -358,7 +358,7 @@ int ant_state_indicator_init( uint8_t channel, uint8_t channel_type)
   m_channel_type  = channel_type;
   m_stable_state  = INDICATE_IDLE;
 
-  int err = ant_cb_register(&ant_evt_handler);
+  int err = ant_cb_register(&ant_state_indicator_evt_handler);
   if (err) {
     LOG_ERR("ant_cb_register failed: %d", err);
     return err;

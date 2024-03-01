@@ -14,7 +14,7 @@ Overview
 
 This sample simulates a Heart Rate Monitor transmitter. It transmits the heart rate information in the main data page (page 4). Device-specific information is transmitted at a slower rate in the background data pages (pages 1-3). The application prints out outgoing page data. The actual channel state is indicated by the ANT channel state indicator.
 
-This sample uses the ''CONFIG_ANT_NP'' and ''CONFIG_ANT_INCLUDE_NP_CHILD_IMAGE'' Kconfig options to automatically configure a child image for multicore platforms.
+On dual core, this sample uses the ''CONFIG_ANT_NP'' and ''CONFIG_ANT_INCLUDE_NP_CHILD_IMAGE'' Kconfig options to automatically configure a child image on the network core.
 
 Channel configuration
 =====================
@@ -41,11 +41,13 @@ This example uses the default channel configuration:
 Requirements
 ************
 
-+--------------------+----------+--------------------+----------------------------+
-| Hardware platforms | PCA      | Board name         | Build target               |
-+--------------------+----------+--------------------+----------------------------+
-| nRF5340 DK         | PCA10095 | nrf5340dk_nrf5340  | nrf5340dk_nrf5340_cpuapp   |
-+--------------------+----------+--------------------+----------------------------+
++--------------------+----------+---------------------+----------------------------+
+| Hardware platforms | PCA      | Board name          | Build target               |
++--------------------+----------+---------------------+----------------------------+
+| nRF5340 DK         | PCA10095 | nrf5340dk_nrf5340   | nrf5340dk_nrf5340_cpuapp   |
++--------------------+----------+---------------------+----------------------------+
+| nRF52840 DK        | PCA10056 | nrf52840dk_nrf52840 | nrf52840dk_nrf52840        |
++--------------------+----------+---------------------+----------------------------+
 
 Building and running
 ********************
@@ -59,7 +61,7 @@ You can select how the profile information is modified with the ''CONFIG_HRM_TX_
 ANT+ Network Key
 ================
 
-This sample selects ''CONFIG_ANT_KEY_MANAGER'' to provide access to ant_plus_key_set(). This library function configures the pre-defined ANT+ Network Key for ANT+ devices. Note that network keys, transmission type, device type IDs and RF channels are assigned and regulated to maintain
+This sample selects ``CONFIG_ANT_KEY_MANAGER`` to provide access to ant_plus_key_set() (See :ref:`ant_key_manager`). This library function configures the pre-defined ANT+ Network Key for ANT+ devices. Note that network keys, transmission type, device type IDs and RF channels are assigned and regulated to maintain
 network integrity, and interoperability, except for the default public network.
 
 For more information on Network Keys, visit https://www.thisisant.com/developer/ant-plus/ant-plus-basics/network-keys.

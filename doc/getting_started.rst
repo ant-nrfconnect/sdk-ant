@@ -11,13 +11,13 @@ Getting Started
 Setting up nRF Connect SDK
 **************************
 
-The nRF Connect SDK (sdk-nrf) uses west to manage a combination of multiple Git repositories and versions.
+The nRF Connect SDK (sdk-nrf) uses ``west`` to manage a combination of multiple Git repositories and versions.
 
 You must use the west tool to install all components of the nRF Connect SDK including ANT. The required version of west is dictated by sdk-nrf.
 
 Follow the installation instuctions in the `nRF Connect SDK Getting started <https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/getting_started.html>`_ guide.
 
-`Get the nRF Connect SDK code <https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/gs_installing.html#get-the-ncs-code>`_ has instructions for obtaining an ANT compatible version of the SDK with this tag, a subsequent tagged version, or the latest state of the main branch.
+`Get the nRF Connect SDK code <https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/gs_installing.html#get-the-ncs-code>`_ has instructions for obtaining an ANT compatible version of the nRF Connect SDK by hash, tag, or the latest state of the main branch.
 
 
 Enabling ANT for nRF Connect SDK
@@ -43,7 +43,7 @@ Once your access is set up, you will be able to browse the repository here: http
 
      west update
 
-   The repository will be cloned from the remote. Your GitHub credentials may be verified at this point. If successful, the output will include an entry for the ANT remote. For example::
+   The repository will be cloned from the remote. Your GitHub credentials may be verified at this point (how this is managed is up to the user - Git Credential Manager is one option). If successful, the output will include an entry for the ANT remote. For example::
 
      === updating ant (ant):
      HEAD is now at 8f6e2b0

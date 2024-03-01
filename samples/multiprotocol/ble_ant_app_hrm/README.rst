@@ -35,11 +35,13 @@ This example uses the default channel configuration:
 Requirements
 ************
 
-+--------------------+----------+--------------------+----------------------------+
-| Hardware platforms | PCA      | Board name         | Build target               |
-+--------------------+----------+--------------------+----------------------------+
-| nRF5340 DK         | PCA10095 | nrf5340dk_nrf5340  | nrf5340dk_nrf5340_cpuapp   |
-+--------------------+----------+--------------------+----------------------------+
++--------------------+----------+---------------------+----------------------------+
+| Hardware platforms | PCA      | Board name          | Build target               |
++--------------------+----------+---------------------+----------------------------+
+| nRF5340 DK         | PCA10095 | nrf5340dk_nrf5340   | nrf5340dk_nrf5340_cpuapp   |
++--------------------+----------+---------------------+----------------------------+
+| nRF52840 DK        | PCA10056 | nrf52840dk_nrf52840 | nrf52840dk_nrf52840        |
++--------------------+----------+---------------------+----------------------------+
 
 Building and running
 ********************
@@ -48,7 +50,7 @@ This sample can be found under ant/samples/multiprotocol/ble_ant_app_hrm in the 
 ANT+ Network Key
 ================
 
-This sample selects ''CONFIG_ANT_KEY_MANAGER'' to provide access to ant_plus_key_set(). This library function configures the pre-defined ANT+ Network Key for ANT+ devices. Note that network keys, transmission type, device type IDs and RF channels are assigned and regulated to maintain
+This sample selects ``CONFIG_ANT_KEY_MANAGER`` to provide access to ant_plus_key_set() (See :ref:`ant_key_manager`). This library function configures the pre-defined ANT+ Network Key for ANT+ devices. Note that network keys, transmission type, device type IDs and RF channels are assigned and regulated to maintain
 network integrity, and interoperability, except for the default public network.
 
 For more information on Network Keys, visit https://www.thisisant.com/developer/ant-plus/ant-plus-basics/network-keys.

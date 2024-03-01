@@ -20,9 +20,10 @@ subprocess.call('doxygen Doxyfile.in', shell=True)
 # -- Project information -----------------------------------------------------
 
 project = 'ANT for nRF Connect SDK'
-copyright = '2023, Garmin Canada Inc'
+copyright = '2024, Garmin Canada Inc'
 author = 'Garmin Canada Inc.'
-version = '1.1.0'
+version = '1.2.0'
+past_versions = ['1.1.0', '1.0.0', '0.5.0']
 
 # -- General configuration ---------------------------------------------------
 
@@ -63,3 +64,24 @@ breathe_default_project = "ANT for nRF Connect SDK"
 breathe_default_members = ('members', 'undoc-members')
 breathe_show_define_initializer = True
 breathe_show_enumvalue_initializer = True
+
+# -- Previous versions -----------------------------------------------------
+try:
+   html_context
+except NameError:
+   html_context = dict()
+html_context['display_lower_left'] = True
+
+templates_path = ['_templates']
+
+# tell the theme which version we're currently on ('current_version' affects
+# the lower-left rtd menu and 'version' affects the logo-area version)
+html_context['current_version'] = version
+html_context['version'] = version
+
+# POPULATE LINKS TO OTHER VERSIONS
+html_context['versions'] = list()
+html_context['versions'].append( (version, 'https://www.thisisant.com/APIassets/ANTnRFConnectDoc/') )
+
+for past_version in past_versions:
+   html_context['versions'].append( (past_version, 'https://www.thisisant.com/APIassets' '/' +past_version+ '_ANTnRFConnectDoc/') )

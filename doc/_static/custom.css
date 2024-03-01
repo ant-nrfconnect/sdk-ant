@@ -49,3 +49,11 @@ img+img {
 .wy-side-nav-search div.version {
     color: hsla(0,0%,100%);
 }
+
+.rst-versions .rst-current-version {
+    color: #FFF;
+}
+
+.rst-versions.shift-up {
+    overflow-y: auto;
+}

@@ -1,5 +1,5 @@
 #
-# Copyright 2022 by Garmin Ltd. or its subsidiaries.
+# Copyright 2023 by Garmin Ltd. or its subsidiaries.
 # All rights reserved.
 #
 # Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
@@ -9,7 +9,7 @@
 
 config ANT_LICENSE_KEY
 	string "ANT License Key."
-	depends on SOC_NRF5340_CPUNET
+	depends on ANT_LIBRARY_CORE
 	default "3831-521d-7df9-24d8-eff3-467b-225f-a00e" if ANT_EVALUATION_KEY
 	help
 		This key is used in library initialization. You MUST obtain a
@@ -22,7 +22,7 @@ config ANT_LICENSE_KEY
 
 config ANT_EVALUATION_KEY
 	bool "Use ANT Evaluation License Key."
-	depends on SOC_NRF5340_CPUNET
+	depends on ANT_LIBRARY_CORE
 	default n
 
 config ANT_THREAD_COOP_PRIO
@@ -51,6 +51,14 @@ config ANT_SWI3
 	bool "SWI3"
 	depends on HAS_HW_NRF_SWI3
 
+config ANT_SWI4
+	bool "SWI4"
+	depends on HAS_HW_NRF_SWI4
+
+config ANT_SWI5
+	bool "SWI5"
+	depends on HAS_HW_NRF_SWI5
+
 endchoice
 
 config ANT_TOTAL_CHANNELS_ALLOCATED
@@ -77,7 +85,7 @@ config ANT_BURST_QUEUE_SIZE
 config ANT_SDC_INIT
 	bool "Allow ANT Init to initialize the Softdevice Controller (sdc_init)"
 	depends on BT
-	depends on SOC_NRF5340_CPUNET
+	depends on ANT_LIBRARY_CORE
 	default n
 	help
 	  Allow ANT initialization on the network core to also initialize the softdevice

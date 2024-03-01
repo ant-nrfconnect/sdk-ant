@@ -12,7 +12,7 @@ The Advanced Burst examples consists of an example application that can be used 
 Overview
 ********
 
-This sample uses the ''CONFIG_ANT_NP'' and ''CONFIG_ANT_INCLUDE_NP_CHILD_IMAGE'' Kconfig options to automatically configure a child image for multicore platforms.
+On dual core, this sample uses the ''CONFIG_ANT_NP'' and ''CONFIG_ANT_INCLUDE_NP_CHILD_IMAGE'' Kconfig options to automatically configure a child image for the network core.
 
 Channel configuration
 =====================
@@ -39,22 +39,26 @@ This example uses the default channel configuration:
 Configuration
 *************
 
-nRF5340 configuration files
-===========================
+The sample configuration is split into the following two files:
 
-This sample configuration is split into the following two files:
-
-* generic configuration (cpuapp) is available in the **prj.conf** file
-* configuration for the ant_rpc child image (cpunet) is stored in the **child_image** subdirectory.
+* generic configuration is available in the **prj.conf** file (single core, or dual core cpuapp)
+* configuration for the ant_rpc child image is stored in the **child_image** subdirectory (dual core cpunet)
 
 Requirements
 ************
++--------------------+----------+---------------------+----------------------------+
+| Hardware platforms | PCA      | Board name          | Build target               |
++--------------------+----------+---------------------+----------------------------+
+| nRF5340 DK         | PCA10095 | nrf5340dk_nrf5340   | nrf5340dk_nrf5340_cpuapp   |
++--------------------+----------+---------------------+----------------------------+
+| nRF52840 DK        | PCA10056 | nrf52840dk_nrf52840 | nrf52840dk_nrf52840        |
++--------------------+----------+---------------------+----------------------------+
 
-+--------------------+----------+--------------------+----------------------------+
-| Hardware platforms | PCA      | Board name         | Build target               |
-+--------------------+----------+--------------------+----------------------------+
-| nRF5340 DK         | PCA10095 | nrf5340dk_nrf5340  | nrf5340dk_nrf5340_cpuapp   |
-+--------------------+----------+--------------------+----------------------------+
+Testing Requirements
+====================
+
+* ANT PC dongle (for example, ANTUSB-m)
+* ANTware II software (see https://www.thisisant.com/developer/resources/software-tools/)
 
 Building and running
 ********************
