@@ -15,6 +15,8 @@ config ANT
     help
        Enable ANT ultra low power wireless protocol by Garmin Canada Inc.
 
+if ANT
+
 config ANT_LIBRARY_CORE
     bool "Defines the core used for ANT radio communication"
     # include multiprotocol service layer (MPSL):
@@ -32,13 +34,11 @@ config ANT_INTERNAL
     bool "ANT Internal"
     default n
 
-if ANT
-
 rsource "init/Kconfig"
 rsource "lib/Kconfig"
 rsource "np/Kconfig"
 rsource "samples/Kconfig"
 
-endif
+endif # ANT
 
 endmenu
