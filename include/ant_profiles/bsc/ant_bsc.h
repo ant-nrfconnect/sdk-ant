@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Garmin Ltd. or its subsidiaries.
+ * Copyright (c) 2024 by Garmin Ltd. or its subsidiaries.
  * All rights reserved.
  *
  * Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
@@ -28,9 +28,6 @@
 #include <ant_profiles/bsc/pages/ant_bsc_pages.h>
 #include <ant_host_init.h>
 
-#define _CONCAT_2(p1, p2)     _CONCAT_2_(p1, p2)
-#define _CONCAT_2_(p1, p2)    p1##p2
-
 #define BSC_ANTPLUS_RF_FREQ      0x39u                      ///< Frequency, decimal 57 (2457 MHz).
 
 #define BSC_SPEED_DEVICE_TYPE    0x7B                       ///< Device type reserved for ANT+ bike speed sensor.
@@ -47,6 +44,10 @@
 #define BSC_EXT_ASSIGN           0x00                       ///< ANT ext assign (see Ext. Assign Channel Parameters in ant_parameters.h: @ref ant_parameters).
 #define BSC_DISP_CHANNEL_TYPE    CHANNEL_TYPE_SLAVE_RX_ONLY ///< Display BSC channel type.
 #define BSC_SENS_CHANNEL_TYPE    CHANNEL_TYPE_MASTER        ///< Sensor BSC channel type.
+
+/**@brief Helper macro with two level expansion for concatenation of two parameters.*/
+#define _ANT_BSC_CONCAT_2(p1, p2)     _ANT_BSC_CONCAT_2_(p1, p2)
+#define _ANT_BSC_CONCAT_2_(p1, p2)    p1##p2
 
 /**@brief Select the basic ANT channel period (in ticks) for the BSC profile depending on the device type.
  *
@@ -87,7 +88,7 @@
                                     DEVICE_NUMBER,                              \
                                     NETWORK_NUMBER,                             \
                                     BSC_MSG_PERIOD)                             \
-static const ant_channel_config_t   _CONCAT_2(NAME, _channel_bsc_disp_config) = \
+static const ant_channel_config_t   _ANT_BSC_CONCAT_2(NAME, _channel_bsc_disp_config) = \
     {                                                                           \
         .channel_number     = (CHANNEL_NUMBER),                                 \
         .channel_type       = BSC_DISP_CHANNEL_TYPE,                            \
@@ -99,7 +100,7 @@ static const ant_channel_config_t   _CONCAT_2(NAME, _channel_bsc_disp_config) = 
         .channel_period     = BSC_PERIOD_TICKS(DEVICE_TYPE, BSC_MSG_PERIOD),    \
         .network_number     = (NETWORK_NUMBER),                                 \
     }
-#define BSC_DISP_CHANNEL_CONFIG(NAME) &_CONCAT_2(NAME, _channel_bsc_disp_config)
+#define BSC_DISP_CHANNEL_CONFIG(NAME) &_ANT_BSC_CONCAT_2(NAME, _channel_bsc_disp_config)
 
 /**@brief Initialize an ANT channel configuration structure for the BSC profile (Transmitter).
  *
@@ -138,13 +139,13 @@ static const ant_channel_config_t   NAME##_channel_bsc_sens_config =            
  */
 #define BSC_DISP_PROFILE_CONFIG_DEF(NAME,                                       \
                                     EVT_HANDLER)                                \
-static ant_bsc_disp_cb_t            _CONCAT_2(NAME, _bsc_disp_cb);               \
-static const ant_bsc_disp_config_t  _CONCAT_2(NAME, _profile_bsc_disp_config) =  \
+static ant_bsc_disp_cb_t            _ANT_BSC_CONCAT_2(NAME, _bsc_disp_cb);               \
+static const ant_bsc_disp_config_t  _ANT_BSC_CONCAT_2(NAME, _profile_bsc_disp_config) =  \
     {                                                                           \
-        .p_cb               = &_CONCAT_2(NAME, _bsc_disp_cb),                    \
+        .p_cb               = &_ANT_BSC_CONCAT_2(NAME, _bsc_disp_cb),                    \
         .evt_handler        = (EVT_HANDLER),                                    \
     }
-#define BSC_DISP_PROFILE_CONFIG(NAME) &_CONCAT_2(NAME, _profile_bsc_disp_config)
+#define BSC_DISP_PROFILE_CONFIG(NAME) &_ANT_BSC_CONCAT_2(NAME, _profile_bsc_disp_config)
 
 
 /**@brief Initialize an ANT profile configuration structure for the BSC profile (Sensor).
@@ -160,16 +161,16 @@ static const ant_bsc_disp_config_t  _CONCAT_2(NAME, _profile_bsc_disp_config) = 
                                     PAGE_4_PRESENT,                             \
                                     MAIN_PAGE_NUMBER,                           \
                                     EVT_HANDLER)                                \
-static ant_bsc_sens_cb_t            _CONCAT_2(NAME, _bsc_sens_cb);               \
-static const ant_bsc_sens_config_t  _CONCAT_2(NAME, _profile_bsc_sens_config) =  \
+static ant_bsc_sens_cb_t            _ANT_BSC_CONCAT_2(NAME, _bsc_sens_cb);               \
+static const ant_bsc_sens_config_t  _ANT_BSC_CONCAT_2(NAME, _profile_bsc_sens_config) =  \
     {                                                                           \
         .page_1_present     = (PAGE_1_PRESENT),                                 \
         .page_4_present     = (PAGE_4_PRESENT),                                 \
         .main_page_number   = (MAIN_PAGE_NUMBER),                               \
-        .p_cb               = &_CONCAT_2(NAME, _bsc_sens_cb),                    \
+        .p_cb               = &_ANT_BSC_CONCAT_2(NAME, _bsc_sens_cb),                    \
         .evt_handler        = (EVT_HANDLER),                                    \
     }
-#define BSC_SENS_PROFILE_CONFIG(NAME) &_CONCAT_2(NAME, _profile_bsc_sens_config)
+#define BSC_SENS_PROFILE_CONFIG(NAME) &_ANT_BSC_CONCAT_2(NAME, _profile_bsc_sens_config)
 
 
 /**@brief BSC page number type. */

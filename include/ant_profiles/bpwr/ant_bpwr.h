@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Garmin Ltd. or its subsidiaries.
+ * Copyright (c) 2024 by Garmin Ltd. or its subsidiaries.
  * All rights reserved.
  *
  * Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
@@ -21,9 +21,6 @@
 #include <ant_profiles/bpwr/pages/ant_bpwr_pages.h>
 #include <ant_host_init.h>
 
-#define _CONCAT_2(p1, p2)     _CONCAT_2_(p1, p2)
-#define _CONCAT_2_(p1, p2)    p1##p2
-
 #define BPWR_DEVICE_TYPE            0x0Bu               ///< Device type reserved for ANT+ Bicycle Power.
 #define BPWR_ANTPLUS_RF_FREQ        0x39u               ///< Frequency, decimal 57 (2457 MHz).
 #define BPWR_MSG_PERIOD             8182u               ///< Message period, decimal 8182 (4.0049 Hz).
@@ -34,6 +31,9 @@
 
 #define BPWR_CALIBRATION_TIMOUT_S   5u                  ///< Time-out for responding to calibration callback (s).
 
+/**@brief Helper macro with two level expansion for concatenation of two parameters.*/
+#define _ANT_BPWR_CONCAT_2(p1, p2)     _ANT_BPWR_CONCAT_2_(p1, p2)
+#define _ANT_BPWR_CONCAT_2_(p1, p2)    p1##p2
 
 /**@brief Initialize an ANT channel configuration structure for the Bicycle Power profile (Display).
  *
@@ -48,7 +48,7 @@
                                      TRANSMISSION_TYPE,                         \
                                      DEVICE_NUMBER,                             \
                                      NETWORK_NUMBER)                            \
-static const ant_channel_config_t   _CONCAT_2(NAME, _channel_bpwr_disp_config) = \
+static const ant_channel_config_t   _ANT_BPWR_CONCAT_2(NAME, _channel_bpwr_disp_config) = \
     {                                                                           \
         .channel_number    = (CHANNEL_NUMBER),                                  \
         .channel_type      = BPWR_DISP_CHANNEL_TYPE,                            \
@@ -60,7 +60,7 @@ static const ant_channel_config_t   _CONCAT_2(NAME, _channel_bpwr_disp_config) =
         .channel_period    = BPWR_MSG_PERIOD,                                   \
         .network_number    = (NETWORK_NUMBER),                                  \
     }
-#define BPWR_DISP_CHANNEL_CONFIG(NAME) &_CONCAT_2(NAME, _channel_bpwr_disp_config)
+#define BPWR_DISP_CHANNEL_CONFIG(NAME) &_ANT_BPWR_CONCAT_2(NAME, _channel_bpwr_disp_config)
 
 /**@brief Initialize an ANT channel configuration structure for the Bicycle Power profile (Sensor).
  *
@@ -75,7 +75,7 @@ static const ant_channel_config_t   _CONCAT_2(NAME, _channel_bpwr_disp_config) =
                                      TRANSMISSION_TYPE,                         \
                                      DEVICE_NUMBER,                             \
                                      NETWORK_NUMBER)                            \
-static const ant_channel_config_t   _CONCAT_2(NAME, _channel_bpwr_sens_config) = \
+static const ant_channel_config_t   _ANT_BPWR_CONCAT_2(NAME, _channel_bpwr_sens_config) = \
     {                                                                           \
         .channel_number    = (CHANNEL_NUMBER),                                  \
         .channel_type      = BPWR_SENS_CHANNEL_TYPE,                            \
@@ -87,7 +87,7 @@ static const ant_channel_config_t   _CONCAT_2(NAME, _channel_bpwr_sens_config) =
         .channel_period    = BPWR_MSG_PERIOD,                                   \
         .network_number    = (NETWORK_NUMBER),                                  \
     }
-#define BPWR_SENS_CHANNEL_CONFIG(NAME) &_CONCAT_2(NAME, _channel_bpwr_sens_config)
+#define BPWR_SENS_CHANNEL_CONFIG(NAME) &_ANT_BPWR_CONCAT_2(NAME, _channel_bpwr_sens_config)
 
 /**@brief Initialize an ANT profile configuration structure for the BPWR profile (Display).
  *
@@ -96,13 +96,13 @@ static const ant_channel_config_t   _CONCAT_2(NAME, _channel_bpwr_sens_config) =
  */
 #define BPWR_DISP_PROFILE_CONFIG_DEF(NAME,                                          \
                                      EVT_HANDLER)                                   \
-static ant_bpwr_disp_cb_t            _CONCAT_2(NAME, _bpwr_disp_cb);                 \
-static const ant_bpwr_disp_config_t  _CONCAT_2(NAME, _profile_bpwr_disp_config) =    \
+static ant_bpwr_disp_cb_t            _ANT_BPWR_CONCAT_2(NAME, _bpwr_disp_cb);                 \
+static const ant_bpwr_disp_config_t  _ANT_BPWR_CONCAT_2(NAME, _profile_bpwr_disp_config) =    \
     {                                                                               \
-        .p_cb               = &_CONCAT_2(NAME, _bpwr_disp_cb),                       \
+        .p_cb               = &_ANT_BPWR_CONCAT_2(NAME, _bpwr_disp_cb),                       \
         .evt_handler        = (EVT_HANDLER),                                        \
     }
-#define BPWR_DISP_PROFILE_CONFIG(NAME) &_CONCAT_2(NAME, _profile_bpwr_disp_config)
+#define BPWR_DISP_PROFILE_CONFIG(NAME) &_ANT_BPWR_CONCAT_2(NAME, _profile_bpwr_disp_config)
 
 
 /**@brief Initialize an ANT profile configuration structure for the BPWR profile (Sensor).
@@ -116,12 +116,12 @@ static const ant_bpwr_disp_config_t  _CONCAT_2(NAME, _profile_bpwr_disp_config) 
                                      TORQUE_USED,                                   \
                                      CALIB_HANDLER,                                 \
                                      EVT_HANDLER)                                   \
-static ant_bpwr_sens_cb_t            _CONCAT_2(NAME, _bpwr_sens_cb);                 \
-static const ant_bpwr_sens_config_t  _CONCAT_2(NAME, _profile_bpwr_sens_config) =    \
+static ant_bpwr_sens_cb_t            _ANT_BPWR_CONCAT_2(NAME, _bpwr_sens_cb);                 \
+static const ant_bpwr_sens_config_t  _ANT_BPWR_CONCAT_2(NAME, _profile_bpwr_sens_config) =    \
     {                                                                               \
         .torque_use         = (TORQUE_USED),                                        \
         .calib_handler      = (CALIB_HANDLER),                                      \
-        .p_cb               = &_CONCAT_2(NAME, _bpwr_sens_cb),                       \
+        .p_cb               = &_ANT_BPWR_CONCAT_2(NAME, _bpwr_sens_cb),                       \
         .evt_handler        = (EVT_HANDLER),                                        \
     }
 #define BPWR_SENS_PROFILE_CONFIG(NAME) &NAME##_profile_bpwr_sens_config
