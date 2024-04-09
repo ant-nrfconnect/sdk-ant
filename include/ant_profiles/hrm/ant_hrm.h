@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 by Garmin Ltd. or its subsidiaries.
+ * Copyright (c) 2024 by Garmin Ltd. or its subsidiaries.
  * All rights reserved.
  *
  * Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
@@ -21,9 +21,6 @@
 #include <ant_profiles/hrm/pages/ant_hrm_pages.h>
 #include <ant_host_init.h>
 
-#define _CONCAT_2(p1, p2)     _CONCAT_2_(p1, p2)
-#define _CONCAT_2_(p1, p2)    p1##p2
-
 #define HRM_DEVICE_TYPE       0x78u     ///< Device type reserved for ANT+ heart rate monitor.
 #define HRM_ANTPLUS_RF_FREQ   0x39u     ///< Frequency, decimal 57 (2457 MHz).
 
@@ -34,6 +31,10 @@
 #define HRM_EXT_ASSIGN        0x00                  ///< ANT ext assign.
 #define HRM_DISP_CHANNEL_TYPE CHANNEL_TYPE_SLAVE    ///< Display HRM channel type.
 #define HRM_SENS_CHANNEL_TYPE CHANNEL_TYPE_MASTER   ///< Sensor HRM channel type.
+
+/**@brief Helper macro with two level expansion for concatenation of two parameters.*/
+#define _ANT_HRM_CONCAT_2(p1, p2)     _ANT_HRM_CONCAT_2_(p1, p2)
+#define _ANT_HRM_CONCAT_2_(p1, p2)    p1##p2
 
 /**@brief Initialize an ANT channel configuration structure for the HRM profile (Display).
  *
@@ -51,7 +52,7 @@
                                     DEVICE_NUMBER,                              \
                                     NETWORK_NUMBER,                             \
                                     HRM_MSG_PERIOD)                             \
-static const ant_channel_config_t   _CONCAT_2(NAME,_channel_hrm_disp_config) =  \
+static const ant_channel_config_t   _ANT_HRM_CONCAT_2(NAME,_channel_hrm_disp_config) =  \
     {                                                                           \
         .channel_number    = (CHANNEL_NUMBER),                                  \
         .channel_type      = HRM_DISP_CHANNEL_TYPE,                             \
@@ -63,7 +64,7 @@ static const ant_channel_config_t   _CONCAT_2(NAME,_channel_hrm_disp_config) =  
         .channel_period    = (HRM_MSG_PERIOD),                                  \
         .network_number    = (NETWORK_NUMBER),                                  \
     }
-#define HRM_DISP_CHANNEL_CONFIG(NAME) &_CONCAT_2(NAME,_channel_hrm_disp_config)
+#define HRM_DISP_CHANNEL_CONFIG(NAME) &_ANT_HRM_CONCAT_2(NAME,_channel_hrm_disp_config)
 
 
 /**@brief Initialize an ANT channel configuration structure for the HRM profile (Sensor).
@@ -79,7 +80,7 @@ static const ant_channel_config_t   _CONCAT_2(NAME,_channel_hrm_disp_config) =  
                                     TRANSMISSION_TYPE,                          \
                                     DEVICE_NUMBER,                              \
                                     NETWORK_NUMBER)                             \
-static const ant_channel_config_t   _CONCAT_2(NAME,_channel_hrm_sens_config) =  \
+static const ant_channel_config_t   _ANT_HRM_CONCAT_2(NAME,_channel_hrm_sens_config) =  \
     {                                                                           \
         .channel_number    = (CHANNEL_NUMBER),                                  \
         .channel_type      = HRM_SENS_CHANNEL_TYPE,                             \
@@ -91,7 +92,7 @@ static const ant_channel_config_t   _CONCAT_2(NAME,_channel_hrm_sens_config) =  
         .channel_period    = HRM_MSG_PERIOD_4Hz,                                \
         .network_number    = (NETWORK_NUMBER),                                  \
     }
-#define HRM_SENS_CHANNEL_CONFIG(NAME) &_CONCAT_2(NAME,_channel_hrm_sens_config)
+#define HRM_SENS_CHANNEL_CONFIG(NAME) &_ANT_HRM_CONCAT_2(NAME,_channel_hrm_sens_config)
 
 /**@brief Initialize an ANT profile configuration structure for the HRM profile (Sensor).
  *
@@ -104,15 +105,15 @@ static const ant_channel_config_t   _CONCAT_2(NAME,_channel_hrm_sens_config) =  
                                     PAGE_1_PRESENT,                             \
                                     MAIN_PAGE_NUMBER,                           \
                                     EVT_HANDLER)                                \
-static ant_hrm_sens_cb_t            _CONCAT_2(NAME,_hrm_sens_cb);               \
-static const ant_hrm_sens_config_t  _CONCAT_2(NAME,_profile_hrm_sens_config) =  \
+static ant_hrm_sens_cb_t            _ANT_HRM_CONCAT_2(NAME,_hrm_sens_cb);               \
+static const ant_hrm_sens_config_t  _ANT_HRM_CONCAT_2(NAME,_profile_hrm_sens_config) =  \
     {                                                                           \
         .page_1_present     = (PAGE_1_PRESENT),                                 \
         .main_page_number   = (MAIN_PAGE_NUMBER),                               \
-        .p_cb               = &_CONCAT_2(NAME,_hrm_sens_cb),                    \
+        .p_cb               = &_ANT_HRM_CONCAT_2(NAME,_hrm_sens_cb),                    \
         .evt_handler        = (EVT_HANDLER),                                    \
     }
-#define HRM_SENS_PROFILE_CONFIG(NAME) &_CONCAT_2(NAME,_profile_hrm_sens_config)
+#define HRM_SENS_PROFILE_CONFIG(NAME) &_ANT_HRM_CONCAT_2(NAME,_profile_hrm_sens_config)
 
 
 /**@brief HRM page number type. */
