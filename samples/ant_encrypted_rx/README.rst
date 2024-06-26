@@ -12,9 +12,9 @@ The Multi Channel Encrypted examples demonstrate transmitter and receiver operat
 Overview
 ********
 
-On dual core, this sample uses the ''CONFIG_ANT_NP'' and ''CONFIG_ANT_INCLUDE_NP_CHILD_IMAGE'' Kconfig options to automatically configure a child image on the network core.
+On dual core, this sample uses sysbuild to add a network core image to the build by defining the ''NRF_DEFAULT_ANT_ONLY'' with a default value of ''y'' in **Kconfig.sysbuild**.
 
-The ''CONFIG_ANT_ENCRYPTED_CHANNELS'' Kconfig must be set to a value between 1 and ''CONFIG_ANT_TOTAL_CHANNELS_ALLOCATED'' Kconfig to allocate encrypted channnels within the ANT stack library. It must be set on the radio-adjacent or ``CONFIG_ANT_LIBRARY_CORE``. In the dual core case, this is set in the child image configuration.
+The ''CONFIG_ANT_ENCRYPTED_CHANNELS'' Kconfig must be set to a value between 1 and ''CONFIG_ANT_TOTAL_CHANNELS_ALLOCATED'' Kconfig to allocate encrypted channnels within the ANT stack library. It must be set on the radio-adjacent or ``CONFIG_ANT_LIBRARY_CORE``. In the dual core case, this is set in the network core image configuration in the **sysbuild/ant_rpc** subdirectory.
 
 This sample utilizes the ANT Encrypt Config Library to configure the encrypted channel(s). The following configurations apply:
 
@@ -49,9 +49,9 @@ Requirements
 +--------------------+----------+---------------------+----------------------------+
 | Hardware platforms | PCA      | Board name          | Build target               |
 +--------------------+----------+---------------------+----------------------------+
-| nRF5340 DK         | PCA10095 | nrf5340dk_nrf5340   | nrf5340dk_nrf5340_cpuapp   |
+| nRF5340 DK         | PCA10095 | nrf5340dk/nrf5340   | nrf5340dk/nrf5340/cpuapp   |
 +--------------------+----------+---------------------+----------------------------+
-| nRF52840 DK        | PCA10056 | nrf52840dk_nrf52840 | nrf52840dk_nrf52840        |
+| nRF52840 DK        | PCA10056 | nrf52840dk/nrf52840 | nrf52840dk/nrf52840        |
 +--------------------+----------+---------------------+----------------------------+
 
 Configuration
@@ -60,11 +60,11 @@ Configuration
 This sample configuration is split into the following two files:
 
 * generic configuration is available in the **prj.conf** file (single core, or dual core cpuapp)
-* configuration for the ant_rpc child image is stored in the **child_image** subdirectory (dual core cpunet)
+* configuration for the ant_rpc network core image is stored in the **sysbuild/ant_rpc** subdirectory (dual core cpunet)
 
 Building and running
 ********************
-This sample can be found under ant/samples/ant_multi_channels_encrypted_rx in the nRF Connect SDK folder structure. 
+This sample can be found under ant/samples/ant_encrypted_rx in the nRF Connect SDK folder structure.
 
 Testing
 =======

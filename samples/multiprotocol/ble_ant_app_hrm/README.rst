@@ -38,9 +38,9 @@ Requirements
 +--------------------+----------+---------------------+----------------------------+
 | Hardware platforms | PCA      | Board name          | Build target               |
 +--------------------+----------+---------------------+----------------------------+
-| nRF5340 DK         | PCA10095 | nrf5340dk_nrf5340   | nrf5340dk_nrf5340_cpuapp   |
+| nRF5340 DK         | PCA10095 | nrf5340dk/nrf5340   | nrf5340dk/nrf5340/cpuapp   |
 +--------------------+----------+---------------------+----------------------------+
-| nRF52840 DK        | PCA10056 | nrf52840dk_nrf52840 | nrf52840dk_nrf52840        |
+| nRF52840 DK        | PCA10056 | nrf52840dk/nrf52840 | nrf52840dk/nrf52840        |
 +--------------------+----------+---------------------+----------------------------+
 
 Building and running
@@ -65,7 +65,9 @@ You can also test the application with nRF Connect for Desktop by performing the
 1. Compile and program the application. Observe that the BSP_INDICATE_ADVERTISING state is indicated.
 2. Connect to the device from nRF Connect (the device is advertising as 'Nordic_HRM').
 3. Observe that the services are shown in the connected device and that you can start receiving values for the Heart Rate Service by clicking the Play button.
-4. Compile and program the ANT Heart Rate Monitor (HRM) transmitter example on the second board as a peer ANT device. This sample can be found under ant/samples/ant_plus/ant_hrm/hrm_tx in the nRF Connect SDK folder structure. Alternatively, you can configure a simulated Heart Rate Sensor in SimulANT+.
-5. On the nRF DK side, connect to the cpuapp virtual COM port to view the ANT+ HRM pages received by the Relay Application.
+4. Compile and program the ANT Heart Rate Monitor (HRM) transmitter example on the second board as a peer ANT device. This sample can be found under ant/samples/ant_plus/ant_hrm/hrm_tx in the nRF Connect SDK folder structure. Alternatively, you can configure a simulated Heart Rate Sensor in SimulANT+ with the channel parameters shown above.
+
+    *Note* that the Serial Number channel parameter in SimulANT+ corresponds to the device number given in the table above. Setting this will automatically set the three device number fields.
+5. On the nRF DK side, connect to the virtual COM port to view the ANT+ HRM pages received by the Relay Application.
 6. Observe that the BLE Heart Rate notifications values received in the nRF Connect app the correspond to modifications made on the transmitter device. This could be simulated data or button presses if using ANT+ HRM Transmitter sample, or manual modifications to the data fields if using SimulANT+.
 

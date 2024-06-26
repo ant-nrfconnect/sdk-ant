@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2024 by Garmin Ltd. or its subsidiaries.
+# All rights reserved.
+
+# Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
+# and Associated Software. The Agreement accompanies the Software in the root directory of
+# the repository.
+
+# Copyright (c) 2015 - 2021 Nordic Semiconductor ASA
+
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SUPPORT_NETCORE_ANT_ONLY
+    bool
+    default y
+
+config NRF_DEFAULT_ANT_ONLY
+    bool
+
+choice NETCORE
+default NETCORE_ANT_ONLY if NRF_DEFAULT_ANT_ONLY && NETCORE_REMOTE_BOARD_NAME != ""
+depends on SUPPORT_NETCORE && !EXTERNAL_CONFIGURED_NETCORE
+
+config NETCORE_ANT_ONLY
+    bool "ant_rpc"
+    depends on SUPPORT_NETCORE_ANT_ONLY
+    help
+      Include ant_rpc as the netcore image to use
+
+endchoice
+
+if !NETCORE_NONE
+
+config NETCORE_IMAGE_NAME
+    default "ant_rpc" if NETCORE_ANT_ONLY
+
+config NETCORE_IMAGE_PATH
+    default "${ZEPHYR_ANT_MODULE_DIR}/samples/ant_rpc" if NETCORE_ANT_ONLY
+
+endif

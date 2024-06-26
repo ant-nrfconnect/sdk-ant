@@ -3,9 +3,10 @@ sample:
   name: ANT RPC
 tests:
   sample.ant_rpc:
-    platform_allow: nrf5340dk_nrf5340_cpunet
+    sysbuild: true
+    platform_allow: nrf5340dk/nrf5340/cpunet
     integration_platforms:
-      - nrf5340dk_nrf5340_cpunet
+      - nrf5340dk/nrf5340/cpunet
     tags: ant
     build_only: true
     extra_configs:

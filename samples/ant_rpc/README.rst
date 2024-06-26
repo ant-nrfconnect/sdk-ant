@@ -17,7 +17,7 @@ The sample supports the following development kits:
 +--------------------+----------+--------------------+----------------------------+
 | Hardware platforms | PCA      | Board name         | Build target               |
 +====================+==========+====================+============================+
-| nRF5340 DK         | PCA10095 | nrf5340dk_nrf5340  | nrf5340dk_nrf5340_cpunet   |
+| nRF5340 DK         | PCA10095 | nrf5340dk/nrf5340  | nrf5340dk/nrf5340/cpunet   |
 +--------------------+----------+--------------------+----------------------------+
 
 Overview
@@ -33,4 +33,4 @@ Building and running
 You must program this sample to the nRF5340 network core.
 
 The recommended way of building the sample is to use the multi-image feature of the build system.
-The sample is built automatically as a child image when both CONFIG_ANT_NP and CONFIG_ANT_INCLUDE_NP_CHILD_IMAGE are enabled.
+The sample is built for the network core when ''NRF_DEFAULT_ANT_ONLY'' is defined in a file called **Kconfig.sysbuild** in the root of a sample or application and given the value y.

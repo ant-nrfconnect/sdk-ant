@@ -14,7 +14,7 @@ Overview
 
 This sample simulates a Bicycle Power Receiver. The Receiver application connects to the nearest Bicycle Power Sensor in range and prints out incoming page data. The actual channel state is indicated by the ANT channel state indicator.
 
-On dual core, this sample uses the ''CONFIG_ANT_NP'' and ''CONFIG_ANT_INCLUDE_NP_CHILD_IMAGE'' Kconfig options to automatically configure a child image on the network core.
+On dual core, this sample uses sysbuild to add a network core image to the build by defining the ''NRF_DEFAULT_ANT_ONLY'' with a default value of ''y'' in **Kconfig.sysbuild**.
 
 Channel configuration
 =====================
@@ -44,9 +44,9 @@ Requirements
 +--------------------+----------+---------------------+----------------------------+
 | Hardware platforms | PCA      | Board name          | Build target               |
 +--------------------+----------+---------------------+----------------------------+
-| nRF5340 DK         | PCA10095 | nrf5340dk_nrf5340   | nrf5340dk_nrf5340_cpuapp   |
+| nRF5340 DK         | PCA10095 | nrf5340dk/nrf5340   | nrf5340dk/nrf5340/cpuapp   |
 +--------------------+----------+---------------------+----------------------------+
-| nRF52840 DK        | PCA10056 | nrf52840dk_nrf52840 | nrf52840dk_nrf52840        |
+| nRF52840 DK        | PCA10056 | nrf52840dk/nrf52840 | nrf52840dk/nrf52840        |
 +--------------------+----------+---------------------+----------------------------+
 
 Building and running
@@ -63,15 +63,14 @@ network integrity, and interoperability, except for the default public network.
 
 For more information on Network Keys, visit https://www.thisisant.com/developer/ant-plus/ant-plus-basics/network-keys.
 
-Testing with ANTware II
-=======================
+Testing
+=======
 
-After programming the sample to your development kit, you can test the Bicycle Power Receiver using ANTware II:
+You can test the Bicycle Power Receiver by performing the following steps:
 
 1. Compile and program the Bicycle Power Receiver.
-2. Compile and program the Bicycle Power Transmitter. Alternatively, use SimulANT+ as described below.
-
-   On the nRF DK side, the virtual COM port will show the ANT+ BPWR pages received. Below is an example of the pages received from a Power only sensor.
+2. Compile and program the Bicycle Power Transmitter to another supported board to act as a peer ANT device. Alternatively, use SimulANT+ as described below.
+3. On the nRF DK side, connect to the virtual COM port to view the ANT+ BPWR pages received. Below is an example of the pages received from a Power only sensor.
 
    .. parsed-literal::
       :class: highlight

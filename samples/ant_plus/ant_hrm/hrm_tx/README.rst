@@ -14,7 +14,7 @@ Overview
 
 This sample simulates a Heart Rate Monitor transmitter. It transmits the heart rate information in the main data page (page 4). Device-specific information is transmitted at a slower rate in the background data pages (pages 1-3). The application prints out outgoing page data. The actual channel state is indicated by the ANT channel state indicator.
 
-On dual core, this sample uses the ''CONFIG_ANT_NP'' and ''CONFIG_ANT_INCLUDE_NP_CHILD_IMAGE'' Kconfig options to automatically configure a child image on the network core.
+On dual core, this sample uses sysbuild to add a network core image to the build by defining the ''NRF_DEFAULT_ANT_ONLY'' with a default value of ''y'' in **Kconfig.sysbuild**.
 
 Channel configuration
 =====================
@@ -44,9 +44,9 @@ Requirements
 +--------------------+----------+---------------------+----------------------------+
 | Hardware platforms | PCA      | Board name          | Build target               |
 +--------------------+----------+---------------------+----------------------------+
-| nRF5340 DK         | PCA10095 | nrf5340dk_nrf5340   | nrf5340dk_nrf5340_cpuapp   |
+| nRF5340 DK         | PCA10095 | nrf5340dk/nrf5340   | nrf5340dk/nrf5340/cpuapp   |
 +--------------------+----------+---------------------+----------------------------+
-| nRF52840 DK        | PCA10056 | nrf52840dk_nrf52840 | nrf52840dk_nrf52840        |
+| nRF52840 DK        | PCA10056 | nrf52840dk/nrf52840 | nrf52840dk/nrf52840        |
 +--------------------+----------+---------------------+----------------------------+
 
 Building and running
