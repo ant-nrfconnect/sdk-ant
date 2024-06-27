@@ -1,5 +1,5 @@
 #
-# Copyright 2023 by Garmin Ltd. or its subsidiaries.
+# Copyright 2024 by Garmin Ltd. or its subsidiaries.
 # All rights reserved.
 #
 # Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
@@ -19,6 +19,8 @@ if ANT
 
 config ANT_LIBRARY_CORE
     bool "Defines the core used for ANT radio communication"
+    select NRFX_PPI if HAS_HW_NRF_PPI
+    select NRFX_DPPI if HAS_HW_NRF_DPPIC
     # include multiprotocol service layer (MPSL):
     #   - ANT stack radio scheduling access via radio event manager (REM)
     select MPSL

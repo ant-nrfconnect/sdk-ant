@@ -57,17 +57,11 @@ static void rand_func(uint8_t *buf, uint8_t len) {
   entropy_get_entropy(stEntropySource, buf, len);
 }
 #if defined(CONFIG_BT)
-#if defined(CONFIG_ANT_SDC_INIT)
-static void sdc_assertion_handler(const char *const file, const uint32_t line) {
-  LOG_ERR("Softdevice Controller ASSERT: %s, %d", file, line);
-  k_oops();
-}
-#endif // CONFIG_ANT_SDC_INIT
-#include <sdc.h>
-#include <sdc_soc.h>
-static void ecb_encrypt_func(ANT_ECB_DATA *data) {
-  // shared access to NRF_ECB using softdevice controller (sdc)
-  sdc_soc_ecb_block_encrypt(data->aucKey, data->aucClearText, data->aucCipherText);
+#include <mpsl_ecb.h>
+static void ecb_encrypt_func(ANT_ECB_DATA *data)
+{
+  // shared access to NRF_ECB using MPSL API
+  mpsl_ecb_block_encrypt_extended(data->aucKey, data->aucClearText, data->aucCipherText, MPSL_ECB_NO_FLAGS);
 }
 #else
 #include <hal/nrf_ecb.h>
@@ -105,14 +99,6 @@ ant_err_t ant_init(void) {
     return err;
 
 #if CONFIG_ANT_ENCRYPTED_CHANNELS > 0
-#if defined(CONFIG_BT)
-#if defined(CONFIG_ANT_SDC_INIT)
-  // Allow ANT to initialize the softdevice controller (sdc) for sdc_soc API access. Call after MPSL is init
-  err = sdc_init(sdc_assertion_handler);
-  if (err)
-    return err;
-#endif // CONFIG_ANT_SDC_INIT
-#endif // CONFIG_BT
 
   // for encryption support, set RAND & ECB encrypt func
   ant_funcs.fpRANDGet = rand_func;

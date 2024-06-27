@@ -11,7 +11,7 @@ The ANT Background Scanning Example shows how to implement a background scanning
 
 Overview
 ********
-On dual core, this sample uses the ''CONFIG_ANT_NP'' and ''CONFIG_ANT_INCLUDE_NP_CHILD_IMAGE'' Kconfig options to automatically configure a child image on the network core.
+On dual core, this sample uses sysbuild to add a network core image to the build by defining the ''NRF_DEFAULT_ANT_ONLY'' with a default value of ''y'' in **Kconfig.sysbuild**.
 
 Description
 ===========
@@ -78,9 +78,9 @@ Requirements
 +--------------------+----------+---------------------+----------------------------+
 | Hardware platforms | PCA      | Board name          | Build target               |
 +--------------------+----------+---------------------+----------------------------+
-| nRF5340 DK         | PCA10095 | nrf5340dk_nrf5340   | nrf5340dk_nrf5340_cpuapp   |
+| nRF5340 DK         | PCA10095 | nrf5340dk/nrf5340   | nrf5340dk/nrf5340/cpuapp   |
 +--------------------+----------+---------------------+----------------------------+
-| nRF52840 DK        | PCA10056 | nrf52840dk_nrf52840 | nrf52840dk_nrf52840        |
+| nRF52840 DK        | PCA10056 | nrf52840dk/nrf52840 | nrf52840dk/nrf52840        |
 +--------------------+----------+---------------------+----------------------------+
 
 Configuration
@@ -89,7 +89,7 @@ Configuration
 This sample configuration is split into the following two files:
 
 * generic configuration is available in the **prj.conf** file (single core, or dual core cpuapp)
-* configuration for the ant_rpc child image is stored in the **child_image** subdirectory (dual core cpunet)
+* configuration for the ant_rpc network core image is stored in the **sysbuild/ant_rpc** subdirectory (dual core cpunet)
 
 Building and running
 ********************

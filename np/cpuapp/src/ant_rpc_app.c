@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Garmin Ltd. or its subsidiaries.
+ * Copyright 2024 by Garmin Ltd. or its subsidiaries.
  * All rights reserved.
  *
  * Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
@@ -20,6 +20,10 @@
 #include "ant_rpc_app.h"
 #include "ant_np_host.h"
 
+#if defined(CONFIG_SOC_NRF5340_CPUAPP)
+#include <nrf53_cpunet_mgmt.h>
+#endif
+
 LOG_MODULE_REGISTER(ant_rpc_app, CONFIG_ANT_LOG_LEVEL);
 
 static ant_rpc_app_evt_cb_t evt_cb_handler;
@@ -30,7 +34,6 @@ NRF_RPC_GROUP_DEFINE(ant_rpc_group, "ant_rpc_group_id", &ant_rpc_tr, NULL, NULL,
 static void ant_rpc_evt_handler(const struct nrf_rpc_group *group, const uint8_t *packet, size_t len, void *handler_data) {
   ANT_MESSAGE evt;
 
-  // TODO: refine logging
   LOG_DBG("ant_rpc_evt_handler");
 
   if (len > MESG_BUFFER_SIZE) {
@@ -63,8 +66,12 @@ static void ant_rpc_init_err_handler(const struct nrf_rpc_err_report *report) {
 ant_err_t ant_rpc_app_init(void) {
   ant_err_t err;
 
-  // TODO: refine logging
   LOG_DBG("ant_rpc_app_init");
+
+#if defined(CONFIG_SOC_NRF5340_CPUAPP)
+  // Network CPU must be requested explicitly prior to IPC initialization
+  nrf53_cpunet_enable(true);
+#endif
 
   err = (ant_err_t)nrf_rpc_init(ant_rpc_init_err_handler);
   if (err) {
@@ -143,7 +150,6 @@ ant_err_t ant_rpc_app_send_cmd(ANT_MESSAGE *cmd, ANT_MESSAGE *rsp) {
 }
 
 ant_err_t ant_rpc_app_register_evt_cb(ant_rpc_app_evt_cb_t cb) {
-  // TODO: refine logging
   LOG_DBG("ant_rpc_app_register_evt_cb\n");
 
   if (cb == NULL) {

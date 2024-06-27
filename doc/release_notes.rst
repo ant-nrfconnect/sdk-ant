@@ -9,6 +9,7 @@ See the release notes for information about specific ANT for nRF Connect SDK rel
    :maxdepth: 1
    :caption: Releases:
 
+   releases/release-notes-1.3.0
    releases/release-notes-1.2.0
    releases/release-notes-1.1.0
    releases/release-notes-1.0.0

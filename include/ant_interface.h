@@ -1,5 +1,5 @@
 /*
- * Copyright 2023 by Garmin Ltd. or its subsidiaries.
+ * Copyright 2024 by Garmin Ltd. or its subsidiaries.
  * All rights reserved.
  *
  * Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
@@ -103,6 +103,7 @@ typedef struct
  * @retval  0 Success
  * @retval  -NRF_EPERM if the stack is not enabled
  * @retval  -NRF_EINVAL if the ANT License Key argument is invalid
+ * @retval  -NRF_ENOMEM if stack resources could not be allocated
  */
 ant_err_t ant_stack_init (const uint8_t *aucLicenseKey);
 
