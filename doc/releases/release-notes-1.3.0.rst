@@ -41,6 +41,7 @@ Changelog
 * Update the ANT library to sync with the latest nRF Connect SDK dependencies
 * Allocate (D)PPI resources at runtime instead of relying on reserved channels (introduces nrfx dependency)
 * Fix BLE API usage to account for deprecated automatic name BLE advertiser option in ``multiprotocol/ble_ant_app_hrm`` sample
+* Use mpsl_ecb instead of sdc_soc interface for encrypted channel support
 * Migrate samples to HWMv2
 * Added sysbuild support for all samples, see Nordic's sysbuild documentation for instructions
 
