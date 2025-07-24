@@ -41,23 +41,15 @@ choice ANT_SWI
 
 config ANT_SWI1
 	bool "SWI1"
-	depends on HAS_HW_NRF_SWI1
+	depends on HAS_HW_NRF_SWI1 || SOC_SERIES_NRF54LX
 
 config ANT_SWI2
 	bool "SWI2"
-	depends on HAS_HW_NRF_SWI2
+	depends on HAS_HW_NRF_SWI2 || SOC_SERIES_NRF54LX
 
 config ANT_SWI3
 	bool "SWI3"
-	depends on HAS_HW_NRF_SWI3
-
-config ANT_SWI4
-	bool "SWI4"
-	depends on HAS_HW_NRF_SWI4
-
-config ANT_SWI5
-	bool "SWI5"
-	depends on HAS_HW_NRF_SWI5
+	depends on HAS_HW_NRF_SWI3 || SOC_SERIES_NRF54LX
 
 endchoice
 
@@ -92,7 +84,7 @@ config ANT_SDC_INIT
 	  controller. This is to allow the ANT library stack to utlize the sdc_soc
 	  interface for cryptographic purposes. If sdc_init() is run prior to ANT
 	  initialization (eg. for BT), then this configuration is not needed as long as
-	  it is run before using any ANT library stack cryptographic functions. 
+	  it is run before using any ANT library stack cryptographic functions.
 
 module=ANT
 module-str=ANT

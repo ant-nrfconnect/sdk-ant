@@ -1,5 +1,5 @@
 #
-# Copyright 2024 by Garmin Ltd. or its subsidiaries.
+# Copyright 2025 by Garmin Ltd. or its subsidiaries.
 # All rights reserved.
 #
 # Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
@@ -11,26 +11,35 @@ menu "ANT Wireless"
 
 config ANT
     bool "ANT Wireless"
-    depends on (SOC_NRF5340_CPUNET || SOC_NRF5340_CPUAPP || SOC_NRF52840)
+    depends on (SOC_NRF5340_CPUNET || SOC_NRF5340_CPUAPP || SOC_NRF52840 || SOC_NRF52832 || SOC_NRF54L15)
     help
-       Enable ANT ultra low power wireless protocol by Garmin Canada Inc.
+       Enable ANT ultra low power wireless protocol.
 
 if ANT
 
 config ANT_LIBRARY_CORE
-    bool "Defines the core used for ANT radio communication"
+    bool "Enabled on the core used for ANT radio communication"
     select NRFX_PPI if HAS_HW_NRF_PPI
     select NRFX_DPPI if HAS_HW_NRF_DPPIC
-    # include multiprotocol service layer (MPSL):
-    #   - ANT stack radio scheduling access via radio event manager (REM)
+    select NRFX_DPPI10 if SOC_SERIES_NRF54LX
+    # Include multiprotocol service layer (MPSL), required for peripheral access and radio scheduling:
     select MPSL
-    # include entropy:
-    #  - ANT stack encrypted channel support using random number for cryptographic services
+    # Include Entropy for ANT encrypted channel support:
     select ENTROPY_GENERATOR
     default n if (SOC_NRF5340_CPUAPP)
     default y
     help
       This configuration is required for all single core builds and for network core builds on dual-core systems.
+
+config ANT_LIB_DIR
+	string
+	default "nrf52" if SOC_SERIES_NRF52X
+	default "nrf53" if SOC_NRF5340_CPUNET
+	default "nrf54h" if SOC_NRF54H20_CPURAD
+	default "nrf54l_ns" if SOC_SERIES_NRF54LX && TRUSTED_EXECUTION_NONSECURE  # 'ns' target unsupported
+	default "nrf54l" if SOC_SERIES_NRF54LX && !TRUSTED_EXECUTION_NONSECURE
+  help
+    Helper option to calculate the library path.
 
 config ANT_INTERNAL
     bool "ANT Internal"
@@ -39,7 +48,6 @@ config ANT_INTERNAL
 rsource "init/Kconfig"
 rsource "lib/Kconfig"
 rsource "np/Kconfig"
-rsource "samples/Kconfig"
 
 endif # ANT
 

@@ -25,7 +25,7 @@ License Keys
 
 Before compiling any sample code, the ANT evaluation key should be set via Kconfig. You MUST obtain a valid commercial license key BEFORE releasing a product to market that uses ANT.
 
-You may use the Evaluation license key for non-commerical use by setting :option:`CONFIG_ANT_EVALUATION_KEY` to ``y`` or defining :option:`CONFIG_ANT_LICENSE_KEY` in the Kconfig configuration file for the radio-adjacent core (:option:`CONFIG_ANT_LIBRARY_CORE`). 
+You may use the Evaluation license key for non-commerical use by setting :option:`CONFIG_ANT_EVALUATION_KEY` to ``y`` or defining :option:`CONFIG_ANT_LICENSE_KEY` in the Kconfig configuration file for the radio-adjacent core (:option:`CONFIG_ANT_LIBRARY_CORE`).
 
 There are stubs in the sample ``.conf`` files that can be changed from ``n`` to ``y`` to enable the Evaluation license key. For single core, this is done in the default ``prj.conf``.
 
@@ -60,11 +60,12 @@ When an ANT sample targets a dual core SoC, it will automatically include an ANT
 
 Multiprotocol: ANT and Bluetooth® Low Energy (LE)
 *************************************************
-See the ``samples/multiprotocol`` folder for multiprotocol application examples.
 
 Multiprotocol support can be evaluated by enabling both ``CONFIG_BT`` and :option:`CONFIG_ANT` along with any other desired stack configuration settings.
 
-On dual core, instead of including the single protocol network core image (``ant_rpc``), the ANT protocol stack will be combined with the default nRF Connect SDK BLE stack application ``hci_ipc``.
+A multiprotocol sample is provided to demonstrate this, see ``ble_ant_app_hrm`` in :ref:`Samples <ant_samples>`.
+
+On dual core, instead of including the single protocol network core image (``ant_rpc``), the ANT protocol stack will be combined with the default nRF Connect SDK Bluetooth® LE stack application ``hci_ipc``.
 
 Due to space constraints on the SoC (or network core), it may be necessary to limit protocol resources to those strictly required for your application (ie. using ``CONFIG_BT_MAX_CONN``).
 

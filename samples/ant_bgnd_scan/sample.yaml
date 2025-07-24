@@ -1,0 +1,23 @@
+sample:
+  description: ANT Background Scanning Sample
+  name: ANT Background Scanning
+tests:
+  sample.ant_bgrnd_scanning.dual_core:
+    sysbuild: true
+    platform_allow: nrf5340dk/nrf5340/cpuapp
+    tags: ant
+    build_only: true
+    extra_args: ant_rpc_CONFIG_ANT_EVALUATION_KEY=y
+  sample.ant_bgrnd_scanning.single_core:
+    sysbuild: true
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf52dk/nrf52832
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf52840dk/nrf52840
+      - nrf52dk/nrf52832
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags: ant
+    build_only: true
+    extra_args: CONFIG_ANT_EVALUATION_KEY=y

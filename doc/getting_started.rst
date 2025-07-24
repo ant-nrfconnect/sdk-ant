@@ -15,51 +15,53 @@ The nRF Connect SDK (sdk-nrf) uses ``west`` to manage a combination of multiple 
 
 You must use the west tool to install all components of the nRF Connect SDK including ANT. The required version of west is dictated by sdk-nrf.
 
-Follow the installation instuctions in the `nRF Connect SDK Getting started <https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/getting_started.html>`_ guide.
+.. note::
+  From sdk-ant v2.0.0 onwards, ANT support is now being offered as an Add-on repository. This model requires completing a specific setup that differs from previous versions.
+  Add-ons manage and clone their own compatible nRF Connect SDK instance. Please follow the instructions below to set up the development environment.
 
-`Get the nRF Connect SDK code <https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/nrf/gs_installing.html#get-the-ncs-code>`_ has instructions for obtaining an ANT compatible version of the nRF Connect SDK by hash, tag, or the latest state of the main branch.
 
-
-Enabling ANT for nRF Connect SDK
-********************************
+Getting the ANT for nRF Connect SDK Add-on
+******************************************
 
 Access to the ANT for nRF Connect repository is granted to ANT Adopters after accepting the license agreement and authenticating through GitHub.
 
 Once your access is set up, you will be able to browse the repository here: https://github.com/ant-nrfconnect/sdk-ant
 
-1. Go to your nRF Connect SDK main folder (that contains folders such as ``nrf`` and ``zephyr``). Open the command prompt and use west to enable the ANT group filter::
+After confirming access, you can set up your development environment either manually or through the nRF Connect for Visual Studio Code extension.
 
-     west config manifest.group-filter +ant
+Manual Installation
+===================
 
-2. Use the west list command to verify the ANT repository version::
+1. Initialize the ANT repository::
 
-     west list ant
+     west init -m "https://github.com/ant-nrfconnect/sdk-ant" --mr main
 
-   The output will display remote and revision information about the repository defined in ``nrf/west.yml``. For example::
-
-     ant          ant                          8f6e2b0470d11b5c1a97c92df35eb1350e84c5f8 https://github.com/ant-nrfconnect/sdk-ant
-
-3. Next, run west update to synchronize the workspace's projects based on the contents of the manifest file::
+2. Update all repositories (including the compatible sdk-nrf version) using the following command::
 
      west update
 
-   The repository will be cloned from the remote. Your GitHub credentials may be verified at this point (how this is managed is up to the user - Git Credential Manager is one option). If successful, the output will include an entry for the ANT remote. For example::
 
-     === updating ant (ant):
-     HEAD is now at 8f6e2b0
+nRF Connect for Visual Studio Code Extension Installation
+=========================================================
 
-   The ANT module will appear as ``ant`` in the nRF Connect SDK main folder (which contains folders such as ``nrf`` and ``zephyr``).
+To set up the ANT Add-On alongside a compatible nRF Connect SDK, follow these steps:
+
+1. Launch Visual Studio Code and open the nRF Connect extension from the Activity Bar.
+2. In the Welcome View, choose **Create a new application** to open the action list.
+3. Select **Browse nRF Connect SDK Add-on Index** to view available SDK Add-Ons.
+4. Locate and select **ANT Wireless Add-On**.
+5. Choose the desired Add-on version for installation.
+6. The installation process for both the Add-on and the compatible nRF Connect SDK will begin.
 
 See the :ref:`Integration notes <ant_integration_notes>` and :ref:`Samples <ant_samples>` for details on configuring your nRF Connect SDK project to include ANT.
 
 Updating ANT for nRF Connect SDK
 ********************************
 
-When new releases are available, they will be tagged with a version and appear in the ``Releases`` sidebar on GitHub. ANT and sdk-nrf :ref:`ant_compatibility` information will be made available for each release.
+When new releases are available, they will be tagged with a version and appear in the ``Releases`` sidebar on GitHub. ANT and sdk-nrf :ref:`ant_compatibility` information is available for each release.
 
-To update your SDK, you can edit the ``revision:`` field for ANT in the sdk-nrf west manifest (``nrf/west.yml``) to reference a new tag or SHA and run west update.
+ANT libraries are tightly coupled to sdk-nrf revisions. It is not recommended to use sdk-ant with any version other than that specified in the west manifest.
 
-sdk-nrf compatibility cannot be guaranteed when updating the sdk-ant revision in the west manifest file between releases.
 
 Building the Documentation
 **************************
@@ -83,8 +85,12 @@ To build the documentation:
 Resources
 *********
 
+Follow the `nRF Connect SDK installation guide <https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/installation.html>`_.
+
+`Installing the nRF Connect SDK <https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/installation/install_ncs.html>`_ has instructions for obtaining an ANT compatible version of the nRF Connect SDK by hash, tag, or the latest state of the main branch.
+
 The nRF Connect SDK is available from Nordic Semiconductor:
 https://github.com/nrfconnect/sdk-nrf
 
 Official documentation for nRF Connect SDK (sdk-nrf) can be found here:
-https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/
+https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/index.html

@@ -22,8 +22,8 @@ subprocess.call('doxygen Doxyfile.in', shell=True)
 project = 'ANT for nRF Connect SDK'
 copyright = '2024, Garmin Canada Inc'
 author = 'Garmin Canada Inc.'
-version = '1.3.0'
-past_versions = ['1.2.0', '1.1.0', '1.0.0', '0.5.0']
+version = '2.0.0'
+past_versions = ['1.3.0', '1.2.0', '1.1.0', '1.0.0', '0.5.0']
 
 # -- General configuration ---------------------------------------------------
 
@@ -64,6 +64,7 @@ breathe_default_project = "ANT for nRF Connect SDK"
 breathe_default_members = ('members', 'undoc-members')
 breathe_show_define_initializer = True
 breathe_show_enumvalue_initializer = True
+breathe_domain_by_extension = {"h": "c", "c": "c"}
 
 # -- Previous versions -----------------------------------------------------
 try:

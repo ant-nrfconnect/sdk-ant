@@ -11,7 +11,6 @@ if(CONFIG_ANT)
     zephyr_include_directories(include)
 
     add_subdirectory(init)
-    add_subdirectory(samples)
     add_subdirectory(lib)
     add_subdirectory(np)
 
@@ -25,11 +24,23 @@ if(CONFIG_ANT)
 
     if(CONFIG_ANT_LIBRARY_CORE)
         add_subdirectory(al)
+
+        if(NOT EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/lib/${CONFIG_ANT_LIB_DIR}/${FPU_ABI}/libant.a)
+            message(WARNING "This combination of SoC, security, and FP ABI is not supported by ANT.")
+        endif()
+
         if(CONFIG_ANT_INTERNAL)
-            zephyr_library_import(libant ${CMAKE_CURRENT_SOURCE_DIR}/lib/${GCC_M_CPU}/${FPU_ABI}/libant_internal.a)
+            zephyr_library_import(libant ${CMAKE_CURRENT_SOURCE_DIR}/lib/${CONFIG_ANT_LIB_DIR}/${FPU_ABI}/libant_internal.a)
         else()
-            zephyr_library_import(libant ${CMAKE_CURRENT_SOURCE_DIR}/lib/${GCC_M_CPU}/${FPU_ABI}/libant.a)
+            zephyr_library_import(libant ${CMAKE_CURRENT_SOURCE_DIR}/lib/${CONFIG_ANT_LIB_DIR}/${FPU_ABI}/libant.a)
         endif()
     endif()
 
+endif()
+
+if(CONFIG_CLOCK_CONTROL_NRF_ACCURACY GREATER 50)
+  message(WARNING "
+  ANT requires a low frequency clock source with a maximum tolerance of +/- 50 ppm.
+  Please see Kconfig values CONFIG_CLOCK_CONTROL_NRF_K32SRC and CONFIG_CLOCK_CONTROL_NRF_ACCURACY.
+  ")
 endif()

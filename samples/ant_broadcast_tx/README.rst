@@ -39,13 +39,17 @@ This example uses the default channel configuration:
 Requirements
 ************
 
-+--------------------+----------+---------------------+----------------------------+
-| Hardware platforms | PCA      | Board name          | Build target               |
-+--------------------+----------+---------------------+----------------------------+
-| nRF5340 DK         | PCA10095 | nrf5340dk/nrf5340   | nrf5340dk/nrf5340/cpuapp   |
-+--------------------+----------+---------------------+----------------------------+
-| nRF52840 DK        | PCA10056 | nrf52840dk/nrf52840 | nrf52840dk/nrf52840        |
-+--------------------+----------+---------------------+----------------------------+
++--------------------+----------+---------------+----------------------------+
+| Hardware platforms | PCA      | Board name    | Board target               |
++--------------------+----------+---------------+----------------------------+
+| nRF52 DK           | PCA10040 | nrf52dk       | nrf52dk/nrf52832           |
++--------------------+----------+---------------+----------------------------+
+| nRF52840 DK        | PCA10056 | nrf52840dk    | nrf52840dk/nrf52840        |
++--------------------+----------+---------------+----------------------------+
+| nRF5340 DK         | PCA10095 | nrf5340dk     | nrf5340dk/nrf5340/cpuapp   |
++--------------------+----------+---------------+----------------------------+
+| nRF54L15 DK        | PCA10156 | nrf54l15dk    | nrf54l15dk/nrf54l15/cpuapp |
++--------------------+----------+---------------+----------------------------+
 
 Configuration
 *************
@@ -70,7 +74,7 @@ After programming the sample to your development kit, you can test the Broadcast
 
    .. parsed-literal::
       :class: highlight
-      
+
       ant\\samples\\ant_broadcast_tx\\ant_broadcast_tx_test.xml
 
    Alternatively, you can configure the device channel manually:
