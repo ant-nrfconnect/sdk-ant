@@ -29,25 +29,33 @@ This example uses the default channel configuration:
 +-------------------+---------------+-----------------+
 | RF channel        | 57 (2457 MHz) | 57 (2457 MHz)   |
 +-------------------+---------------+-----------------+
-| Device number     | 0x31 (49)     | 0x31 (49)       |
+| Device number     | 0x31 (49)     | 0x00 (Wildcard) |
 +-------------------+---------------+-----------------+
 | Device type       | 0x78 (120)    | 0x78 (120)      |
 +-------------------+---------------+-----------------+
-| Transmission type | 0x01          | 0x01            |
+| Transmission type | 0x01          | 0x00 (Wildcard) |
 +-------------------+---------------+-----------------+
 | Channel period    | 8070 (4.06 Hz)| 8070 (4.06 Hz)  |
 +-------------------+---------------+-----------------+
 
+By default, the receiver configuration uses wildcard (0x00) values for Device number and Transmission type.
+
+According to the ANT+ Heart Rate Device profile, any returned transmission type is valid. Once the transmission type is learned, the receiving device can remember the type for future searches.
+
 Requirements
 ************
 
-+--------------------+----------+---------------------+----------------------------+
-| Hardware platforms | PCA      | Board name          | Build target               |
-+--------------------+----------+---------------------+----------------------------+
-| nRF5340 DK         | PCA10095 | nrf5340dk/nrf5340   | nrf5340dk/nrf5340/cpuapp   |
-+--------------------+----------+---------------------+----------------------------+
-| nRF52840 DK        | PCA10056 | nrf52840dk/nrf52840 | nrf52840dk/nrf52840        |
-+--------------------+----------+---------------------+----------------------------+
++--------------------+----------+---------------+----------------------------+
+| Hardware platforms | PCA      | Board name    | Board target               |
++--------------------+----------+---------------+----------------------------+
+| nRF52 DK           | PCA10040 | nrf52dk       | nrf52dk/nrf52832           |
++--------------------+----------+---------------+----------------------------+
+| nRF52840 DK        | PCA10056 | nrf52840dk    | nrf52840dk/nrf52840        |
++--------------------+----------+---------------+----------------------------+
+| nRF5340 DK         | PCA10095 | nrf5340dk     | nrf5340dk/nrf5340/cpuapp   |
++--------------------+----------+---------------+----------------------------+
+| nRF54L15 DK        | PCA10156 | nrf54l15dk    | nrf54l15dk/nrf54l15/cpuapp |
++--------------------+----------+---------------+----------------------------+
 
 Building and running
 ********************

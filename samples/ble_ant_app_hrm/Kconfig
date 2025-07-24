@@ -1,0 +1,44 @@
+#
+# Copyright 2022 by Garmin Ltd. or its subsidiaries.
+# All rights reserved.
+#
+# Use of this Software is limited and subject to the License Agreement for ANT SoftDevice
+# and Associated Software. The Agreement accompanies the Software in the root directory of
+# the repository.
+#
+
+source "Kconfig.zephyr"
+
+menuconfig HRM_RELAY
+	bool "Bluetooth LE ANT+ HRM Relay sample"
+	select ANT
+	select ANT_HRM
+	select ANT_KEY_MANAGER
+	select ANT_CHANNEL_CONFIG
+	select ANT_STATE_INDICATOR
+	select DK_LIBRARY
+	default y
+
+menu "Channel configuration"
+
+config HRM_RX_CHANNEL_NUM
+	int "Channel number assigned to HRM profile"
+	default 0
+
+config HRM_RX_NETWORK_NUM
+	int "ANT+ Network number"
+	default 0
+	help
+	  Selects the network number to associate with the channel.
+
+config HRM_RX_CHAN_ID_DEV_NUM
+	int "Channel ID: Device number"
+	default 49
+	range 0 65535
+
+config HRM_RX_CHAN_ID_TRANS_TYPE
+	int "Channel ID: Transmission type"
+	default 1
+	range 0 255
+
+endmenu

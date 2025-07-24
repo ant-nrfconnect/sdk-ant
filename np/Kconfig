@@ -11,12 +11,13 @@ config ANT_NP
     bool "ANT Network Processor Multicore API Serialization"
     depends on ANT
     select ANT_NP_HOST if SOC_NRF5340_CPUAPP
+    select SOC_NRF53_CPUNET_ENABLE if SOC_NRF5340_CPUAPP
     select ANT_NP_REMOTE if SOC_NRF5340_CPUNET
     select ANT_RPC
     default y if SOC_NRF5340_CPUAPP || SOC_NRF5340_CPUNET
     default n
     help
-       Serialize API calls for execution on remote CPU. 
+       Serialize API calls for execution on remote CPU.
 
 config ANT_NP_HOST
     bool "ANT Network Processor Host (cpuapp)"

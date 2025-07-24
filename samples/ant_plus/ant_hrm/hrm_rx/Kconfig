@@ -33,12 +33,12 @@ config HRM_RX_NETWORK_NUM
 
 config HRM_RX_CHAN_ID_DEV_NUM
 	int "Channel ID: Device number"
-	default 49
+	default 0
 	range 0 65535
 
 config HRM_RX_CHAN_ID_TRANS_TYPE
 	int "Channel ID: Transmission type"
-	default 1
+	default 0
 	range 0 255
 
 endmenu

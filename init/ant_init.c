@@ -27,11 +27,23 @@ static K_THREAD_STACK_DEFINE(ant_work_stack, CONFIG_ANT_WORK_STACK_SIZE);
 LOG_MODULE_REGISTER(ant_init, CONFIG_ANT_LOG_LEVEL);
 
 #if defined(CONFIG_ANT_SWI1)
+#if defined (CONFIG_SOC_SERIES_NRF54LX)
+#define ANT_SWI_IRQN SWI01_IRQn
+#else
 #define ANT_SWI_IRQN SWI1_IRQn
+#endif
 #elif defined(CONFIG_ANT_SWI2)
+#if defined (CONFIG_SOC_SERIES_NRF54LX)
+#define ANT_SWI_IRQN SWI02_IRQn
+#else
 #define ANT_SWI_IRQN SWI2_IRQn
+#endif
 #elif defined(CONFIG_ANT_SWI3)
+#if defined (CONFIG_SOC_SERIES_NRF54LX)
+#define ANT_SWI_IRQN SWI03_IRQn
+#else
 #define ANT_SWI_IRQN SWI3_IRQn
+#endif
 #else
 #error "Software interrupt for ANT events has not been defined."
 #endif
@@ -51,32 +63,20 @@ __ALIGN(4) static uint8_t m_ant_stack_buffer[NRF_ANT_BUF_SIZE];
 
 #if (CONFIG_ANT_ENCRYPTED_CHANNELS > 0)
 #include <zephyr/drivers/entropy.h>
-static const struct device *stEntropySource = DEVICE_DT_GET(DT_NODELABEL(rng));
+#include <mpsl_ecb.h>
+
+static const struct device *stEntropySource = DEVICE_DT_GET(DT_CHOSEN(zephyr_entropy));
 static ANT_STACK_FUNCS ant_funcs;
 static void rand_func(uint8_t *buf, uint8_t len) {
   entropy_get_entropy(stEntropySource, buf, len);
 }
-#if defined(CONFIG_BT)
-#include <mpsl_ecb.h>
+
 static void ecb_encrypt_func(ANT_ECB_DATA *data)
 {
   // shared access to NRF_ECB using MPSL API
   mpsl_ecb_block_encrypt_extended(data->aucKey, data->aucClearText, data->aucCipherText, MPSL_ECB_NO_FLAGS);
 }
-#else
-#include <hal/nrf_ecb.h>
-static void ecb_encrypt_func(ANT_ECB_DATA *data) {
-  // direct access to NRF_ECB
-  nrf_ecb_data_pointer_set(NRF_ECB, data);
-  nrf_ecb_event_clear(NRF_ECB, NRF_ECB_EVENT_ENDECB);
-  nrf_ecb_event_clear(NRF_ECB, NRF_ECB_EVENT_ERRORECB);
-  nrf_ecb_task_trigger(NRF_ECB, NRF_ECB_TASK_STARTECB);
-  while (!(nrf_ecb_event_check(NRF_ECB, NRF_ECB_EVENT_ENDECB) ||
-          nrf_ecb_event_check(NRF_ECB, NRF_ECB_EVENT_ERRORECB))) {
-  }
-}
-#endif // CONFIG_BT
-#endif // CONFIG_ANT_ENCRYPTED_CHANNELS
+#endif
 
 ant_err_t ant_init(void) {
   ant_err_t err;
