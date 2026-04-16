@@ -27,7 +27,7 @@ Documentation
 
 To get started, visit the official ANT for nRF Connect SDK documentation:
 
-* https://www.thisisant.com/APIassets/ANTnRFConnectDoc/
+* https://ant-nrfconnect.github.io/
 
 
 Frequently Asked Questions
@@ -58,7 +58,7 @@ Since ANT must be kept in sync with the sdk-nrf and sdk-nrfxlib repositories, wo
 Which nRF SoC series are supported?
 ===================================
 
-ANT for nRF Connect SDK supports selected parts in the nRF52 (nRF52840, nRF52832), nRF53 (nRF5340) and nRF54 (nRF54L15) series. Contact https://www.thisisant.com/support for release timelines. Please see https://www.thisisant.com/APIassets/ANTnRFConnectDoc/doc/compatibility.html for more details regarding ANT for nRF Connect SDK compatibility.
+ANT for nRF Connect SDK supports selected parts in the nRF52 (nRF52840, nRF52832), nRF53 (nRF5340) and nRF54 (nRF54L15, nRF54LM20) series. Contact https://www.thisisant.com/support for release timelines. Please see https://ant-nrfconnect.github.io/doc/compatibility.html for more details regarding ANT for nRF Connect SDK compatibility.
 
 Does enabling ANT affect the Bluetooth QDID used for certification?
 ===================================================================

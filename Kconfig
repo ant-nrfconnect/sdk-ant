@@ -11,7 +11,7 @@ menu "ANT Wireless"
 
 config ANT
     bool "ANT Wireless"
-    depends on (SOC_NRF5340_CPUNET || SOC_NRF5340_CPUAPP || SOC_NRF52840 || SOC_NRF52832 || SOC_NRF54L15)
+    depends on (SOC_NRF5340_CPUNET || SOC_NRF5340_CPUAPP || SOC_NRF52840 || SOC_NRF52832 || SOC_NRF54L05 || SOC_NRF54L10 || SOC_NRF54L15 || SOC_NRF54LM20A)
     help
        Enable ANT ultra low power wireless protocol.
 
@@ -19,9 +19,8 @@ if ANT
 
 config ANT_LIBRARY_CORE
     bool "Enabled on the core used for ANT radio communication"
-    select NRFX_PPI if HAS_HW_NRF_PPI
-    select NRFX_DPPI if HAS_HW_NRF_DPPIC
-    select NRFX_DPPI10 if SOC_SERIES_NRF54LX
+    # Include GPPI which handles using PPI or DPPI depending on the platform
+    select NRFX_GPPI
     # Include multiprotocol service layer (MPSL), required for peripheral access and radio scheduling:
     select MPSL
     # Include Entropy for ANT encrypted channel support:
