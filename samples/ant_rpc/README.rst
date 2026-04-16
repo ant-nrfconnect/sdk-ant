@@ -7,7 +7,7 @@ ANT RPC
    :local:
    :depth: 2
 
-This sample exposes the ANT network processor to the nRF5340 application CPU, using nRF RPC transport and OpenAMP. 
+This sample exposes the ANT network processor to the nRF5340 application CPU, using nRF RPC transport and OpenAMP.
 
 Requirements
 ************

@@ -13,7 +13,7 @@
 #include <zephyr/types.h>
 #include <zephyr/device.h>
 
-#include <nrf.h>
+#include <nrfx.h>
 #include <nrf_rpc.h>
 #include <nrf_rpc/nrf_rpc_ipc.h>
 
@@ -148,7 +148,7 @@ int32_t ant_rpc_net_init(void) {
 
   return 0;
 }
-SYS_INIT(ant_rpc_net_init, POST_KERNEL, CONFIG_APPLICATION_INIT_PRIORITY);
+SYS_INIT(ant_rpc_net_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
 
 ant_err_t ant_rpc_net_send_evt(ANT_MESSAGE *evt) {
   ant_err_t err;

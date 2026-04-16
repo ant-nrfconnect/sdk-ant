@@ -70,6 +70,7 @@
 #include <zephyr/bluetooth/uuid.h>
 #include <zephyr/bluetooth/gatt.h>
 #include <zephyr/bluetooth/services/hrs.h>
+#include <zephyr/settings/settings.h>
 
 #include <ant_parameters.h>
 #include <ant_state_indicator.h>
@@ -86,6 +87,7 @@
 LOG_MODULE_REGISTER(hrm_relay, LOG_LEVEL_INF);
 
 static struct bt_conn *default_conn;
+static bool hrs_ntf_enabled;
 
 HRM_DISP_CHANNEL_CONFIG_DEF(hrm, CONFIG_HRM_RX_CHANNEL_NUM, CONFIG_HRM_RX_CHAN_ID_TRANS_TYPE,
                             CONFIG_HRM_RX_CHAN_ID_DEV_NUM, CONFIG_HRM_RX_NETWORK_NUM,
@@ -151,7 +153,7 @@ static int bt_ready(void) {
 
   LOG_INF("Bluetooth initialized");
 
-  err = bt_le_adv_start(BT_LE_ADV_CONN, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
+  err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
   if (err && err != -EALREADY) {
     LOG_INF("Advertising failed to start (err %x)", err);
     return err;
@@ -160,6 +162,15 @@ static int bt_ready(void) {
   LOG_INF("Advertising started");
   return 0;
 }
+
+static void hrs_ntf_changed(bool enabled)
+{
+  hrs_ntf_enabled = enabled;
+}
+
+static struct bt_hrs_cb hrs_cb = {
+  .ntf_changed = hrs_ntf_changed,
+};
 
 static void auth_cancel(struct bt_conn *conn) {
   char addr[BT_ADDR_LE_STR_LEN];
@@ -178,7 +189,10 @@ static void hrs_notify_thread(void) {
 
   while (1) {
     k_msgq_get(&hrs_queue, &hrm_profile, K_FOREVER);
-    bt_hrs_notify((uint16_t)hrm_profile.page_0.computed_heart_rate);
+
+    if(hrs_ntf_enabled) {
+      bt_hrs_notify((uint16_t)hrm_profile.page_0.computed_heart_rate);
+    }
   }
 }
 
@@ -314,6 +328,10 @@ int main(void) {
     goto ERROR_EXIT;
   }
 
+  if (IS_ENABLED(CONFIG_SETTINGS)) {
+    settings_load();
+  }
+
   err = ant_and_adv_start();
   if (err) {
     LOG_INF("ANT and Bluetooth LE start failed (err %d)", err);
@@ -321,6 +339,8 @@ int main(void) {
   }
 
   bt_conn_auth_cb_register(&auth_cb_display);
+
+  bt_hrs_cb_register(&hrs_cb);
 
   return 0;
 
