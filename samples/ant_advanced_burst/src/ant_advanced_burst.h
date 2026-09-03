@@ -1,6 +1,6 @@
 /**
  * This software is subject to the ANT+ Shared Source License
- * www.thisisant.com/swlicenses
+ * https://developer.garmin.com/ant-program/licensing/shared-source-license/
  * Copyright (c) Garmin Canada Inc. 2022
  * All rights reserved.
  *
@@ -25,9 +25,7 @@
  * The following actions are prohibited:
  *
  *    1) Redistribution of source code containing the ANT+ Network
- *       Key. The ANT+ Network Key is available to ANT+ Adopters.
- *       Please refer to http://thisisant.com to become an ANT+
- *       Adopter and access the key.
+ *       Key.
  *
  *    2) Reverse engineering, decompilation, and/or disassembly of
  *       software provided in binary form under this license.

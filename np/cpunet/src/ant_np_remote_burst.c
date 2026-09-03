@@ -24,7 +24,6 @@ static void burst_handler_init(void) {
 }
 
 void ant_np_remote_burst_init(void) {
-  // TODO: refine logging
   LOG_DBG("ant_np_remote_burst_init");
 
   burst_handler_init();
@@ -35,7 +34,6 @@ ant_err_t ant_np_remote_burst_cmd(ANT_MESSAGE *cmd) {
   uint8_t burst_seg = BURST_SEGMENT_CONTINUE;
   uint8_t seq = cmd->ANT_MESSAGE_ucChannel & SEQUENCE_NUMBER_MASK;
 
-  // TODO: refine logging
   LOG_DBG("ant_np_remote_burst_cmd");
 
   cmd->ANT_MESSAGE_ucChannel &= ~SEQUENCE_NUMBER_MASK;
@@ -120,13 +118,11 @@ ant_err_t ant_np_remote_burst_cmd(ANT_MESSAGE *cmd) {
 }
 
 void ant_np_remote_burst_evt(ANT_MESSAGE *evt) {
-  // TODO: refine logging
   LOG_DBG("ant_np_remote_burst_evt");
 
   // check evts from ant stack to progress burst handler states
 
   if (evt->ANT_MESSAGE_ucSize && (evt->ANT_MESSAGE_ucMesgID == MESG_RESPONSE_EVENT_ID)) {
-    // TODO: use payload offset define
     switch (evt->ANT_MESSAGE_aucPayload[1]) {
     case EVENT_TRANSFER_TX_START:
     case EVENT_TRANSFER_NEXT_DATA_BLOCK: {

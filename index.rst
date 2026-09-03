@@ -20,3 +20,4 @@ The nRF Connect SDK is available on GitHub from Nordic Semiconductor: https://gi
    doc/samples
    doc/api
    doc/kconfig/index
+   doc/tools

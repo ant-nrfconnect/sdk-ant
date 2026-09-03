@@ -29,12 +29,11 @@ static bool seg_complete;
 
 static void burst_handler_init(void) {
   state = HANDLER_IDLE;
-  // TODO: use invalid channel number define
   burst_channel = 0xFF;
 }
 
 static void burst_cmd_sequencer(ANT_MESSAGE *cmd) {
-  // serialize the burst data content. TODO: expand the packet size for better efficiency
+  // serialize the burst data content.
   cmd->ANT_MESSAGE_ucSize = MESG_CHANNEL_NUM_SIZE + ANT_STANDARD_DATA_PAYLOAD_SIZE;
   cmd->ANT_MESSAGE_ucMesgID = MESG_BURST_DATA_ID;
   memcpy(&cmd->ANT_MESSAGE_aucPayload, seg_pos, ANT_STANDARD_DATA_PAYLOAD_SIZE);
@@ -58,7 +57,6 @@ static void burst_cmd_sequencer(ANT_MESSAGE *cmd) {
 }
 
 void ant_np_host_burst_init(void) {
-  // TODO: refine logging
   LOG_DBG("ant_np_host_burst_init");
 
   burst_handler_init();
@@ -71,7 +69,6 @@ ant_err_t ant_np_host_burst_cmd(uint8_t ucChannel, uint16_t usSize,
   // set alignment to ANT_STANDARD_DATA_PAYLOAD_SIZE
   uint16_t size_div = usSize >> 3;
 
-  // TODO: refine logging
   LOG_DBG("ant_np_host_burst_cmd");
 
   switch (state) {
@@ -81,7 +78,6 @@ ant_err_t ant_np_host_burst_cmd(uint8_t ucChannel, uint16_t usSize,
       err = NRF_ANT_ERROR_TRANSFER_SEQUENCE_NUMBER_ERROR;
       LOG_ERR("burst cmd start seg mismatch");
       break;
-      // TODO: use invalid channel number define
     } else if (burst_channel != 0xFF) {
       err = NRF_ANT_ERROR_TRANSFER_IN_PROGRESS;
       LOG_ERR("burst cmd start ch mismatch");
@@ -154,13 +150,11 @@ ant_err_t ant_np_host_burst_cmd(uint8_t ucChannel, uint16_t usSize,
 }
 
 void ant_np_host_burst_evt(ANT_MESSAGE *evt, ANT_MESSAGE *cmd) {
-  // TODO: refine logging
   LOG_DBG("ant_np_host_burst_evt");
 
   // check evts from ant stack to progress burst handler states
 
   if (evt->ANT_MESSAGE_ucSize && (evt->ANT_MESSAGE_ucMesgID == MESG_RESPONSE_EVENT_ID)) {
-    // TODO: use payload offset define
     switch (evt->ANT_MESSAGE_aucPayload[1]) {
     case EVENT_TRANSFER_TX_START: {
       // not consumed, pass on to the application

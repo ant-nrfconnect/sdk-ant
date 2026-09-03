@@ -1,6 +1,6 @@
-.. _ant_release_notes_210:
+.. _ant_release_notes_211:
 
-v2.1.0 Release Notes
+v2.1.1 Release Notes
 ####################
 
 .. contents::
@@ -12,14 +12,9 @@ This release provides support for developing ANT and ANT+ enabled applications w
 Highlights
 **********
 
-* This is a compatibility release targeting sdk-nrf v3.2.4.
+* This is a bugfix release targeting sdk-nrf v3.2.4.
 
   - Please review the :ref:`Integration notes <ant_integration_notes>` or visit https://developer.garmin.com/ant-program/licensing/ for commercial license information
-
-* nRF54L Support
-
-  - Libraries and samples now support nRF54L05, nRF54L10, and nRF54LM20 (cpuapp target)
-  - nRF54L security by separation and TF-M will be supported in a future release
 
 Supported boards
 ****************
@@ -47,5 +42,4 @@ Some ANT features that were available for nRF5 SDK/SoftDevice are unsupported in
 Changelog
 *********
 
-* Update the ANT library to sync with the target nRF Connect SDK dependencies (v3.2.4)
-* Add library and supporting targets/files for nRF54L05, nRF54L10, and nRF54LM20 support
+* Resolves a potential ANT stack stall that could occur under concurrent channel activity and/or significant system load

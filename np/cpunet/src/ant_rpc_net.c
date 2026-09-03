@@ -32,7 +32,6 @@ static ant_err_t ant_rpc_cmd_rsp(const struct nrf_rpc_group * group, ANT_MESSAGE
   uint8_t pkt_size;
   uint8_t *rsp_pkt = NULL;
 
-  // TODO: refine logging
   LOG_DBG("ant_rpc_cmd_rsp");
 
   if (rsp == NULL)
@@ -68,16 +67,12 @@ static void ant_rpc_init_handler(const struct nrf_rpc_group *group, const uint8_
   ant_err_t err;
   ANT_MESSAGE rsp;
 
-  // TODO: refine logging
   LOG_DBG("ant_rpc_init_handler");
 
-  // TODO: process init pkt
   rsp.ANT_MESSAGE_ucSize = 0;
 
   // input packet process done
   nrf_rpc_decoding_done(group, packet);
-
-  // TODO: initialization(s)
 
   // Response
   err = ant_rpc_cmd_rsp(group, &rsp);
@@ -93,7 +88,6 @@ static void ant_rpc_cmd_handler(const struct nrf_rpc_group *group, const uint8_t
   ANT_MESSAGE cmd;
   ANT_MESSAGE rsp;
 
-  // TODO: refine logging
   LOG_DBG("ant_rpc_cmd_handler");
 
   if (len > MESG_BUFFER_SIZE) {
@@ -115,8 +109,7 @@ static void ant_rpc_cmd_handler(const struct nrf_rpc_group *group, const uint8_t
     // response
     err = ant_rpc_cmd_rsp(group, &rsp);
     if (err) {
-      // unable to send out cmd rsp. Could lead to rpc thread locking on cpuapp...
-      // TODO: recovery possible?
+      // unable to send out cmd rsp. Could lead to rpc thread locking on cpuapp.
       LOG_ERR("cmd handler cmd rsp err %d", err);
     }
   } else {
@@ -132,7 +125,6 @@ static void ant_rpc_init_err_handler(const struct nrf_rpc_err_report *report) {
 int32_t ant_rpc_net_init(void) {
   int err;
 
-  // TODO: refine logging
   LOG_DBG("ant_rpc_net_init");
 
   err = (ant_err_t)nrf_rpc_init(ant_rpc_init_err_handler);
@@ -155,7 +147,6 @@ ant_err_t ant_rpc_net_send_evt(ANT_MESSAGE *evt) {
   uint8_t pkt_size;
   uint8_t *evt_pkt = NULL;
 
-  // TODO: refine logging
   LOG_DBG("ant_rpc_net_send_evt");
 
   if (evt == NULL)
@@ -181,7 +172,6 @@ ant_err_t ant_rpc_net_send_evt(ANT_MESSAGE *evt) {
 }
 
 ant_err_t ant_rpc_net_register_cmd_cb(ant_rpc_net_cmd_cb_t cb) {
-  // TODO: refine logging
   LOG_DBG("ant_rpc_net_register_cmd_cb");
 
   if (cb == NULL) {

@@ -98,7 +98,6 @@ ant_err_t ant_rpc_app_send_cmd(ANT_MESSAGE *cmd, ANT_MESSAGE *rsp) {
   const uint8_t *rsp_pkt = NULL;
   size_t rsp_size;
 
-  // TODO: refine logging
   LOG_DBG("ant_rpc_app_send_cmd");
 
   if (cmd == NULL)

@@ -68,7 +68,7 @@ Testing Requirements
 ====================
 
 * ANT PC dongle (for example, ANTUSB-m)
-* ANTware II software (see https://www.thisisant.com/developer/resources/software-tools/)
+* ANTware II software (see https://www.https://developer.garmin.com/ant-program/developer/resources/software-tools/)
 
 Building and running
 ********************

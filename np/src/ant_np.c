@@ -329,7 +329,7 @@ void ant_np_process_msg_data(ant_cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_ME
 
   /*
       case MESG_PA_LNA_CONFIG_ID: {
-        // TODO:
+        // Unsupported
         break;
       }
   */
@@ -535,8 +535,7 @@ void ant_np_process_msg_cmd(ant_cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MES
   }
 
   case MESG_RADIO_CW_MODE_ID: {
-    // TODO: does hfclk need to be forced on?
-    // TODO: MESG_RADIO_CW_MODE_SIZE not updated with ucMode
+    // MESG_RADIO_CW_MODE_SIZE not updated with ucMode
     if (rx_msg->ANT_MESSAGE_ucSize >= (MESG_RADIO_CW_MODE_SIZE + 2)) {
       cmd_rsp->response = ant_cw_test_mode(rx_msg->ANT_MESSAGE_aucPayload[ANT_SERIAL_DATA_OFFSET_2],
                             rx_msg->ANT_MESSAGE_aucPayload[ANT_SERIAL_DATA_OFFSET_1],
@@ -557,7 +556,7 @@ void ant_np_process_msg_cmd(ant_cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MES
   }
 
   case MESG_SYSTEM_RESET_ID: {
-    // blocking call. TODO: revise this if rpc cannot afford to be blocked for up to 2s
+    // Assumes rpc can be blocked for up to 2s.
     ant_stack_reset_in_progress = true;
     cmd_rsp->response = ant_stack_reset();
 
@@ -572,7 +571,7 @@ void ant_np_process_msg_cmd(ant_cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MES
 
 /*
   case MESG_SLEEP_ID: {
-    // TODO:
+    // Unsupported
     break;
   }
 */
@@ -720,7 +719,7 @@ void ant_np_process_msg_cmd(ant_cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MES
 
 /*
   case MESG_SCALABLE_CHANNEL_CONFIG_ID: {
-    // TODO:
+    // Unsupported
     break;
   }
 */
@@ -732,7 +731,7 @@ void ant_np_process_msg_cmd(ant_cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MES
 
 /*
   case MESG_PA_LNA_CONFIG_ID: {
-    // TODO:
+    // Unsupported
     break;
   }
 */
@@ -755,7 +754,7 @@ void ant_np_process_msg_cmd(ant_cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT_MES
   }
 
   case MESG_STACK_ENABLE_DISABLE_ID: {
-    // blocking call. TODO: revise this if rpc cannot afford to be blocked for up to 2s
+    // Assumes rpc can be blocked for up to 2s.
     ant_stack_reset_in_progress = true;
 
     if (cmd_rsp->channel) { // note: channel reused for desired API call, 0 = enable, 1 = disable
@@ -805,7 +804,6 @@ void ant_np_process_msg_ext_ids(ant_cmd_rsp_t *cmd_rsp, ANT_MESSAGE *rx_msg, ANT
       tx_msg->ANT_MESSAGE_ucSubID = (uint8_t)ext_id;
 
       switch (ext_id) {
-      // TODO: ext id reqs
       default:
         invalid_msg = true;
         break;
@@ -852,10 +850,10 @@ void ant_np_process_cmd(ANT_MESSAGE *rx_msg, ANT_MESSAGE *tx_msg) {
 
   if (ant_stack_reset_in_progress) {
     // disallow cmds from any threads from being processed until reset has completed
-    // TODO: For time being, report back as wrong channel state error in cmd rsp
+    // For time being, report back as wrong channel state error in cmd rsp
     cmd_rsp.response = CHANNEL_IN_WRONG_STATE;
   } else {
-    // send through msg type processors. TODO: optimzation
+    // send through msg type processors.
     ant_np_process_msg_data(&cmd_rsp, rx_msg, tx_msg);
     ant_np_process_msg_req(&cmd_rsp, rx_msg, tx_msg);
     ant_np_process_msg_cmd(&cmd_rsp, rx_msg, tx_msg);
