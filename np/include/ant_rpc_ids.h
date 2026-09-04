@@ -12,11 +12,11 @@
 
 enum ant_rpc_cmd_ids {
    ANT_RPC_INIT = 0x00,
-   ANT_RPC_CMD = 0x01, // TODO: separate out DATA?
+   ANT_RPC_CMD = 0x01,
 };
 
 enum ant_rpc_evt_ids {
-   ANT_RPC_EVT = 0x01, // TODO: separate out DATA?
+   ANT_RPC_EVT = 0x01,
 };
 
 #endif // ANT_RPC_IDS__

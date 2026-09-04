@@ -33,7 +33,7 @@ If using the existing dual core sysbuild configurations, the radio-adjacent or n
 
 If your organization already has a unique commercial license key, you can continue to use the same license key for all products based on Nordic Semiconductor's nRF52 and nRF53 SoCs. Use :option:`CONFIG_ANT_LICENSE_KEY` ="your-key" to define your unique key as described above.
 
-For more information about ANT licensing visit the following website: https://www.thisisant.com/developer/ant/licensing
+For more information about ANT licensing visit the following website: https://developer.garmin.com/ant-program/licensing/
 
 .. _ant_architecture:
 
@@ -77,4 +77,4 @@ Due to space constraints on the SoC (or network core), it may be necessary to li
 Resources
 *********
 
-http://www.thisisant.com
+https://developer.garmin.com/ant-program/

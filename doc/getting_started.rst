@@ -13,21 +13,24 @@ Setting up nRF Connect SDK
 
 The nRF Connect SDK (sdk-nrf) uses ``west`` to manage a combination of multiple Git repositories and versions.
 
-You must use the west tool to install all components of the nRF Connect SDK including ANT. The required version of west is dictated by sdk-nrf.
+You should use the west tool to install all components of the nRF Connect SDK including ANT. The required version of west is dictated by sdk-nrf.
 
 .. note::
-  From sdk-ant v2.0.0 onwards, ANT support is now being offered as an Add-on repository. This model requires completing a specific setup that differs from previous versions.
-  Add-ons manage and clone their own compatible nRF Connect SDK instance. Please follow the instructions below to set up the development environment.
+  From sdk-ant v2.0.0 onwards, ANT support is now being offered as an Add-on repository.
+  This model requires completing a specific setup that differs from previous versions.
+  Add-ons manage and clone their own compatible nRF Connect SDK instance.
+  Please follow the instructions below to set up the development environment.
 
 
 Getting the ANT for nRF Connect SDK Add-on
 ******************************************
 
-Access to the ANT for nRF Connect repository is granted to ANT Adopters after accepting the license agreement and authenticating through GitHub.
+The ANT for nRF Connect repository is located here: https://github.com/ant-nrfconnect/sdk-ant
 
-Once your access is set up, you will be able to browse the repository here: https://github.com/ant-nrfconnect/sdk-ant
+Use of the repository is subject to the ANT+ Adopter agreement:
+https://developer.garmin.com/ant-program/licensing/adopter-agreement/
 
-After confirming access, you can set up your development environment either manually or through the nRF Connect for Visual Studio Code extension.
+You can set up your development environment either manually or through the nRF Connect for Visual Studio Code extension.
 
 Manual Installation
 ===================
@@ -62,32 +65,8 @@ When new releases are available, they will be tagged with a version and appear i
 
 ANT libraries are tightly coupled to sdk-nrf revisions. It is not recommended to use sdk-ant with any version other than that specified in the west manifest.
 
-
-Building the Documentation
-**************************
-
-If desired, this documentation can be generated on demand from the repository source. Documentation build files are located in the ``ant/doc`` folder.
-
-1. Install the nRF Connect SDK and enable ANT as described above.
-2. Install or update all required Python dependencies. Open the command-line window in the ``ant`` folder. Use the following command to install the requirements for the documentation build::
-
-     pip3 install -r doc/requirements.txt
-
-To build the documentation:
-
-1. Open a command-line window in the ANT module folder (``ant``).
-2. Run ninja by entering the following command::
-
-     ninja
-
-3. The documentation output will be generated in the ``ant/doc/html`` folder. Double-click ``index.html`` to display the documentation in your browser.
-
 Resources
 *********
-
-Follow the `nRF Connect SDK installation guide <https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/installation.html>`_.
-
-`Installing the nRF Connect SDK <https://docs.nordicsemi.com/bundle/ncs-latest/page/nrf/installation/install_ncs.html>`_ has instructions for obtaining an ANT compatible version of the nRF Connect SDK by hash, tag, or the latest state of the main branch.
 
 The nRF Connect SDK is available from Nordic Semiconductor:
 https://github.com/nrfconnect/sdk-nrf

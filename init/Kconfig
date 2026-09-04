@@ -18,7 +18,7 @@ config ANT_LICENSE_KEY
 		non-commericial use by setting CONFIG ANT_EVALUATION_KEY=y or
 		defining CONFIG_ANT_LICENSE_KEY in the configuration file. For
 		more information about ANT licensing, visit the following website:
-		https://www.thisisant.com/developer/ant/licensing
+		https://developer.garmin.com/ant-program/licensing/
 
 config ANT_EVALUATION_KEY
 	bool "Use ANT Evaluation License Key."

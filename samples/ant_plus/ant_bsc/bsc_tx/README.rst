@@ -82,7 +82,7 @@ ANT+ Network Key
 This sample selects ``CONFIG_ANT_KEY_MANAGER`` to provide access to ant_plus_key_set() (See :ref:`ant_key_manager`). This library function configures the pre-defined ANT+ Network Key for ANT+ devices. Note that network keys, transmission type, device type IDs and RF channels are assigned and regulated to maintain
 network integrity, and interoperability, except for the default public network.
 
-For more information on Network Keys, visit https://www.thisisant.com/developer/ant-plus/ant-plus-basics/network-keys.
+For more information on Network Keys, visit https://developer.garmin.com/ant-program/ant-ant-plus/network-keys/
 
 Testing with ANTware II
 =======================
@@ -162,4 +162,4 @@ Testing the BSC examples with the ANT+ Simulator tools
 
 To use the ANT+ Simulator tools, the ANT+ Network Key must be configured (ie. using ant_plus_key_set() as shown in the sample).
 
-You can then use the ANT+ Display Simulator to test the BSC Transmitter. See the documentation of the ANT+ Simulator tools at thisisant.com for information about how to use these tools.
+You can then use the ANT+ Display Simulator to test the BSC Transmitter. See the documentation of the ANT+ Simulator tools at https://developer.garmin.com/ant-program/ for information about how to use these tools.

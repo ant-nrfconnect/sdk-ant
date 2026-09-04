@@ -36,10 +36,10 @@ void ant_np_remote_process_cmd(ANT_MESSAGE *rx_msg, ANT_MESSAGE *tx_msg) {
 
   if (ant_stack_reset_in_progress) {
     // disallow cmds from any threads from being processed until reset has completed
-    // TODO: For time being, report back as wrong channel state error in cmd rsp
+    // For time being, report back as wrong channel state error in cmd rsp
     cmd_rsp.response = CHANNEL_IN_WRONG_STATE;
   } else {
-    // send through msg type processors. TODO: optimzation
+    // send through msg type processors
     ant_np_process_msg_data(&cmd_rsp, rx_msg, tx_msg);
     ant_np_process_msg_req(&cmd_rsp, rx_msg, tx_msg);
     ant_np_process_msg_cmd(&cmd_rsp, rx_msg, tx_msg);
@@ -65,10 +65,9 @@ void ant_np_remote_process_cmd(ANT_MESSAGE *rx_msg, ANT_MESSAGE *tx_msg) {
 }
 
 void ant_np_remote_process_evt(ant_evt_t *evt) {
-   // TODO: refine logging
   LOG_DBG("ant_np_remote_process_evt");
 
-  // TODO: buffering/threading processing required?
+  // buffering/threading processing may be required here
 
   if (evt->message.ANT_MESSAGE_ucSize > MESG_MAX_SIZE_VALUE) {
     LOG_ERR("process evt msg size exceeded %d > %d",
@@ -94,7 +93,6 @@ void ant_np_remote_process_evt(ant_evt_t *evt) {
 ant_err_t ant_np_remote_init(void) {
   ant_err_t err;
 
-  // TODO: refine logging
   LOG_DBG("ant_np_remote_init");
 
   ant_stack_reset_in_progress = false;
@@ -120,7 +118,7 @@ ant_err_t ant_np_remote_init(void) {
   // intialize remote side burst handler
   ant_np_remote_burst_init();
 
-  // TODO: if buffering/threading need to be implemented, initialize them here
+  // if buffering/threading need to be implemented, initialize them here
 
   return 0;
 }

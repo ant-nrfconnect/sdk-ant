@@ -71,7 +71,7 @@ ANT+ Network Key
 This sample selects ``CONFIG_ANT_KEY_MANAGER`` to provide access to ant_plus_key_set() (See :ref:`ant_key_manager`). This library function configures the pre-defined ANT+ Network Key for ANT+ devices. Note that network keys, transmission type, device type IDs and RF channels are assigned and regulated to maintain
 network integrity, and interoperability, except for the default public network.
 
-For more information on Network Keys, visit https://www.thisisant.com/developer/ant-plus/ant-plus-basics/network-keys.
+For more information on Network Keys, visit https://developer.garmin.com/ant-program/ant-ant-plus/network-keys/
 
 Testing
 =======
@@ -103,4 +103,4 @@ You can test the Bicycle Power Receiver by performing the following steps:
 Testing the BPWR examples with the ANT+ Simulator tools
 =======================================================
 
-You can use the SimulANT+ Bicycle Power Sensor Simulator to test the BPWR Receiver. Make sure the Device Number matches the Channel Configuration above (0x31). See the documentation of the ANT+ Simulator tools at thisisant.com for information about how to use these tools.
+You can use the SimulANT+ Bicycle Power Sensor Simulator to test the BPWR Receiver. Make sure the Device Number matches the Channel Configuration above (0x31). See the documentation of the ANT+ Simulator tools at https://developer.garmin.com/ant-program/ for information about how to use these tools.

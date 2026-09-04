@@ -14,7 +14,7 @@ Highlights
 
 * This release removes the ``EXPERIMENTAL`` tag and is considered production ready for nRF5340-based designs
 
-  - Please review the :ref:`Integration notes <ant_integration_notes>` or visit https://www.thisisant.com/developer/ant/licensing for commercial license information
+  - Please review the :ref:`Integration notes <ant_integration_notes>` or visit https://developer.garmin.com/ant-program/licensing/ for commercial license information
 
 * Encrypted channel support has been enabled
 

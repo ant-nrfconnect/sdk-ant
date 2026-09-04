@@ -22,6 +22,18 @@ When combined with the SDK, these files enable developers to create unique appli
 
 sdk-ant is now maintained as a top-level Add-on. This means when the repository is initialized with west, it will also pull a compatible version of nRF Connect SDK.
 
+Licensing
+*********
+
+ANT softdevices and stacks for Nordic Semiconductor SoC devices are licensed by Garmin for evaluation and for commercial or other revenue generating purposes under separate agreements.
+
+Use of the ANT stacks for **evaluation purposes only** is free.
+
+There is a per-instance royalty fee associated with use of the ANT softdevices and stacks for revenue-generating purposes. For more information, visit:
+
+* https://developer.garmin.com/ant-program/licensing/
+
+
 Documentation
 *************
 
@@ -33,8 +45,8 @@ To get started, visit the official ANT for nRF Connect SDK documentation:
 Frequently Asked Questions
 **************************
 
-I have applied for evaluation or commercial access, but I'm not sure what to do next. How do I start working with the SDK?
-==========================================================================================================================
+How do I start working with the SDK?
+====================================
 
 nRF Connect SDK uses the west tool to manage all repositories that make up the SDK, including ANT (this repository). See the Getting Started guide in the documentation above for details.
 
@@ -58,7 +70,7 @@ Since ANT must be kept in sync with the sdk-nrf and sdk-nrfxlib repositories, wo
 Which nRF SoC series are supported?
 ===================================
 
-ANT for nRF Connect SDK supports selected parts in the nRF52 (nRF52840, nRF52832), nRF53 (nRF5340) and nRF54 (nRF54L15, nRF54LM20) series. Contact https://www.thisisant.com/support for release timelines. Please see https://ant-nrfconnect.github.io/doc/compatibility.html for more details regarding ANT for nRF Connect SDK compatibility.
+ANT for nRF Connect SDK supports selected parts in the nRF52 (nRF52840, nRF52832), nRF53 (nRF5340) and nRF54 (nRF54L15, nRF54LM20) series. Please see https://ant-nrfconnect.github.io/doc/compatibility.html for more details regarding ANT for nRF Connect SDK compatibility.
 
 Does enabling ANT affect the Bluetooth QDID used for certification?
 ===================================================================
@@ -67,9 +79,8 @@ ANT is provided as a standalone library that exists in parallel with the Bluetoo
 
 Where can I get support?
 ========================
+If the request is specific to this repository, open an issue.
 
-nRF Connect SDK questions: https://devzone.nordicsemi.com/
+For nRF Connect SDK questions, visit https://devzone.nordicsemi.com/.
 
-ANT implementation questions: https://www.thisisant.com/forum/
-
-For general questions, inquiries, etc. use the links here: https://www.thisisant.com/support/
+For general information about ANT, see https://developer.garmin.com/ant-program.

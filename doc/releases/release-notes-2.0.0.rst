@@ -14,7 +14,7 @@ Highlights
 
 * This is a compatibility release targeting sdk-nrf v2.9.2.
 
-  - Please review the :ref:`Integration notes <ant_integration_notes>` or visit https://www.thisisant.com/developer/ant/licensing for commercial license information
+  - Please review the :ref:`Integration notes <ant_integration_notes>` or visit https://developer.garmin.com/ant-program/licensing/ for commercial license information
 
 * Add On Model
 

@@ -14,7 +14,7 @@ Highlights
 
 * This release is a compatibility release targeting sdk-nrf v2.6.0 and is considered production ready for nRF5340-based designs
 
-  - Please review the :ref:`Integration notes <ant_integration_notes>` or visit https://www.thisisant.com/developer/ant/licensing for commercial license information
+  - Please review the :ref:`Integration notes <ant_integration_notes>` or visit https://developer.garmin.com/ant-program/licensing/ for commercial license information
 
 * In addition, this release introduces support for nRF52840-based designs
 

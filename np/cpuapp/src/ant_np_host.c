@@ -33,7 +33,6 @@ typedef struct {
 static K_FIFO_DEFINE(ant_host_evt_fifo);
 
 static uint32_t decode_cmd_rsp(ANT_MESSAGE *rsp) {
-  // TODO: check for mismatch cmd id and rsp id?
   if (rsp->ANT_MESSAGE_ucSize == 0) {
     // responses with 0 size ANT_MESSAGE
     return NRF_ANT_SUCCESS;
@@ -369,21 +368,21 @@ ant_err_t ant_pending_transmit_clear(uint8_t ucChannel, uint8_t *pucSuccess) {
 
 /*
 ant_err_t ant_transfer_stop(void) {
-  // TODO:
+  // Unsupported
   return NRF_ANT_ERROR_INVALID_MESSAGE;
 }
 */
 
 /*
 ant_err_t ant_burst_handler_wait_flag_enable(uint8_t *pucWaitFlag) {
-  // TODO:
+  // Unsupported
   return NRF_ANT_ERROR_INVALID_MESSAGE;
 }
 */
 
 /*
 ant_err_t ant_burst_handler_wait_flag_disable(void) {
-  // TODO:
+  // Unsupported
   return NRF_ANT_ERROR_INVALID_MESSAGE;
 }
 */
@@ -495,28 +494,28 @@ ant_err_t ant_prox_search_set(uint8_t ucChannel, uint8_t ucProxThreshold,
 
 /*
 ant_err_t ant_wakeon_rf_activity_config_set(uint8_t ucWakeupConfig) {
-  // TODO:
+  // Unsupported
   return NRF_ANT_ERROR_INVALID_MESSAGE;
 }
 */
 
 /*
 ant_err_t ant_wakeon_rf_activity_config_get(uint8_t *ucWakeupConfig) {
-  // TODO:
+  // Unsupported
   return NRF_ANT_ERROR_INVALID_MESSAGE;
 }
 */
 
 /*
 ant_err_t ant_config_pa_lna_set(ANT_PA_LNA_CONFIG *pstAmpConfig) {
-  // TODO:
+  // Unsupported
   return NRF_ANT_ERROR_INVALID_MESSAGE;
 }
 */
 
 /*
 ant_err_t ant_config_pa_lna_get(ANT_PA_LNA_CONFIG *pstAmpConfig) {
-  // TODO:
+  // Unsupported
   return NRF_ANT_ERROR_INVALID_MESSAGE;
 }
 */
@@ -1055,7 +1054,6 @@ ant_err_t ant_sdu_mask_config(uint8_t ucChannel, uint8_t ucMaskConfig) {
   ANT_MESSAGE cmd;
   ANT_MESSAGE rsp;
 
-  // TODO: use MESG size define
   cmd.ANT_MESSAGE_ucSize = MESG_CHANNEL_NUM_SIZE + 1;
   cmd.ANT_MESSAGE_ucMesgID = MESG_SDU_CONFIG_ID;
   cmd.ANT_MESSAGE_ucChannel = ucChannel;
@@ -1073,7 +1071,6 @@ ant_err_t ant_crypto_channel_enable(uint8_t ucChannel, uint8_t ucEnable,
   ANT_MESSAGE cmd;
   ANT_MESSAGE rsp;
 
-  // TODO: use MESG size define
   cmd.ANT_MESSAGE_ucSize = MESG_CHANNEL_NUM_SIZE + 3;
   cmd.ANT_MESSAGE_ucMesgID = MESG_ENCRYPT_ENABLE_ID;
   cmd.ANT_MESSAGE_ucChannel = ucChannel;
@@ -1097,7 +1094,6 @@ ant_err_t ant_crypto_key_set(uint8_t ucKeyNum, uint8_t *aucKey) {
     return NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED;
   }
 
-   // TODO: use MESG size define
   cmd.ANT_MESSAGE_ucSize = MESG_CHANNEL_NUM_SIZE + 16;
   cmd.ANT_MESSAGE_ucMesgID = MESG_SET_ENCRYPT_KEY_ID;
   cmd.ANT_MESSAGE_ucChannel = ucKeyNum;
@@ -1124,11 +1120,9 @@ ant_err_t ant_crypto_info_set(uint8_t ucType, uint8_t *aucInfo) {
   cmd.ANT_MESSAGE_ucChannel = ucType;
   if (ucType == ENCRYPTION_INFO_SET_CRYPTO_ID) {
     cmd.ANT_MESSAGE_ucSize += 4;
-    // TODO: use MESG size define
     memcpy(cmd.ANT_MESSAGE_aucPayload, aucInfo, 4);
   } else if (ucType == ENCRYPTION_INFO_SET_CUSTOM_USER_DATA) {
     cmd.ANT_MESSAGE_ucSize += 19;
-    // TODO: use MESG size define
     memcpy(cmd.ANT_MESSAGE_aucPayload, aucInfo, 19);
   } else {
     return NRF_ANT_ERROR_INVALID_PARAMETER_PROVIDED;
@@ -1353,49 +1347,49 @@ ant_err_t ant_enhanced_channel_spacing_enable(uint8_t ucEnable) {
 
 /*
 ant_err_t ant_time_stamp_config_set(ANT_TIME_STAMP_CONFIG *pstTimeStampConfig) {
-  // TODO:
+  // Unsupported
   return NRF_ANT_ERROR_INVALID_MESSAGE;
 }
 */
 
 /*
 ant_err_t ant_time_stamp_config_get(ANT_TIME_STAMP_CONFIG *pstTimeStampConfig) {
-  // TODO:
+  // Unsupported
   return NRF_ANT_ERROR_INVALID_MESSAGE;
 }
 */
 
 /*
 ant_err_t ant_time_sync_config_set(ANT_TIME_SYNC_CONFIG *pstTimeSyncConfig) {
-  // TODO:
+  // Unsupported
   return NRF_ANT_ERROR_INVALID_MESSAGE;
 }
 */
 
 /*
 ant_err_t ant_time_sync_config_get(ANT_TIME_SYNC_CONFIG *pstTimeSyncConfig) {
-  // TODO:
+  // Unsupported
   return NRF_ANT_ERROR_INVALID_MESSAGE;
 }
 */
 
 /*
 ant_err_t ant_time_sync_broadcast_tx(uint8_t ucChannel, uint8_t ucSize, uint8_t *aucMesg) {
-  // TODO:
+  // Unsupported
   return NRF_ANT_ERROR_INVALID_MESSAGE;
 }
 */
 
 /*
 ant_err_t ant_high_duty_search_config_set(const ANT_HIGH_DUTY_SEARCH_CONFIG *pstConfig) {
-  // TODO:
+  // Unsupported
   return NRF_ANT_ERROR_INVALID_MESSAGE;
 }
 */
 
 /*
 ant_err_t ant_high_duty_search_config_get(ANT_HIGH_DUTY_SEARCH_CONFIG *pstConfig) {
-  // TODO:
+  // Unsupported
   return NRF_ANT_ERROR_INVALID_MESSAGE;
 }
 */
@@ -1403,14 +1397,14 @@ ant_err_t ant_high_duty_search_config_get(ANT_HIGH_DUTY_SEARCH_CONFIG *pstConfig
 /*************************** STATUS APIS *********************************/
 /*
 ant_err_t ant_active(uint8_t *pbAntActive) {
-  // TODO:
+  // Unsupported
   return NRF_ANT_ERROR_INVALID_MESSAGE;
 }
 */
 
 /*
 ant_err_t ant_channel_in_progress(uint8_t *pbChannelInProgress) {
-  // TODO:
+  // Unsupported
   return NRF_ANT_ERROR_INVALID_MESSAGE;
 }
 */
@@ -1538,7 +1532,7 @@ ant_err_t ant_cw_test_mode(uint8_t ucRadioFreq, uint8_t ucTxPower,
   ANT_MESSAGE cmd;
   ANT_MESSAGE rsp;
 
-  // TODO: MESG_RADIO_CW_MODE_SIZE not updated with ucMode
+  // MESG_RADIO_CW_MODE_SIZE not updated with ucMode
   cmd.ANT_MESSAGE_ucSize = MESG_RADIO_CW_MODE_SIZE + 2;
   cmd.ANT_MESSAGE_ucMesgID = MESG_RADIO_CW_MODE_ID;
   cmd.ANT_MESSAGE_ucChannel = 0;
@@ -1564,7 +1558,6 @@ ant_err_t ant_cw_test_mode(uint8_t ucRadioFreq, uint8_t ucTxPower,
 ant_err_t ant_np_host_cmd_passthrough(ANT_MESSAGE *cmd, ANT_MESSAGE *rsp) {
   ant_err_t err;
 
-  // TODO: refine logging
   LOG_DBG("ant_np_host_cmd_passthrough");
 
   // pre-set rsp to size 0 indicating no outgoing response msg
@@ -1580,7 +1573,6 @@ void ant_np_host_process_evt(ANT_MESSAGE *evt) {
   ANT_MESSAGE cmd;
   ANT_MESSAGE rsp;
 
-  // TODO: refine logging
   LOG_DBG("ant_np_host_process_evt");
 
   if (evt->ANT_MESSAGE_ucSize > MESG_MAX_SIZE_VALUE) {
@@ -1643,7 +1635,6 @@ void ant_np_host_process_evt(ANT_MESSAGE *evt) {
 ant_err_t ant_np_host_init(void) {
   ant_err_t err;
 
-  // TODO: refine logging
   LOG_DBG("ant_np_host_init");
 
   err = ant_rpc_app_register_evt_cb(ant_np_host_process_evt);
